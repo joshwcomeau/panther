@@ -1,0 +1,55 @@
+#nodes {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 133.333%;
+  display: flex;
+
+  .nodes-region {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #graveyard {
+    background: #000;
+  }
+
+  #past {
+    background: $orange1;
+  }
+
+  #present {
+    background: $orange2;
+  }
+
+  #future {
+    background: $orange3;
+  }
+
+  .node-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .node {
+      width: 100%;
+      max-width: 250px;
+      background: #FFF;
+      border-radius: 100%;
+      text-align: center;
+
+      &:after {
+        content: '';
+        display: block;
+        padding-bottom: 100%;
+      }
+
+    }
+  }
+}

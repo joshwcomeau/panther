@@ -1,2 +1,9 @@
 @import 'variables';
 @import 'reset';
+
+@import 'header';
+@import 'nodes';
+
+html, body, #render-target, #layout {
+  height: 100%;
+}
