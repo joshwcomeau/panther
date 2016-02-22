@@ -4,30 +4,6 @@ import faker from 'faker';
 import { CLICK_NODE } from '../constants';
 
 
-/*
-State shape:
-
-{
-  nodes: {
-    past: {
-      name: 'Bloody Beetroots',
-      image: 'http://',
-      genres: ['country'],
-      audioSamples: ['url1']
-    },
-    present: {
-      name: 'Hot Pink Delorean',
-      image: '', genres: [], audioSamples: []
-    },
-    future: [
-      { name: 'deadmau5' },
-      { name: 'Shania Twain' },
-      { name: 'Julia Louis-Dreyfus' }
-    ]
-  }
-}
-*/
-
 const initialState = fromJS({
   nodes: {
     past: {
@@ -50,7 +26,7 @@ const initialState = fromJS({
   }
 });
 
-const rootReducer = ( state = Map(), action ) => {
+const rootReducer = ( state = initialState, action ) => {
   switch (action.type) {
     case CLICK_NODE:
       // this will ultimately become more complex as API requests are integrated.
