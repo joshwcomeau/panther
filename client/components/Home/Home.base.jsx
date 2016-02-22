@@ -2,6 +2,8 @@ import React, { Component }     from 'react';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 import classNames               from 'classnames';
 
+import NodesContainer           from '../../containers/NodesContainer.jsx';
+
 export default function HomeBase(DevTools = null) {
   return class Home extends Component {
     render() {
@@ -11,7 +13,9 @@ export default function HomeBase(DevTools = null) {
 
       return (
         <div id="layout" className={classes}>
-          { this.props.children }
+          <header>Panther</header>
+
+          <NodesContainer />
 
           { DevTools ? <DevTools /> : null }
         </div>

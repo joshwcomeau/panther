@@ -1,10 +1,10 @@
 import { bindActionCreators } from 'redux';
 import { connect }            from 'react-redux';
-import Home                   from '../components/Home';
+import Nodes                  from '../components/Nodes';
 import * as Actions           from '../actions';
 
 function mapStateToProps(state) {
-  return {state};
+  return { nodes: state.get('nodes') };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -13,4 +13,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( Home );
+export default connect( mapStateToProps, mapDispatchToProps )( Nodes );

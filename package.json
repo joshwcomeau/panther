@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "classnames": "^2.2.1",
+    "faker": "^3.0.1",
     "history": "~1.17.0",
     "immutable": "^3.7.6",
     "isomorphic-fetch": "^2.2.0",

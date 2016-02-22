@@ -1,4 +1,4 @@
-import { REPLACE_ME } from '../constants/constants';
+import { REPLACE_ME } from '../constants';
 
 export function replaceMe() {
   return {
