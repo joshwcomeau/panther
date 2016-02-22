@@ -11,15 +11,27 @@ class Nodes extends Component {
 
         </div>
         <div id="past" className="nodes-region">
-          <Node data={this.props.nodes.get('past')} />
+          <Node
+            key={this.props.nodes.get('past').get('name')}
+            data={this.props.nodes.get('past')}
+            clickNode={this.props.actions.clickNode}
+          />
         </div>
         <div id="present" className="nodes-region">
-          <Node data={this.props.nodes.get('present')} />
+          <Node
+            key={this.props.nodes.get('present').get('name')}
+            data={this.props.nodes.get('present')}
+            clickNode={this.props.actions.clickNode}
+          />
         </div>
         <div id="future" className="nodes-region">
           {
             this.props.nodes.get('future').map( node => (
-              <Node key={node.get('name')} data={node} />
+              <Node
+                key={node.get('name')}
+                data={node}
+                clickNode={this.props.actions.clickNode}
+              />
             ))
           }
         </div>

@@ -1,7 +1,8 @@
-import { REPLACE_ME } from '../constants';
+import { CLICK_NODE } from '../constants';
 
-export function replaceMe() {
+export function clickNode(node) {
   return {
-    type: REPLACE_ME
+    type: CLICK_NODE,
+    node: node
   };
 }

@@ -1,1 +1,1 @@
-export const REPLACE_ME = 'REPLACE_ME';
+export const CLICK_NODE = 'CLICK_NODE';
