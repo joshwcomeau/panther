@@ -7,3 +7,7 @@
 html, body, #render-target, #layout {
   height: 100%;
 }
+
+body, input, select, option, textarea {
+  font-family: "brandon-grotesque", sans-serif;
+}

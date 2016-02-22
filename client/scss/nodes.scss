@@ -19,14 +19,20 @@
 
   #past {
     background: $orange1;
+
+    .node { cursor: pointer; }
   }
 
   #present {
     background: $orange2;
+
+    .node { cursor: default; }
   }
 
   #future {
     background: $orange3;
+
+    .node { cursor: pointer; }
   }
 
   .node-wrapper {
@@ -38,18 +44,27 @@
     position: relative;
 
     .node {
-      width: 100%;
-      max-width: 200px;
+      width: 10rem;
+      height: 10rem;
       background: #FFF;
       border-radius: 100%;
+      font-size: 14px;
+      font-weight: bold;
       text-align: center;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      box-shadow:
+        0px 2px 0px rgba(0,0,0,0.2),
+        0px 0px 4px rgba(0,0,0,0.1)
+      ;
+      transition: 400ms;
 
-      &:after {
-        content: '';
-        display: block;
-        padding-bottom: 100%;
+      &:hover {
+        transition: 200ms;
+        transform: scale(1.1, 1.1);
       }
-
     }
   }
 }
