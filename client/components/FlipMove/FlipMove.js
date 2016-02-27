@@ -14,7 +14,7 @@
  *     transition between their positions.
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes, cloneElement } from 'react';
 import ReactDOM from 'react-dom';
 
 import { whichTransitionEvent } from './helpers.js';
@@ -56,6 +56,47 @@ class FlipMove extends Component {
     previousProps.children
       .filter(this.childNeedsToBeAnimated.bind(this))
       .forEach(this.animateTransform.bind(this));
+
+
+    // Figure out if any children have disappeared.
+    const exitingChildren = this.findMissingChildren(previousProps.children, this.props.children);
+
+    let exitingClones = exitingChildren.map( child => {
+      const boundingBox = this.state[child.key]
+      let style = {
+        top: boundingBox.top,
+        left: boundingBox.left,
+        right: boundingBox.right,
+        bottom: boundingBox.bottom,
+        position: 'absolute'
+      };
+
+      console.log("Setting style", style)
+
+      return cloneElement(child, { style: style });
+    });
+
+    console.log("Exiting clones", exitingClones)
+
+    // Find the container
+    const renderTarget = ReactDOM
+      .findDOMNode(this.refs[this.props.children[0].key])
+      .parentNode
+      .getElementsByClassName("clone-holder")[0];
+
+    // Render the clones!
+    ReactDOM.render(<div>{exitingClones}</div>, renderTarget)
+
+
+    const brandNewChildren = this.findMissingChildren(this.props.children, previousProps.children);
+
+  }
+
+  findMissingChildren(arr1, arr2) {
+    return arr1.filter( arr1Item => {
+      if ( !arr1Item.key ) return false;
+      return !arr2.find( arr2Item => arr1Item.key === arr2Item.key)
+    })
   }
 
   childNeedsToBeAnimated(child) {
@@ -153,15 +194,24 @@ class FlipMove extends Component {
 
   childrenWithRefs () {
     return this.props.children.map( child => {
-      return React.cloneElement(child, { ref: child.key });
+      return cloneElement(child, { ref: child.key });
     });
   }
 
   render() {
+    const cloneStyles = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: -1
+    }
     return React.createElement(
       this.props.typeName,
       { className: this.props.className },
-      this.childrenWithRefs()
+      this.childrenWithRefs(),
+      <div className="clone-holder" style={cloneStyles}></div>
     );
   }
 }
