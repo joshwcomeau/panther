@@ -7,6 +7,7 @@ import {
 
 
 const initialState = fromJS({
+  graveyard: {},
   past: {
     name: faker.internet.userName(),
     image: faker.image.avatar(),

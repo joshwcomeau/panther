@@ -6,9 +6,11 @@ import Node from './Node'
 
 class Nodes extends Component {
   render() {
+    console.log(this.props.nodes.toJS());
     return (
       <div id="nodes">
         <FlipMove className="nodes-flip">
+          { }
           <div id="graveyard" className="nodes-region">
 
           </div>
