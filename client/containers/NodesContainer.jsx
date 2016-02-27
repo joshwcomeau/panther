@@ -5,7 +5,7 @@ import * as Actions           from '../actions';
 import nodesSelector          from '../selectors/nodes.selector';
 
 function mapStateToProps(state) {
-  return nodesSelector(state);
+  return { nodes: state.get('nodes') };
 }
 
 function mapDispatchToProps(dispatch) {

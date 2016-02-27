@@ -50,6 +50,7 @@
     "express": "^4.13.4",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
+    "nodemon": "^1.9.1",
     "postcss-loader": "^0.8.0",
     "react-addons-test-utils": "^0.14.6",
     "react-transform-hmr": "^1.0.0",

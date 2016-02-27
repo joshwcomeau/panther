@@ -2,9 +2,9 @@
   position: absolute;
   z-index: 1;
   top: 0;
-  right: 0;
+  right: -33.33%;
   height: 100%;
-  width: 133.333%;
+  width: 166.66%;
 
   .nodes-flip {
     position: absolute;
@@ -19,29 +19,31 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    transition: background 2s;
+
+    &:nth-of-type(1) {
+      // background: #000;
+    }
+
+    &:nth-of-type(2) {
+      // background: $orange1;
+
+      .node { cursor: pointer; }
+    }
+
+    &:nth-of-type(3) {
+      // background: $orange2;
+
+      .node { cursor: default; }
+    }
+
+    &:nth-of-type(4) {
+      // background: $orange3;
+
+      .node { cursor: pointer; }
+    }
   }
 
-  #graveyard {
-    background: #000;
-  }
-
-  #past {
-    background: $orange1;
-
-    .node { cursor: pointer; }
-  }
-
-  #present {
-    background: $orange2;
-
-    .node { cursor: default; }
-  }
-
-  #future {
-    background: $orange3;
-
-    .node { cursor: pointer; }
-  }
 
   .node-wrapper {
     flex: 1;
