@@ -19,6 +19,10 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+
     transition: background 2s;
 
     &:nth-of-type(1) {
@@ -44,37 +48,22 @@
     }
   }
 
-
-  .node-wrapper {
-    flex: 1;
+  .node {
+    width: 10rem;
+    height: 10rem;
+    background: #FFF;
+    border-radius: 100%;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    padding: 0 1rem;
+    margin: 1rem 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    position: relative;
-
-    .node {
-      width: 10rem;
-      height: 10rem;
-      background: #FFF;
-      border-radius: 100%;
-      font-size: 14px;
-      font-weight: bold;
-      text-align: center;
-      padding: 0 1rem;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      box-shadow:
-        0px 2px 0px rgba(0,0,0,0.2),
-        0px 0px 4px rgba(0,0,0,0.1)
-      ;
-      transition: 400ms;
-
-      &:hover {
-        transition: 200ms;
-        transform: scale(1.1, 1.1);
-      }
-    }
+    flex-direction: column;
+    box-shadow:
+      0px 2px 0px rgba(0,0,0,0.2),
+      0px 0px 4px rgba(0,0,0,0.1)
+    ;
   }
 }

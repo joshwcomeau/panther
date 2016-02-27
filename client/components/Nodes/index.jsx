@@ -18,7 +18,7 @@ class Nodes extends Component {
   renderNodeContainers() {
     console.log(this.props.nodes)
     return this.props.nodes.map( nodeGroup => (
-      <FlipMove limitToAxis='y' className="nodes-region" key={nodeGroup.get('id')}>
+      <FlipMove duration={1000} limitToAxis='y' className="nodes-region" key={nodeGroup.get('id')}>
         { this.renderNodes(nodeGroup.get('nodes')) }
       </FlipMove>
     ));
@@ -26,7 +26,7 @@ class Nodes extends Component {
   render() {
     return (
       <div id="nodes">
-        <FlipMove className="nodes-flip">
+        <FlipMove className="nodes-flip" duration={1000}>
           { this.renderNodeContainers() }
         </FlipMove>
       </div>
