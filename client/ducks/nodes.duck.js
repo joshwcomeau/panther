@@ -1,6 +1,10 @@
 import { Map, List, fromJS } from 'immutable';
 import faker from 'faker';
 
+import {
+  GRAVEYARD, PAST, PRESENT, FUTURE,
+  getNodeIndex
+} from '../helpers/nodes.duck.helpers';
 
 // TEMPORARY. Just for development purposes.
 import { nodesData } from '../temp_fixtures.js';
@@ -9,20 +13,28 @@ import { nodesData } from '../temp_fixtures.js';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-export const SELECT_ARTIST          = 'panther/nodes/SELECT_ARTIST';
-export const CLICK_NODE             = 'panther/nodes/CLICK_NODE';
-export const FADE_AND_REMOVE_NODES  = 'panther/nodes/FADE_AND_REMOVE_NODES';
-
+export const SELECT_ARTIST = 'panther/nodes/SELECT_ARTIST';
+const MARK_ARTIST_AS_SELECTED = 'panther/nodes/MARK_ARTIST_AS_SELECTED';
+const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTIST_TO_CENTER';
 
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
 export default function reducer(state = fromJS(nodesData), action) {
   switch (action.type) {
-    case FADE_AND_REMOVE_NODES:
-      return state;
+    case MARK_ARTIST_AS_SELECTED:
+      const nodeIndex = getNodeIndex(state, action.node)
 
-    case CLICK_NODE:
+      if ( !nodeIndex ) {
+        console.error(`Could not find index in MARK_ARTIST_AS_SELECTED. Looking for ${action.node}`)
+      }
+
+      return state
+        .updateIn([FUTURE, 'nodes', selectedNodeIndex], node => (
+          node.set('selected', true)
+        ));
+
+    case POSITION_SELECTED_ARTIST_TO_CENTER:
       // this will ultimately become more complex as API requests are integrated.
       // For now, we'll just:
       // - drop the first group (it's the graveyard)
@@ -54,22 +66,29 @@ export default function reducer(state = fromJS(nodesData), action) {
 
 
 ///////////////////////////
-// ACTIONS ///////////////
+// ACTION CREATORS ///////
 /////////////////////////
-export function clickNode(node) {
+export function selectArtist(node) {
   return {
-    type: CLICK_NODE,
-    node: node
-  };
+    type: SELECT_ARTIST,
+    node
+  }
 }
 
-export function fadeAndRemoveNodes(clickedNode) {
+export function markArtistAsSelected(node) {
+  console.log("Marking artists as selected", node)
   return {
-    type: FADE_AND_REMOVE_NODES,
-    node: clickedNode
+    type: MARK_ARTIST_AS_SELECTED,
+    node
   }
 }
 
 export function fetchArtistInfo() {
 
+}
+
+export function positionSelectedArtistToCenter() {
+  return {
+    type: POSITION_SELECTED_ARTIST_TO_CENTER
+  }
 }

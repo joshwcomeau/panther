@@ -10,13 +10,12 @@ class Nodes extends Component {
       <Node
         key={node.get('name')}
         data={node}
-        clickNode={this.props.actions.clickNode}
+        clickNode={this.props.actions.selectArtist}
       />
     ));
   }
 
   renderNodeContainers() {
-    console.log(this.props.nodes)
     return this.props.nodes.map( nodeGroup => (
       <FlipMove duration={1000} limitToAxis='y' className="nodes-region" key={nodeGroup.get('id')}>
         { this.renderNodes(nodeGroup.get('nodes')) }

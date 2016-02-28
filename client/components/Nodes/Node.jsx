@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 class Node extends Component {
   constructor() {
@@ -11,12 +12,13 @@ class Node extends Component {
   }
 
   render() {
+    const classes = classNames([
+      'node',
+      this.props.selected ? 'selected' : ''
+    ]);
+
     return (
-      <div
-        className="node"
-        style={this.props.style}
-        onClick={this.clickHandler}
-      >
+      <div className={classes} onClick={this.clickHandler}>
         {this.props.data.get('name')}
       </div>
     );
