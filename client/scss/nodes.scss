@@ -27,22 +27,26 @@
 
     transition: background 2s;
 
+    // graveyard
     &:nth-of-type(1) {
       // background: #000;
     }
 
+    // past
     &:nth-of-type(2) {
       // background: $orange1;
 
       .node { cursor: pointer; }
     }
 
+    // present
     &:nth-of-type(3) {
       // background: $orange2;
 
       .node { cursor: default; }
     }
 
+    // future
     &:nth-of-type(4) {
       // background: $orange3;
 
@@ -68,8 +72,21 @@
       0px 0px 4px rgba(0,0,0,0.1)
     ;
 
-    &.selected {
-      background: #F00 !important;
+    &.rejected {
+      animation: rejected 500ms;
     }
+
   }
+
+}
+
+@keyframes rejected {
+    from  {
+      transform: scale(1, 1) rotate(0);
+      opacity: 1;
+    }
+    to {
+      transform: scale(0.01, 0.01) rotate(25deg);
+      opacity: 0.01;
+    }
 }

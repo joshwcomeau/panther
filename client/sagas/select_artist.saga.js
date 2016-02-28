@@ -24,13 +24,10 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 // Our worker saga. It does the actual orchestration
 export function* selectArtist(action) {
-  console.log("Request strted", action.node)
   yield put(markArtistAsSelected(action.node));
-  console.log("Marked artist as selected")
-  yield delay(250);
-  console.log("Positioning selected")
+  console.log("TRANSITION STARTED", performance.now())
+  yield delay(500);
   yield put(positionSelectedArtistToCenter());
-  console.log("Done!")
 }
 
 // Our watcher Saga: spawn a new incrementAsync task on each INCREMENT_ASYNC

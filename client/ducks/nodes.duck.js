@@ -2,7 +2,7 @@ import { Map, List, fromJS } from 'immutable';
 import faker from 'faker';
 
 import {
-  GRAVEYARD, PAST, PRESENT, FUTURE,
+  GRAVEYARD, PAST, PRESENT, FUTURE, WOMB,
   getNodeIndex
 } from '../helpers/nodes.duck.helpers';
 
@@ -25,37 +25,36 @@ export default function reducer(state = fromJS(nodesData), action) {
     case MARK_ARTIST_AS_SELECTED:
       const nodeIndex = getNodeIndex(state, action.node)
 
-      if ( !nodeIndex ) {
+      if ( typeof nodeIndex === 'undefined' ) {
         console.error(`Could not find index in MARK_ARTIST_AS_SELECTED. Looking for ${action.node}`)
       }
 
-      return state
-        .updateIn([FUTURE, 'nodes', selectedNodeIndex], node => (
-          node.set('selected', true)
-        ));
+      return state.updateIn([FUTURE, 'nodes'], nodes => {
+        return nodes.map( (node, index) => {
+          return nodeIndex === index
+          ? node.set( 'selected', true )
+          : node.set( 'rejected', true );
+        });
+      });
 
     case POSITION_SELECTED_ARTIST_TO_CENTER:
-      // this will ultimately become more complex as API requests are integrated.
-      // For now, we'll just:
-      // - drop the first group (it's the graveyard)
+        // - drop the first group (it's the graveyard)
       // - remove the non-clicked nodes
       // - add a new group of random nodes
-      let newGroupId = state.get(-1).get('id') + 1;
+      let nextGroupId = state.getIn([WOMB, 'id']) + 1;
 
       return state
-        .delete(0)
-        .updateIn([-2, 'nodes'], nodes => {
-          return nodes.filter( node => {
-            return action.node.get('name') === node.get('name')
-          })
+        .delete(GRAVEYARD)
+        .updateIn([PRESENT, 'nodes'], nodes => {
+          return nodes.filter( node => node.get('selected'))
         })
-        .setIn([-1, 'nodes'], fromJS([
+        .setIn([FUTURE, 'nodes'], fromJS([
           { name: faker.company.companyName() },
           { name: faker.internet.userName() },
           { name: faker.internet.userName() }
         ]))
         .push(fromJS({
-          id: newGroupId,
+          id: nextGroupId,
           nodes: []
         }));
 
@@ -76,7 +75,6 @@ export function selectArtist(node) {
 }
 
 export function markArtistAsSelected(node) {
-  console.log("Marking artists as selected", node)
   return {
     type: MARK_ARTIST_AS_SELECTED,
     node

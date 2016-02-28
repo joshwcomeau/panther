@@ -8,13 +8,15 @@ class Node extends Component {
   }
 
   clickHandler() {
+    console.log("NODE CLICKED", performance.now())
     this.props.clickNode(this.props.data);
   }
 
   render() {
     const classes = classNames([
       'node',
-      this.props.selected ? 'selected' : ''
+      this.props.data.get('selected') ? 'selected' : '',
+      this.props.data.get('rejected') ? 'rejected' : ''
     ]);
 
     return (

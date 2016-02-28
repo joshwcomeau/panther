@@ -10,9 +10,8 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  console.log("Node actions", nodeActions)
   const validActionCreators = selectActionCreators(nodeActions);
-  console.log("Valid", validActionCreators)
+
   return {
     actions: bindActionCreators(validActionCreators, dispatch)
   }
