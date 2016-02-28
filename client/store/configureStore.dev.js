@@ -1,8 +1,10 @@
 import { createStore, applyMiddleware, compose }  from 'redux';
 import thunkMiddleware                            from 'redux-thunk';
+import createSagaMiddleware                       from 'redux-saga'
 
-import rootReducer  from '../reducers';
-import DevTools     from '../containers/DevTools.jsx';
+import rootReducer    from '../reducers';
+import { clickNode }  from '../sagas';
+import DevTools       from '../containers/DevTools.jsx';
 
 
 export default function configureStore() {
@@ -15,6 +17,7 @@ export default function configureStore() {
 
 
   let middlewares = [];
+  middlewares.push( createSagaMiddleware(clickNode) );
   middlewares.push( thunkMiddleware );
 
   const store = createStore(

@@ -5,6 +5,7 @@ var autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: [
+    'babel-polyfill',
     './client/index.jsx'
   ],
 
