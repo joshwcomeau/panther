@@ -9,8 +9,9 @@ import { nodesData } from '../temp_fixtures.js';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-const CLICK_NODE = 'panther/nodes/CLICK_NODE';
-const FADE_AND_REMOVE_NODES = 'panther/nodes/FADE_AND_REMOVE_NODES';
+export const SELECT_ARTIST          = 'panther/nodes/SELECT_ARTIST';
+export const CLICK_NODE             = 'panther/nodes/CLICK_NODE';
+export const FADE_AND_REMOVE_NODES  = 'panther/nodes/FADE_AND_REMOVE_NODES';
 
 
 ///////////////////////////
@@ -33,7 +34,6 @@ export default function reducer(state = fromJS(nodesData), action) {
         .delete(0)
         .updateIn([-2, 'nodes'], nodes => {
           return nodes.filter( node => {
-            console.log("comparing", action.node.get('name'), node.get('name'))
             return action.node.get('name') === node.get('name')
           })
         })

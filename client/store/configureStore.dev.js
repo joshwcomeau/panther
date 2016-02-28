@@ -3,7 +3,7 @@ import thunkMiddleware                            from 'redux-thunk';
 import createSagaMiddleware                       from 'redux-saga'
 
 import rootReducer    from '../reducers';
-import { clickNode }  from '../sagas';
+import { watchSelectArtist }  from '../sagas/select_artist.saga';
 import DevTools       from '../containers/DevTools.jsx';
 
 
@@ -17,7 +17,7 @@ export default function configureStore() {
 
 
   let middlewares = [];
-  middlewares.push( createSagaMiddleware(clickNode) );
+  middlewares.push( createSagaMiddleware(watchSelectArtist) );
   middlewares.push( thunkMiddleware );
 
   const store = createStore(
