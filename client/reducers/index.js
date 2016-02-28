@@ -1,6 +1,6 @@
 import { Map, List, fromJS } from 'immutable';
 
-import nodes from './nodes.reducer';
+import nodes from '../ducks/nodes.duck';
 
 
 const rootReducer = ( state = Map(), action ) => {

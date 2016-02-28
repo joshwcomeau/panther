@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect }            from 'react-redux';
 import Nodes                  from '../components/Nodes';
-import * as Actions           from '../actions';
+import * as nodeActions       from '../ducks/nodes.duck';
 import nodesSelector          from '../selectors/nodes.selector';
 
 function mapStateToProps(state) {
@@ -10,7 +10,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(Actions, dispatch)
+    actions: bindActionCreators(nodeActions, dispatch)
   }
 }
 

@@ -57,39 +57,6 @@ class FlipMove extends Component {
       .filter(this.childNeedsToBeAnimated.bind(this))
       .forEach(this.animateTransform.bind(this));
 
-
-    // Figure out if any children have disappeared.
-    const exitingChildren = this.findMissingChildren(previousProps.children, this.props.children);
-
-    let exitingClones = exitingChildren.map( child => {
-      const boundingBox = this.state[child.key]
-      let style = {
-        top: boundingBox.top,
-        left: boundingBox.left,
-        right: boundingBox.right,
-        bottom: boundingBox.bottom,
-        position: 'absolute'
-      };
-
-      console.log("Setting style", style)
-
-      return cloneElement(child, { style: style });
-    });
-
-    console.log("Exiting clones", exitingClones)
-
-    // Find the container
-    const renderTarget = ReactDOM
-      .findDOMNode(this.refs[this.props.children[0].key])
-      .parentNode
-      .getElementsByClassName("clone-holder")[0];
-
-    // Render the clones!
-    ReactDOM.render(<div>{exitingClones}</div>, renderTarget)
-
-
-    const brandNewChildren = this.findMissingChildren(this.props.children, previousProps.children);
-
   }
 
   findMissingChildren(arr1, arr2) {

@@ -12,7 +12,13 @@ class Node extends Component {
 
   render() {
     return (
-      <div className="node" onClick={this.clickHandler}>{this.props.data.get('name')}</div>
+      <div
+        className="node"
+        style={this.props.style}
+        onClick={this.clickHandler}
+      >
+        {this.props.data.get('name')}
+      </div>
     );
   }
 }
