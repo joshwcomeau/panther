@@ -1,6 +1,6 @@
 import React, { Component }     from 'react';
 import classNames               from 'classnames';
-import FlipMove                 from '../FlipMove';
+import FlipMove                 from 'react-flip-move';
 
 import Node from './Node'
 
@@ -17,7 +17,7 @@ class Nodes extends Component {
 
   renderNodeContainers() {
     return this.props.nodes.map( nodeGroup => (
-      <FlipMove duration={1000} limitToAxis='y' className="nodes-region" key={nodeGroup.get('id')}>
+      <FlipMove duration={1000} className="nodes-region" key={nodeGroup.get('id')}>
         { this.renderNodes(nodeGroup.get('nodes')) }
       </FlipMove>
     ));

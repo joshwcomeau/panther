@@ -26,7 +26,7 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 export function* selectArtist(action) {
   yield put(markArtistAsSelected(action.node));
   console.log("TRANSITION STARTED", performance.now())
-  yield delay(500);
+  yield delay(350);
   yield put(positionSelectedArtistToCenter());
 }
 

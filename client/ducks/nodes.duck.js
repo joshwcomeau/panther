@@ -38,7 +38,7 @@ export default function reducer(state = fromJS(nodesData), action) {
       });
 
     case POSITION_SELECTED_ARTIST_TO_CENTER:
-        // - drop the first group (it's the graveyard)
+      // - drop the first group (it's the graveyard)
       // - remove the non-clicked nodes
       // - add a new group of random nodes
       let nextGroupId = state.getIn([WOMB, 'id']) + 1;
