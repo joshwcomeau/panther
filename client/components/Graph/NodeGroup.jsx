@@ -6,10 +6,13 @@ import Node from './Node'
 
 class NodeGroup extends Component {
   renderNodes(nodes) {
+    const numOfSiblings = nodes.size;
+
     return nodes.map( node => (
       <Node
         key={node.get('name')}
         data={node}
+        siblings={numOfSiblings}
         clickNode={this.props.clickNode}
       />
     ));

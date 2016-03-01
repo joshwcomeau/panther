@@ -34,7 +34,7 @@ export default function reducer(state = fromJS(nodesData), action) {
       // - drop the first group (it's the graveyard)
       // - remove the non-clicked nodes
       // - add a new group of random nodes
-      const nextGroupId = state.getIn([WOMB, 'id']) + 1;
+      const nextGroupId = state.getIn(['nodeGroups', WOMB, 'id']) + 1;
 
       const nodeGroups = state.get('nodeGroups')
         .delete(GRAVEYARD)
