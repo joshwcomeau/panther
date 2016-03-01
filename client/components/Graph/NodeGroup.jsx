@@ -19,7 +19,7 @@ class NodeGroup extends Component {
     const { id, nodes } = this.props;
 
     return (
-      <FlipMove duration={1000} className="nodes-region" key={id}>
+      <FlipMove duration={1000} className="node-group" key={id}>
         { this.renderNodes(nodes) }
       </FlipMove>
     );

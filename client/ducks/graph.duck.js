@@ -13,7 +13,7 @@ import { nodesData } from '../temp_fixtures.js';
 // ACTION TYPES //////////
 /////////////////////////
 export const SELECT_ARTIST = 'panther/nodes/SELECT_ARTIST';
-const MARK_ARTIST_AS_SELECTED = 'panther/nodes/MARK_ARTIST_AS_SELECTED';
+const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'panther/nodes/MARK_UNCLICKED_ARTISTS_AS_REJECTED';
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTIST_TO_CENTER';
 
 ///////////////////////////
@@ -21,12 +21,12 @@ const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTI
 /////////////////////////
 export default function reducer(state = fromJS(nodesData), action) {
   switch (action.type) {
-    case MARK_ARTIST_AS_SELECTED:
+    case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
       return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => {
         return nodes.map( (node, index) => {
-          return node.get('name') === action.node.get('name')
-          ? node.set( 'selected', true )
-          : node.set( 'rejected', true );
+          return node.get('name') !== action.node.get('name')
+            ? node.set( 'rejected', true )
+            : node;
         });
       });
 
@@ -39,7 +39,7 @@ export default function reducer(state = fromJS(nodesData), action) {
       const nodeGroups = state.get('nodeGroups')
         .delete(GRAVEYARD)
         .updateIn([PRESENT, 'nodes'], nodes => {
-          return nodes.filter( node => node.get('selected'))
+          return nodes.filter( node => !node.get('rejected'))
         })
         .setIn([FUTURE, 'nodes'], fromJS([
           { name: faker.company.companyName() },
@@ -71,7 +71,7 @@ export function selectArtist(node) {
 
 export function markArtistAsSelected(node) {
   return {
-    type: MARK_ARTIST_AS_SELECTED,
+    type: MARK_UNCLICKED_ARTISTS_AS_REJECTED,
     node
   }
 }
