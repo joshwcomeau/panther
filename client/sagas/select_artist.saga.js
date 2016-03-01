@@ -6,7 +6,7 @@ import {
   markArtistAsSelected,
   fadeAndRemoveNodes,
   positionSelectedArtistToCenter
-} from '../ducks/nodes.duck';
+} from '../ducks/graph.duck';
 
 
 // an utility function: return a Promise that will resolve after 1 second
@@ -25,7 +25,6 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 // Our worker saga. It does the actual orchestration
 export function* selectArtist(action) {
   yield put(markArtistAsSelected(action.node));
-  console.log("TRANSITION STARTED", performance.now())
   yield delay(350);
   yield put(positionSelectedArtistToCenter());
 }

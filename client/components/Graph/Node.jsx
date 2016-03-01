@@ -8,7 +8,6 @@ class Node extends Component {
   }
 
   clickHandler() {
-    console.log("NODE CLICKED", performance.now())
     this.props.clickNode(this.props.data);
   }
 

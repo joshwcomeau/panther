@@ -1,20 +1,20 @@
 import { bindActionCreators }   from 'redux';
 import { connect }              from 'react-redux';
 
-import Nodes                    from '../components/Nodes';
-import * as nodeActions         from '../ducks/nodes.duck';
+import Graph                    from '../components/Graph';
+import * as Actions             from '../ducks/graph.duck';
 import { selectActionCreators } from '../helpers/duck.helpers';
 
 function mapStateToProps(state) {
-  return { nodes: state.get('nodes') };
+  return { nodeGroups: state.get('graph').get('nodeGroups') };
 }
 
 function mapDispatchToProps(dispatch) {
-  const validActionCreators = selectActionCreators(nodeActions);
+  const validActionCreators = selectActionCreators(Actions);
 
   return {
     actions: bindActionCreators(validActionCreators, dispatch)
   }
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( Nodes );
+export default connect( mapStateToProps, mapDispatchToProps )( Graph );

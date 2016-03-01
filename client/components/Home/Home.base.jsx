@@ -2,7 +2,7 @@ import React, { Component }     from 'react';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 import classNames               from 'classnames';
 
-import NodesContainer           from '../../containers/NodesContainer.jsx';
+import GraphContainer           from '../../containers/GraphContainer.jsx';
 
 export default function HomeBase(DevTools = null) {
   return class Home extends Component {
@@ -15,7 +15,7 @@ export default function HomeBase(DevTools = null) {
         <div id="layout" className={classes}>
           <header>Panther</header>
 
-          <NodesContainer />
+          <GraphContainer />
 
           { DevTools ? <DevTools /> : null }
         </div>

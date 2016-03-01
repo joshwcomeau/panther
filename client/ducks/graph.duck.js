@@ -2,9 +2,8 @@ import { Map, List, fromJS } from 'immutable';
 import faker from 'faker';
 
 import {
-  GRAVEYARD, PAST, PRESENT, FUTURE, WOMB,
-  getNodeIndex
-} from '../helpers/nodes.duck.helpers';
+  GRAVEYARD, PAST, PRESENT, FUTURE, WOMB
+} from '../helpers/graph.duck.helpers';
 
 // TEMPORARY. Just for development purposes.
 import { nodesData } from '../temp_fixtures.js';
@@ -23,15 +22,9 @@ const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTI
 export default function reducer(state = fromJS(nodesData), action) {
   switch (action.type) {
     case MARK_ARTIST_AS_SELECTED:
-      const nodeIndex = getNodeIndex(state, action.node)
-
-      if ( typeof nodeIndex === 'undefined' ) {
-        console.error(`Could not find index in MARK_ARTIST_AS_SELECTED. Looking for ${action.node}`)
-      }
-
-      return state.updateIn([FUTURE, 'nodes'], nodes => {
+      return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => {
         return nodes.map( (node, index) => {
-          return nodeIndex === index
+          return node.get('name') === action.node.get('name')
           ? node.set( 'selected', true )
           : node.set( 'rejected', true );
         });
@@ -41,9 +34,9 @@ export default function reducer(state = fromJS(nodesData), action) {
       // - drop the first group (it's the graveyard)
       // - remove the non-clicked nodes
       // - add a new group of random nodes
-      let nextGroupId = state.getIn([WOMB, 'id']) + 1;
+      const nextGroupId = state.getIn([WOMB, 'id']) + 1;
 
-      return state
+      const nodeGroups = state.get('nodeGroups')
         .delete(GRAVEYARD)
         .updateIn([PRESENT, 'nodes'], nodes => {
           return nodes.filter( node => node.get('selected'))
@@ -57,6 +50,8 @@ export default function reducer(state = fromJS(nodesData), action) {
           id: nextGroupId,
           nodes: []
         }));
+
+      return state.set('nodeGroups', nodeGroups);
 
     default:
       return state;
