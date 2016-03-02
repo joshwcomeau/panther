@@ -6,7 +6,7 @@ import NodeGroup from './NodeGroup.jsx';
 const Graph = ({nodeGroups, actions}) => (
   <div id="graph">
     <div id="nodes">
-      <FlipMove className="nodes-flip" duration={1000}>
+      <FlipMove className="nodes-flip" easing="ease" duration={1000}>
         {
           nodeGroups.map( group => (
             <NodeGroup
@@ -14,6 +14,7 @@ const Graph = ({nodeGroups, actions}) => (
               id={group.get('id')}
               nodes={group.get('nodes')}
               clickNode={actions.selectArtist}
+              finishTransition={actions.updateNodePositions}
             />
           ))
         }

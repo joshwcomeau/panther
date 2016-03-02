@@ -10,6 +10,7 @@ export const nodesData = {
       id: 1,
       nodes: [
         {
+          id: faker.random.number(),
           name: faker.internet.userName(),
           image: faker.image.avatar(),
           genres: ['country'],
@@ -20,6 +21,7 @@ export const nodesData = {
       id: 2,
       nodes: [
         {
+          id: faker.random.number(),
           name: faker.internet.userName(),
           image: faker.image.avatar(),
           genres: ['electronica', 'nu wave'],
@@ -29,9 +31,9 @@ export const nodesData = {
     }, {
       id: 3,
       nodes: [
-        { name: faker.company.companyName() },
-        { name: faker.internet.userName() },
-        { name: faker.internet.userName() }
+        { id: faker.random.number(), name: faker.company.companyName() },
+        { id: faker.random.number(), name: faker.company.companyName() },
+        { id: faker.random.number(), name: faker.company.companyName() }
       ]
     }, {
       id: 4,

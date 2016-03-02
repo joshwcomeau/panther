@@ -1,5 +1,28 @@
 export const [ GRAVEYARD, PAST, PRESENT, FUTURE, WOMB ] = [ 0, 1, 2, 3, 4 ];
 
+export function findPathToNode(state, id) {
+  let foundGroupIndex, foundNodeIndex;
+
+  state.get('nodeGroups').find( (group, groupIndex) => {
+    return group.get('nodes').find( (node, nodeIndex) => {
+      if ( node.get('id') === id ) {
+        foundGroupIndex = groupIndex;
+        foundNodeIndex = nodeIndex;
+
+        // We're returning true simply to stop the execution of the function;
+        // We don't actually care about the return values of these find calls.
+        return true;
+      }
+    });
+  });
+
+  if ( foundGroupIndex !== undefined && foundNodeIndex !== undefined ) {
+    return [ foundGroupIndex, foundNodeIndex ];
+  } else {
+    return console.error(`Could not find node with ID ${id} in state ${state.toJS()}`)
+  }
+}
+
 export function findNodeGroupById(state, id) {
   return findEntry({
     state,

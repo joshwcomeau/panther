@@ -2,7 +2,8 @@ import { Map, List, fromJS } from 'immutable';
 import faker from 'faker';
 
 import {
-  GRAVEYARD, PAST, PRESENT, FUTURE, WOMB
+  GRAVEYARD, PAST, PRESENT, FUTURE, WOMB,
+  findNodeGroupById, findPathToNode
 } from '../helpers/graph.duck.helpers';
 
 // TEMPORARY. Just for development purposes.
@@ -15,6 +16,7 @@ import { nodesData } from '../temp_fixtures.js';
 export const SELECT_ARTIST = 'panther/nodes/SELECT_ARTIST';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'panther/nodes/MARK_UNCLICKED_ARTISTS_AS_REJECTED';
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTIST_TO_CENTER';
+const UPDATE_NODE_POSITIONS = 'panther/nodes/UPDATE_NODE_POSITIONS';
 
 ///////////////////////////
 // REDUCER ///////////////
@@ -53,6 +55,20 @@ export default function reducer(state = fromJS(nodesData), action) {
 
       return state.set('nodeGroups', nodeGroups);
 
+    case UPDATE_NODE_POSITIONS:
+      action.positions.forEach( position => {
+        const { node, x, y } = position;
+
+        const [ groupIndex, nodeIndex ] = findPathToNode(state, node.get('id'));
+        const fullPath = ['nodeGroups', groupIndex, 'nodes', nodeIndex];
+
+        state = state.updateIn(fullPath, node => {
+          return node.set('x', x).set('y', y)
+        });
+      });
+
+      return state;
+
     default:
       return state;
   }
@@ -73,6 +89,13 @@ export function markArtistAsSelected(node) {
   return {
     type: MARK_UNCLICKED_ARTISTS_AS_REJECTED,
     node
+  }
+}
+
+export function updateNodePositions(positions) {
+  return {
+    type: UPDATE_NODE_POSITIONS,
+    positions
   }
 }
 
