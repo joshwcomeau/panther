@@ -18,8 +18,12 @@ class Node extends Component {
     ]);
 
     return (
-      <div className="node-wrapper" dataId={this.props.data.get('id')}>
-        <div className={classes} onClick={this.clickHandler}>
+      <div className="node-wrapper">
+        <div
+          className={classes}
+          onClick={this.clickHandler}
+          data-id={this.props.data.get('id')}
+        >
           {this.props.data.get('name')}
         </div>
       </div>
