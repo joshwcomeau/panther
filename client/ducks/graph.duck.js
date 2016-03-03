@@ -1,10 +1,13 @@
 import { Map, List, fromJS } from 'immutable';
+import zip from 'lodash/zip';
+import flatten from 'lodash/flatten';
 import faker from 'faker';
 
 import {
   GRAVEYARD, PAST, PRESENT, FUTURE, WOMB,
   findNodeGroupById, findPathToNode
 } from '../helpers/graph.duck.helpers';
+import { findCenterOfNode } from '../helpers/position.helpers';
 
 // TEMPORARY. Just for development purposes.
 import { nodesData } from '../temp_fixtures.js';
@@ -44,9 +47,9 @@ export default function reducer(state = fromJS(nodesData), action) {
           return nodes.filter( node => !node.get('rejected'))
         })
         .setIn([FUTURE, 'nodes'], fromJS([
-          { name: faker.company.companyName() },
-          { name: faker.internet.userName() },
-          { name: faker.internet.userName() }
+          { id: faker.random.number(), name: faker.company.companyName() },
+          { id: faker.random.number(), name: faker.internet.userName() },
+          { id: faker.random.number(), name: faker.internet.userName() }
         ]))
         .push(fromJS({
           id: nextGroupId,
@@ -57,9 +60,12 @@ export default function reducer(state = fromJS(nodesData), action) {
 
     case UPDATE_NODE_POSITIONS:
       action.positions.forEach( position => {
-        const { node, x, y } = position;
+        const [ id, coordinates ] = position;
+        const { x, y } = coordinates;
 
-        const [ groupIndex, nodeIndex ] = findPathToNode(state, node.get('id'));
+        const [ groupIndex, nodeIndex ] = findPathToNode(state, id);
+        if ( groupIndex === undefined || nodeIndex === undefined ) return;
+
         const fullPath = ['nodeGroups', groupIndex, 'nodes', nodeIndex];
 
         state = state.updateIn(fullPath, node => {
@@ -92,7 +98,50 @@ export function markArtistAsSelected(node) {
   }
 }
 
-export function updateNodePositions(positions) {
+export function updateNodePositions(elements, domNodes) {
+  console.log("Updated", elements, domNodes)
+  const loFlatten = flatten;
+  // Sadly, I have to break out of React's lovely declarative abstraction here.
+  // We've been given a set of section DOM Nodes; GRAVEYARD through FUTURE.
+  // Our goal is to find all the Node children, compute their center point,
+  // and attach it to the corresponding nodes in our state.
+  //
+  // We have some data juggling to do. We're given an array of ReactElements,
+  // and an array of domNodes. Both of these are for the sections.
+  // We want to zip together the graph node elements with their DOM node.
+
+
+
+
+
+
+  // Ok, so this is all pretty fucked. Instead of zipping everything together,
+  // Why don't we just extract a list of node IDs and a list of element coords,
+  // separately, and combine.
+
+  const nodeIds = elements
+    .map( element => element.props.nodes )
+    .reduce( (memo, nodes) => {
+      nodes.forEach( node => { memo.push(node.get('id')) });
+
+      return memo;
+    }, []);
+
+
+  const elementCoordinates = domNodes
+    .map( node => node.childNodes )
+    .reduce( (memo, nodes) => {
+      Array.prototype.forEach.call(nodes, node => {
+        memo.push( findCenterOfNode(node) )
+      });
+
+      return memo;
+    }, []);
+
+
+  const positions = zip(nodeIds, elementCoordinates);
+  console.log(positions);
+
   return {
     type: UPDATE_NODE_POSITIONS,
     positions

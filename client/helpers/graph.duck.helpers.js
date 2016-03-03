@@ -5,6 +5,7 @@ export function findPathToNode(state, id) {
 
   state.get('nodeGroups').find( (group, groupIndex) => {
     return group.get('nodes').find( (node, nodeIndex) => {
+      console.log("Comparing", node.get('id'), id)
       if ( node.get('id') === id ) {
         foundGroupIndex = groupIndex;
         foundNodeIndex = nodeIndex;
@@ -16,11 +17,7 @@ export function findPathToNode(state, id) {
     });
   });
 
-  if ( foundGroupIndex !== undefined && foundNodeIndex !== undefined ) {
-    return [ foundGroupIndex, foundNodeIndex ];
-  } else {
-    return console.error(`Could not find node with ID ${id} in state ${state.toJS()}`)
-  }
+  return [ foundGroupIndex, foundNodeIndex ];
 }
 
 export function findNodeGroupById(state, id) {
