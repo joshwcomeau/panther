@@ -104,7 +104,6 @@ export function updateNodePositions() {
   // should be available as a data attribute, and I can find them by their classes.
   const domNodes = document.querySelectorAll('.node');
   const positions = Array.prototype.reduce.call(domNodes, (acc, node) => {
-    console.log("Accumulating", acc)
     acc.push({
       id:           node.getAttribute('data-id'),
       coordinates:  findCenterOfNode(node)
@@ -117,40 +116,7 @@ export function updateNodePositions() {
   return {
     type: UPDATE_NODE_POSITIONS,
     positions
-  }
-
-
-  // Ok, so this is all pretty fucked. Instead of zipping everything together,
-  // Why don't we just extract a list of node IDs and a list of element coords,
-  // separately, and combine.
-
-  // const nodeIds = elements
-  //   .map( element => element.props.nodes )
-  //   .reduce( (memo, nodes) => {
-  //     nodes.forEach( node => { memo.push(node.get('id')) });
-  //
-  //     return memo;
-  //   }, []);
-  //
-  //
-  // const elementCoordinates = domNodes
-  //   .map( node => node.childNodes )
-  //   .reduce( (memo, nodes) => {
-  //     Array.prototype.forEach.call(nodes, node => {
-  //       memo.push( findCenterOfNode(node) )
-  //     });
-  //
-  //     return memo;
-  //   }, []);
-  //
-  //
-  // const positions = zip(nodeIds, elementCoordinates);
-  // console.log(positions);
-  //
-  // return {
-  //   type: UPDATE_NODE_POSITIONS,
-  //   positions
-  // }
+  };
 }
 
 export function fetchArtistInfo() {

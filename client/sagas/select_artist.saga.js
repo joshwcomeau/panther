@@ -5,13 +5,23 @@ import {
   SELECT_ARTIST,
   markArtistAsSelected,
   fadeAndRemoveNodes,
-  positionSelectedArtistToCenter
+  positionSelectedArtistToCenter,
+  updateNodePositions
 } from '../ducks/graph.duck';
 
 
-// an utility function: return a Promise that will resolve after 1 second
+// a utility function: return a Promise that will resolve after 1 second
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+
+// TIMING VARIABLES
+// TODO: Find some central place to store these, ideally which can populate
+// the CSS durations as well.
+const delayBeforeRepositionMs = 350;
+const rejectedFadeOutMs       = 500;
+const repositionMs            = 1000;
+const edgesRetractMs          = 250;
+const edgesExpandMs           = 550;
 
 // When we click a node, a bunch of stuff needs to happen:
 //   - immediately fade out the NON-clicked nodes, over N1 ms.
@@ -25,8 +35,12 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 // Our worker saga. It does the actual orchestration
 export function* selectArtist(action) {
   yield put(markArtistAsSelected(action.node));
-  yield delay(350);
+
+  yield delay(delayBeforeRepositionMs);
   yield put(positionSelectedArtistToCenter());
+
+  yield delay(repositionMs);
+  yield put(updateNodePositions());
 }
 
 // Our watcher Saga: spawn a new incrementAsync task on each INCREMENT_ASYNC
