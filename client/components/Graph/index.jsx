@@ -3,6 +3,7 @@ import FlipMove from 'react-flip-move';
 // import FlipMove from '../FlipMove';
 
 import NodeGroup from './NodeGroup.jsx';
+import EdgesContainer from '../../containers/EdgesContainer.jsx';
 
 const Graph = ({nodeGroups, actions}) => (
   <div id="graph">
@@ -24,7 +25,7 @@ const Graph = ({nodeGroups, actions}) => (
         }
       </FlipMove>
     </div>
-    { /* Edges here */}
+    <EdgesContainer />
   </div>
 );
 
