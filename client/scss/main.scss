@@ -12,3 +12,32 @@ html, body, #render-target, #layout {
 body, input, select, option, textarea {
   font-family: "brandon-grotesque", sans-serif;
 }
+
+.background {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+
+  div {
+    flex: 1;
+  }
+
+  // past
+  div:nth-of-type(1) {
+    background: $orange1;
+  }
+
+  // present
+  div:nth-of-type(2) {
+    background: $orange2;
+  }
+
+  // future
+  div:nth-of-type(3) {
+    background: $orange3;
+  }
+}

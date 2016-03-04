@@ -1,6 +1,6 @@
 #nodes {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 0;
   right: -33.33%;
   height: 100%;
@@ -26,29 +26,18 @@
 
     transition: background 2s;
 
-    // graveyard
-    &:nth-of-type(1) {
-      // background: #000;
-    }
-
     // past
     &:nth-of-type(2) {
-      // background: $orange1;
-
       .node { cursor: pointer; }
     }
 
     // present
     &:nth-of-type(3) {
-      // background: $orange2;
-
       .node { cursor: default; }
     }
 
     // future
     &:nth-of-type(4) {
-      // background: $orange3;
-
       .node { cursor: pointer; }
     }
   }

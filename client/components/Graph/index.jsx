@@ -26,6 +26,11 @@ const Graph = ({nodeGroups, actions}) => (
       </FlipMove>
     </div>
     <EdgesContainer />
+    <div className="background">
+      <div />
+      <div />
+      <div />
+    </div>
   </div>
 );
 
