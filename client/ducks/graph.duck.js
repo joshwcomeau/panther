@@ -47,19 +47,16 @@ export default function reducer(state = fromJS(nodesData), action) {
 
       return state.update('edges', edges => {
         return edges.map( edge => {
-          console.log("Updating", edge)
-          if ( rejectedNodeIds.indexOf(edge.toNodeId) !== -1 ) {
-            edge.retracting = true;
-            console.log("Setting edge to retracting!", edge)
-          }
+          edge.expanding = false;
+          edge.retracting = rejectedNodeIds.indexOf(edge.toNodeId) !== -1
           return edge;
         });
       });
 
     case POSITION_SELECTED_ARTIST_TO_CENTER:
       // - drop the first group (it's the graveyard)
-      // - remove the non-clicked nodes
       // - add a new group of random nodes
+      // - set the clicked node to 'pulling'
       const nextGroupId = state.getIn(['nodeGroups', WOMB, 'id']) + 1;
 
       const numOfFutureNodes = Math.floor(Math.random() * 4)+2;
@@ -71,33 +68,32 @@ export default function reducer(state = fromJS(nodesData), action) {
         })
       }
 
-      const nodeGroups = state.get('nodeGroups')
-        .delete(GRAVEYARD)
-        .updateIn([PRESENT, 'nodes'], nodes => {
-          return nodes
-            .filter( node => !node.get('rejected'))
-            .setIn(['0', 'pulling'], true)
-        })
-        .setIn([FUTURE, 'nodes'], fromJS(futureNodes))
-        .push(fromJS({
-          id: nextGroupId,
-          nodes: []
-        }));
+      state = state.update('nodeGroups', nodeGroups => {
+        return nodeGroups
+          .delete(GRAVEYARD)
+          .updateIn([PRESENT, 'nodes'], nodes => {
+            return nodes.filter( node => !node.get('rejected'))
+          })
+          .setIn([FUTURE, 'nodes'], fromJS(futureNodes))
+          .push(fromJS({
+            id: nextGroupId,
+            nodes: []
+          }));
+      });
 
-      return state.set('nodeGroups', nodeGroups);
+      // If we don't have any edges, we can skip this bit.
+      if ( !state.get('edges') || !state.get('edges').length ) return state;
 
-    // case UPDATE_NODE_POSITIONS:
-    //   action.positions.forEach( position => {
-    //     const { id, coordinates } = position;
-    //     const { x, y } = coordinates;
-    //
-    //     const [ groupIndex, nodeIndex ] = findPathToNode(state, id);
-    //     if ( groupIndex === undefined || nodeIndex === undefined ) return;
-    //
-    //     const fullPath = ['nodeGroups', groupIndex, 'nodes', nodeIndex];
-    //
-    //     state = state.updateIn(fullPath, node => {
-    //       return node.set('x', x).set('y', y).set('pulling', false)
+      const selectedNodeId = state.getIn(['nodeGroups', PRESENT, 'nodes', '0', 'id']);
+
+      return state.update('edges', edges => {
+        return edges.map( edge => {
+          edge.pulling = edge.toNodeId === selectedNodeId;
+          return edge;
+        });
+      });
+
+
     case CALCULATE_AND_EXPAND_EDGES:
       let edges = [];
       const groups = state.get('nodeGroups');
@@ -131,7 +127,8 @@ export default function reducer(state = fromJS(nodesData), action) {
             // If the nodes don't have coordinates, don't include the edges.
             if ( !nextNodeCoords || !nextNodeCoords.y ) return;
 
-            // Calculate the line length. Will be useful for animations
+            // We want to expand present-to-future edges
+
 
             edges.push({
               x1:         nodeCoords.x,
@@ -140,7 +137,7 @@ export default function reducer(state = fromJS(nodesData), action) {
               y2:         nextNodeCoords.y,
               fromNodeId: node.get('id'),
               toNodeId:   nextNode.get('id'),
-              expanding:  true
+              expanding:  groupIndex === PRESENT
             });
           });
         });

@@ -15,7 +15,7 @@ class Edges extends Component {
 
       let styles = {};
 
-      if ( edge.pulling || edge.retracting ) {
+      if ( edge.pulling || edge.retracting || edge.expanding ) {
         const edgeLength = calculateLineLength(edge.x1, edge.y1, edge.x2, edge.y2);
         styles.strokeDasharray  =  edgeLength,
         styles.strokeDashoffset =  edgeLength

@@ -18,14 +18,23 @@
     }
 
     &.pulling {
-      stroke: rgb(255,0,0);
-      animation: retract 1000ms ease reverse;
+      animation: retract 500ms ease reverse;
+    }
+
+    &.expanding {
+      animation: expand 500ms ease forwards reverse;
     }
   }
 }
 
 @keyframes retract {
   to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes expand {
+  from {
     stroke-dashoffset: 0;
   }
 }
