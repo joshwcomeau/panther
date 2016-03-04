@@ -8,7 +8,30 @@
   height: 100%;
 
   line {
-    stroke: rgba(0,0,0,1);
+    stroke: rgb(0,0,0);
     stroke-width: 4;
+
+
+    &.retracting {
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+      animation: retract 500ms ease reverse;
+    }
+
+    &.pulling {
+      stroke: rgb(255,0,0);
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+      animation: retract 1000ms ease reverse;
+    }
+  }
+}
+
+@keyframes retract {
+  from {
+    stroke-dashoffset: 500;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }

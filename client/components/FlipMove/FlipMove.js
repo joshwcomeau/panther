@@ -164,6 +164,7 @@ class FlipMove extends Component {
     });
 
     // Trigger the onStart callback immediately.
+    console.log("FLIP STARTING", performance.now())
     if ( this.props.onStart ) this.props.onStart(child, domNode);
 
     // The onFinish callback needs to be bound to the transitionEnd event.

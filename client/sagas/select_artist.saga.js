@@ -17,7 +17,7 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 // TIMING VARIABLES
 // TODO: Find some central place to store these, ideally which can populate
 // the CSS durations as well.
-const delayBeforeRepositionMs = 350;
+const delayBeforeRepositionMs = 500;
 const rejectedFadeOutMs       = 500;
 const repositionMs            = 1000;
 const edgesRetractMs          = 250;

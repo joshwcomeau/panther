@@ -41,16 +41,23 @@ export default function reducer(state = fromJS(nodesData), action) {
       // - add a new group of random nodes
       const nextGroupId = state.getIn(['nodeGroups', WOMB, 'id']) + 1;
 
+      const numOfFutureNodes = Math.floor(Math.random() * 4)+2;
+      let futureNodes = [];
+      for ( let i=0; i<numOfFutureNodes; i++ ) {
+        futureNodes.push({
+          id: faker.random.number().toString(),
+          name: faker.company.companyName()
+        })
+      }
+
       const nodeGroups = state.get('nodeGroups')
         .delete(GRAVEYARD)
         .updateIn([PRESENT, 'nodes'], nodes => {
-          return nodes.filter( node => !node.get('rejected'))
+          return nodes
+            .filter( node => !node.get('rejected'))
+            .setIn(['0', 'pulling'], true)
         })
-        .setIn([FUTURE, 'nodes'], fromJS([
-          { id: faker.random.number().toString(), name: faker.company.companyName() },
-          { id: faker.random.number().toString(), name: faker.internet.userName() },
-          { id: faker.random.number().toString(), name: faker.internet.userName() }
-        ]))
+        .setIn([FUTURE, 'nodes'], fromJS(futureNodes))
         .push(fromJS({
           id: nextGroupId,
           nodes: []
@@ -69,7 +76,7 @@ export default function reducer(state = fromJS(nodesData), action) {
         const fullPath = ['nodeGroups', groupIndex, 'nodes', nodeIndex];
 
         state = state.updateIn(fullPath, node => {
-          return node.set('x', x).set('y', y)
+          return node.set('x', x).set('y', y).set('pulling', false)
         });
       });
 

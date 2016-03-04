@@ -1,8 +1,8 @@
 import React, { Component }     from 'react';
 import classNames               from 'classnames';
-import FlipMove                 from 'react-flip-move';
+// import FlipMove                 from 'react-flip-move';
 
-// import FlipMove from '../FlipMove';
+import FlipMove from '../FlipMove';
 import Node from './Node'
 
 class NodeGroup extends Component {

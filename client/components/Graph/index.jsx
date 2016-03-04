@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import FlipMove from 'react-flip-move';
-// import FlipMove from '../FlipMove';
+// import FlipMove from 'react-flip-move';
+import FlipMove from '../FlipMove';
 
 import NodeGroup from './NodeGroup.jsx';
 import EdgesContainer from '../../containers/EdgesContainer.jsx';

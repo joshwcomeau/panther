@@ -30,15 +30,23 @@ const edgesSelector      = state => {
 
     group.get('nodes').forEach( node => {
       nextGroup.get('nodes').forEach( nextNode => {
-        // If the nodes don't have coordinates, don't push the edges.
-        // TODO: This probably only needs to be necessary
-        if ( !node.get('x') ) return;
+        // If the nodes don't have coordinates, don't include the edges.
+        if ( !nextNode.get('y') ) return;
+
+        // Calculate the line length. Will be useful for animations
+        const length = Math.sqrt(
+          Math.pow( (nextNode.get('x') - node.get('x')), 2 ) +
+          Math.pow( (nextNode.get('y') - node.get('y')), 2 )
+        )
 
         edges.push({
           x1: node.get('x'),
           y1: node.get('y'),
           x2: nextNode.get('x'),
-          y2: nextNode.get('y')
+          y2: nextNode.get('y'),
+          length,
+          retracting: nextNode.get('rejected'),
+          pulling:    nextNode.get('pulling')
         });
       });
     });
