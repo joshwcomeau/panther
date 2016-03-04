@@ -10,14 +10,17 @@ class Edges extends Component {
         pulling:    edge.pulling
       });
 
-      if ( edge.pulling ) {
-        console.log("Pulling!", performance.now())
+      let styles = {};
+
+      if ( edge.pulling || edge.retracting ) {
+        styles.strokeDasharray  =  edge.length,
+        styles.strokeDashoffset =  edge.length
       }
 
       return <line
         key={i}
         className={classes}
-        style={{}}
+        style={styles}
         {...edge}
       />;
     })
