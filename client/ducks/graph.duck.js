@@ -5,9 +5,8 @@ import faker from 'faker';
 
 import {
   GRAVEYARD, PAST, PRESENT, FUTURE, WOMB,
-  findNodeGroupById, findPathToNode
+  findNodeGroupById, findPathToNode, findCoordinatesForNodes
 } from '../helpers/graph.duck.helpers';
-import { findCenterOfNode } from '../helpers/position.helpers';
 
 // TEMPORARY. Just for development purposes.
 import { nodesData } from '../temp_fixtures.js';
@@ -19,7 +18,8 @@ import { nodesData } from '../temp_fixtures.js';
 export const SELECT_ARTIST = 'panther/nodes/SELECT_ARTIST';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'panther/nodes/MARK_UNCLICKED_ARTISTS_AS_REJECTED';
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTIST_TO_CENTER';
-const UPDATE_NODE_POSITIONS = 'panther/nodes/UPDATE_NODE_POSITIONS';
+const CALCULATE_AND_EXPAND_EDGES = 'panther/edges/CALCULATE_AND_EXPAND_EDGES';
+const RETRACT_EDGES = 'panther/edges/RETRACT_EDGES';
 
 ///////////////////////////
 // REDUCER ///////////////
@@ -27,11 +27,32 @@ const UPDATE_NODE_POSITIONS = 'panther/nodes/UPDATE_NODE_POSITIONS';
 export default function reducer(state = fromJS(nodesData), action) {
   switch (action.type) {
     case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
-      return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => {
+      // Update the nodes themselves with a `rejected` property
+      state = state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => {
         return nodes.map( (node, index) => {
-          return node.get('name') !== action.node.get('name')
+          return node.get('id') !== action.node.get('id')
             ? node.set( 'rejected', true )
             : node;
+        });
+      });
+
+      // Next, find all affected edges and set them as retracting
+      // If we don't have any edges, we can skip this bit.
+      if ( !state.get('edges') || !state.get('edges').length ) return state;
+
+      const rejectedNodeIds = state
+        .getIn( ['nodeGroups', FUTURE, 'nodes'] )
+        .filter( node => node.get('rejected') )
+        .map( node => node.get('id'));
+
+      return state.update('edges', edges => {
+        return edges.map( edge => {
+          console.log("Updating", edge)
+          if ( rejectedNodeIds.indexOf(edge.toNodeId) !== -1 ) {
+            edge.retracting = true;
+            console.log("Setting edge to retracting!", edge)
+          }
+          return edge;
         });
       });
 
@@ -65,22 +86,68 @@ export default function reducer(state = fromJS(nodesData), action) {
 
       return state.set('nodeGroups', nodeGroups);
 
-    case UPDATE_NODE_POSITIONS:
-      action.positions.forEach( position => {
-        const { id, coordinates } = position;
-        const { x, y } = coordinates;
+    // case UPDATE_NODE_POSITIONS:
+    //   action.positions.forEach( position => {
+    //     const { id, coordinates } = position;
+    //     const { x, y } = coordinates;
+    //
+    //     const [ groupIndex, nodeIndex ] = findPathToNode(state, id);
+    //     if ( groupIndex === undefined || nodeIndex === undefined ) return;
+    //
+    //     const fullPath = ['nodeGroups', groupIndex, 'nodes', nodeIndex];
+    //
+    //     state = state.updateIn(fullPath, node => {
+    //       return node.set('x', x).set('y', y).set('pulling', false)
+    case CALCULATE_AND_EXPAND_EDGES:
+      let edges = [];
+      const groups = state.get('nodeGroups');
 
-        const [ groupIndex, nodeIndex ] = findPathToNode(state, id);
-        if ( groupIndex === undefined || nodeIndex === undefined ) return;
+      groups.forEach( (group, groupIndex) => {
+        // We're making lines, essentially. One line per node for each node in the
+        // NEXT group.
+        // eg:
+        //      /-----> o
+        //     /
+        //   o -------> o
+        //
+        // Because there is 1 node in this group and two nodes in the next group,
+        // we need (1 * 2 = 2) edges.
 
-        const fullPath = ['nodeGroups', groupIndex, 'nodes', nodeIndex];
+        // If this group has 0 nodes, we can return
+        if ( !group.get('nodes') || !group.get('nodes').size ) return;
 
-        state = state.updateIn(fullPath, node => {
-          return node.set('x', x).set('y', y).set('pulling', false)
+        const nextGroup = groups.get(groupIndex+1);
+
+        // If this is the final group, no edges are necessary.
+        if ( !nextGroup ) return;
+
+        group.get('nodes').forEach( node => {
+          nextGroup.get('nodes').forEach( nextNode => {
+
+            // Find the coordinate pair for both nodes.
+            const nodeCoords = action.positions[node.get('id')];
+            const nextNodeCoords = action.positions[nextNode.get('id')];
+
+            // If the nodes don't have coordinates, don't include the edges.
+            if ( !nextNodeCoords || !nextNodeCoords.y ) return;
+
+            // Calculate the line length. Will be useful for animations
+
+            edges.push({
+              x1:         nodeCoords.x,
+              y1:         nodeCoords.y,
+              x2:         nextNodeCoords.x,
+              y2:         nextNodeCoords.y,
+              fromNodeId: node.get('id'),
+              toNodeId:   nextNode.get('id'),
+              expanding:  true
+            });
+          });
         });
       });
 
-      return state;
+      console.log("Calculated edges", edges.slice())
+      return state.set('edges', edges);
 
     default:
       return state;
@@ -91,6 +158,9 @@ export default function reducer(state = fromJS(nodesData), action) {
 ///////////////////////////
 // ACTION CREATORS ///////
 /////////////////////////
+
+// This is our orchestration action that is caught by the Saga.
+// It does not have any direct effect on the state.
 export function selectArtist(node) {
   return {
     type: SELECT_ARTIST,
@@ -98,30 +168,31 @@ export function selectArtist(node) {
   }
 }
 
-export function markArtistAsSelected(node) {
+// This action makes the non-selected artists disappear.
+export function markUnclickedArtistsAsRejected(node) {
   return {
     type: MARK_UNCLICKED_ARTISTS_AS_REJECTED,
     node
   }
 }
 
-export function updateNodePositions() {
+// This action retracts the edges from rejected artists.
+export function retractEdges() {
+  return {
+    type: RETRACT_EDGES
+  };
+}
+
+export function calculateAndExpandEdges() {
   // Sadly, I have to break out of React's lovely declarative abstraction here.
   // I need to access the DOM and find all currently-existing nodes. Their IDs
   // should be available as a data attribute, and I can find them by their classes.
-  const domNodes = document.querySelectorAll('.node');
-  const positions = Array.prototype.reduce.call(domNodes, (acc, node) => {
-    acc.push({
-      id:           node.getAttribute('data-id'),
-      coordinates:  findCenterOfNode(node)
-    });
-
-    return acc;
-  }, []);
-
+  //
+  // Doing this outside the reducer because it relies on the DOM.
+  const positions = findCoordinatesForNodes();
 
   return {
-    type: UPDATE_NODE_POSITIONS,
+    type: CALCULATE_AND_EXPAND_EDGES,
     positions
   };
 }

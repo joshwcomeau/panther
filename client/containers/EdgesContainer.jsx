@@ -2,12 +2,11 @@ import { bindActionCreators }   from 'redux';
 import { connect }              from 'react-redux';
 
 import Edges                    from '../components/Graph/Edges.jsx';
-import edgesSelector            from '../selectors/edges.selector';
 
 
 
 function mapStateToProps(state) {
-  return edgesSelector(state);
+  return { edges: state.get('graph').get('edges') }
 }
 
 function mapDispatchToProps(dispatch) {

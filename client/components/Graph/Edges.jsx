@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
+import { calculateLineLength } from '../../helpers/graph.duck.helpers';
+
+
 class Edges extends Component {
   renderEdges() {
     return this.props.edges.map( (edge, i) => {
@@ -13,9 +16,12 @@ class Edges extends Component {
       let styles = {};
 
       if ( edge.pulling || edge.retracting ) {
-        styles.strokeDasharray  =  edge.length,
-        styles.strokeDashoffset =  edge.length
+        const edgeLength = calculateLineLength(edge.x1, edge.y1, edge.x2, edge.y2);
+        styles.strokeDasharray  =  edgeLength,
+        styles.strokeDashoffset =  edgeLength
       }
+
+      console.log("Edges rendering", performance.now())
 
       return <line
         key={i}
@@ -29,7 +35,7 @@ class Edges extends Component {
   render() {
     return (
       <svg id="edges">
-        { this.renderEdges() }
+        { this.props.edges ? this.renderEdges() : null }
       </svg>
     )
   }
