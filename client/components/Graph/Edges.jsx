@@ -1,9 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 
 class Edges extends Component {
+  renderEdges() {
+    return this.props.edges.map( (edge, i) => {
+      return <line key={i} {...edge} />;
+    })
+  }
+
   render() {
     return (
-      <div id="edges">This is edgy!</div>
+      <svg id="edges">
+        { this.renderEdges() }
+      </svg>
     )
   }
 }

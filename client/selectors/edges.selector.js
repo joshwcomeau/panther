@@ -21,7 +21,7 @@ const edgesSelector      = state => {
     // we need (1 * 2 = 2) edges.
 
     // If this group has 0 nodes, we can return
-    if ( !group.nodes || !group.nodes.size ) return;
+    if ( !group.get('nodes') || !group.get('nodes').size ) return;
 
     const nextGroup = groups.get(groupIndex+1);
 
@@ -30,9 +30,15 @@ const edgesSelector      = state => {
 
     group.get('nodes').forEach( node => {
       nextGroup.get('nodes').forEach( nextNode => {
+        // If the nodes don't have coordinates, don't push the edges.
+        // TODO: This probably only needs to be necessary
+        if ( !node.get('x') ) return;
+
         edges.push({
-          p1: { x: node.get('x'),     y: node.get('y') },
-          p2: { x: nextNode.get('x'), y: nextNode.get('y') },
+          x1: node.get('x'),
+          y1: node.get('y'),
+          x2: nextNode.get('x'),
+          y2: nextNode.get('y')
         });
       });
     });
