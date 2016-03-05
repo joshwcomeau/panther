@@ -10,19 +10,12 @@ import {
   calculateAndExpandEdges
 } from '../ducks/graph.duck';
 
+import { repositionDelay, repositionLength } from '../config/timing';
+
 
 // a utility function: return a Promise that will resolve after 1 second
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-
-// TIMING VARIABLES
-// TODO: Find some central place to store these, ideally which can populate
-// the CSS durations as well.
-const delayBeforeRepositionMs = 500;
-const rejectedFadeOutMs       = 700; // Change this one in nodes.scss!!
-const repositionMs            = 1000;
-const edgesRetractMs          = 250;
-const edgesExpandMs           = 550;
 
 // When we click a node, a bunch of stuff needs to happen:
 //   - immediately fade out the NON-clicked nodes, over N1 ms.
@@ -38,10 +31,10 @@ export function* selectArtist(action) {
   yield put(markUnclickedArtistsAsRejected(action.node));
   yield put(retractEdges())
 
-  yield delay(delayBeforeRepositionMs);
+  yield delay(repositionDelay);
   yield put(positionSelectedArtistToCenter());
 
-  yield delay(repositionMs);
+  yield delay(repositionLength);
   yield put(calculateAndExpandEdges());
 }
 

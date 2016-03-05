@@ -2,16 +2,18 @@ import React, { PropTypes } from 'react';
 // import FlipMove from 'react-flip-move';
 import FlipMove from '../FlipMove';
 
-import NodeGroup from './NodeGroup.jsx';
-import EdgesContainer from '../../containers/EdgesContainer.jsx';
+import { repositionLength } from '../../config/timing';
+import { repositionEasing } from '../../config/easing';
+import EdgesContainer       from '../../containers/EdgesContainer.jsx';
+import NodeGroup            from './NodeGroup.jsx';
 
 const Graph = ({nodeGroups = [], actions}) => (
   <div id="graph">
     <div id="nodes">
       <FlipMove
         className="nodes-flip"
-        easing="ease-in-out"
-        duration={1000}
+        easing={repositionEasing}
+        duration={repositionLength}
       >
         {
           nodeGroups.map( group => (

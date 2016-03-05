@@ -1,9 +1,11 @@
 import React, { Component }     from 'react';
 import classNames               from 'classnames';
 // import FlipMove                 from 'react-flip-move';
-
 import FlipMove from '../FlipMove';
-import Node from './Node'
+
+import { repositionLength } from '../../config/timing';
+import { repositionEasing } from '../../config/easing';
+import Node                 from './Node'
 
 class NodeGroup extends Component {
   renderNodes(nodes) {
@@ -25,8 +27,8 @@ class NodeGroup extends Component {
     return (
       <FlipMove
         key={id}
-        duration={1000}
-        easing="ease-in-out"
+        duration={repositionLength}
+        easing={repositionEasing}
         className="node-group"
       >
         { this.renderNodes(nodes) }

@@ -14,15 +14,19 @@
 
 
     &.retracting {
-      animation: retract 500ms ease-in-out reverse;
+      animation-name: 'retract';
+      animation-direction: reverse;
     }
 
     &.pulling {
-      animation: retract 1000ms ease-in-out reverse;
+      animation-name: 'retract';
+      animation-direction: reverse;
     }
 
     &.expanding {
-      animation: expand 500ms ease-in-out forwards reverse;
+      animation-name: 'expand';
+      animation-direction: reverse;
+      animation-fill-mode: forwards;
     }
   }
 }
