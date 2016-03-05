@@ -4,9 +4,9 @@ import { put } from 'redux-saga/effects'
 import {
   SELECT_ARTIST,
   markUnclickedArtistsAsRejected,
-  fadeAndRemoveNodes,
+  removeRejectedArtists,
   positionSelectedArtistToCenter,
-  retractEdges,
+  populateRelatedArtistNodes,
   calculateAndExpandEdges
 } from '../ducks/graph.duck';
 
@@ -29,10 +29,13 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 // Our worker saga. It does the actual orchestration
 export function* selectArtist(action) {
   yield put(markUnclickedArtistsAsRejected(action.node));
-  yield put(retractEdges())
 
   yield delay(repositionDelay);
-  yield put(positionSelectedArtistToCenter());
+  console.log("Direction", action.direction);
+  yield put(removeRejectedArtists());
+  yield put(positionSelectedArtistToCenter(action.direction));
+
+  yield put(populateRelatedArtistNodes())
 
   yield delay(repositionLength);
   yield put(calculateAndExpandEdges());

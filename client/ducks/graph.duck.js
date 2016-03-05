@@ -9,6 +9,7 @@ import {
 } from '../helpers/graph.duck.helpers';
 
 
+
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
@@ -16,15 +17,18 @@ export const SELECT_ARTIST = 'SELECT_ARTIST';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'POSITION_SELECTED_ARTIST_TO_CENTER';
 const CALCULATE_AND_EXPAND_EDGES = 'CALCULATE_AND_EXPAND_EDGES';
-const RETRACT_EDGES = 'RETRACT_EDGES';
+const POPULATE_RELATED_ARTIST_NODES = 'POPULATE_RELATED_ARTIST_NODES';
+const REMOVE_REJECTED_ARTISTS = 'REMOVE_REJECTED_ARTISTS';
+
+
 
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
 // TEMPORARY. Just for development purposes.
 import { nodesData } from '../temp_fixtures.js';
-// const initialState = fromJS(nodesData);
-const initialState = Map();
+const initialState = fromJS(nodesData);
+// const initialState = Map();
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -57,32 +61,34 @@ export default function reducer(state = initialState, action) {
         });
       });
 
+    case REMOVE_REJECTED_ARTISTS:
+      // TODO: Could make this more efficient by only checking groups that
+      // can have rejected nodes (PRESENT and WOMB)
+      return state.update('nodeGroups', nodeGroups => (
+        nodeGroups.map( group => (
+          group.update('nodes', nodes => (
+            nodes.filter( node => !node.get('rejected') )
+          ))
+        ))
+      ));
+
+    case POPULATE_RELATED_ARTIST_NODES:
+      return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
+        nodes.concat( action.nodes )
+      ));
+
     case POSITION_SELECTED_ARTIST_TO_CENTER:
-      // - drop the first group (it's the graveyard)
-      // - add a new group of random nodes
-      // - set the clicked node to 'pulling'
+      // What needs to happen here will depend on the direction specified.
+
+      let groupToDelete = action.direction === 'forwards' ? GRAVEYARD : WOMB;
+
       const nextGroupId = state.getIn(['nodeGroups', WOMB, 'id']) + 1;
 
-      const numOfFutureNodes = Math.floor(Math.random() * 4)+2;
-      let futureNodes = [];
-      for ( let i=0; i<numOfFutureNodes; i++ ) {
-        futureNodes.push({
-          id: faker.random.number().toString(),
-          name: faker.company.companyName()
-        })
-      }
 
       state = state.update('nodeGroups', nodeGroups => {
         return nodeGroups
-          .delete(GRAVEYARD)
-          .updateIn([PRESENT, 'nodes'], nodes => {
-            return nodes.filter( node => !node.get('rejected'))
-          })
-          .setIn([FUTURE, 'nodes'], fromJS(futureNodes))
-          .push(fromJS({
-            id: nextGroupId,
-            nodes: []
-          }));
+          .delete(groupToDelete)
+          .push(fromJS({ id: nextGroupId, nodes: List() }));
       });
 
       // If we don't have any edges, we can skip this bit.
@@ -117,8 +123,9 @@ export default function reducer(state = initialState, action) {
 
         const nextGroup = groups.get(groupIndex+1);
 
-        // If this is the final group, no edges are necessary.
-        if ( !nextGroup ) return;
+        // If this is the final group, or the next group is empty,
+        // no edges are necessary.
+        if ( !nextGroup || !nextGroup.size ) return;
 
         group.get('nodes').forEach( node => {
           nextGroup.get('nodes').forEach( nextNode => {
@@ -160,10 +167,11 @@ export default function reducer(state = initialState, action) {
 
 // This is our orchestration action that is caught by the Saga.
 // It does not have any direct effect on the state.
-export function selectArtist(node) {
+export function selectArtist(node, direction) {
   return {
     type: SELECT_ARTIST,
-    node
+    node,
+    direction
   }
 }
 
@@ -173,13 +181,6 @@ export function markUnclickedArtistsAsRejected(node) {
     type: MARK_UNCLICKED_ARTISTS_AS_REJECTED,
     node
   }
-}
-
-// This action retracts the edges from rejected artists.
-export function retractEdges() {
-  return {
-    type: RETRACT_EDGES
-  };
 }
 
 export function calculateAndExpandEdges() {
@@ -200,8 +201,33 @@ export function fetchArtistInfo() {
 
 }
 
-export function positionSelectedArtistToCenter() {
+export function populateRelatedArtistNodes() {
+  const numOfFutureNodes = Math.floor(Math.random() * 4)+2;
+  let nodes = [];
+  for ( let i=0; i<numOfFutureNodes; i++ ) {
+    nodes.push({
+      id: faker.random.number().toString(),
+      name: faker.company.companyName()
+    })
+  }
+
+  nodes = fromJS(nodes);
+
   return {
-    type: POSITION_SELECTED_ARTIST_TO_CENTER
+    type: POPULATE_RELATED_ARTIST_NODES,
+    nodes
+  }
+}
+
+export function removeRejectedArtists() {
+  return {
+    type: REMOVE_REJECTED_ARTISTS
+  }
+}
+
+export function positionSelectedArtistToCenter(direction) {
+  return {
+    type: POSITION_SELECTED_ARTIST_TO_CENTER,
+    direction
   }
 }

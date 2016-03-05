@@ -16,11 +16,12 @@ const Graph = ({nodeGroups = [], actions}) => (
         duration={repositionLength}
       >
         {
-          nodeGroups.map( group => (
+          nodeGroups.map( (group, i) => (
             <NodeGroup
               key={group.get('id')}
               id={group.get('id')}
               nodes={group.get('nodes')}
+              group={i}
               clickNode={actions.selectArtist}
             />
           ))

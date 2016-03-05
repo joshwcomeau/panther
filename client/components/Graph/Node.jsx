@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
+import { PAST, PRESENT, FUTURE } from '../../helpers/graph.duck.helpers';
+
+
 class Node extends Component {
   constructor() {
     super()
@@ -8,7 +11,14 @@ class Node extends Component {
   }
 
   clickHandler() {
-    this.props.clickNode(this.props.data);
+    // Ignore clicks on the present node.
+    if ( this.props.group === PRESENT ) return;
+
+    // If we click a node in the FUTURE, we're going forwards.
+    // If we click a node in the PAST, we're going backwards.
+    const direction = this.props.group === FUTURE ? 'forwards' : 'backwards';
+
+    this.props.clickNode(this.props.data, direction);
   }
 
   render() {
