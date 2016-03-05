@@ -32,7 +32,7 @@ export function calculateLineLength(x1, y1, x2, y2) {
   return Math.sqrt( Math.pow( (x1 - x2), 2 ) + Math.pow( (y1 - y2), 2 ) );
 }
 
-export function findCoordinatesForNodes() {
+export function findCoordinatesForEdges() {
   const domNodes = document.querySelectorAll('.node');
 
   return Array.prototype.reduce.call(domNodes, (acc, node) => {

@@ -5,7 +5,7 @@ import faker from 'faker';
 
 import {
   GRAVEYARD, PAST, PRESENT, FUTURE, WOMB,
-  findNodeGroupById, findPathToNode, findCoordinatesForNodes
+  findNodeGroupById, findPathToNode, findCoordinatesForEdges
 } from '../helpers/graph.duck.helpers';
 
 
@@ -17,7 +17,7 @@ export const SELECT_ARTIST = 'SELECT_ARTIST';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
 const RETRACT_REJECTED_NODE_EDGES = 'RETRACT_REJECTED_NODE_EDGES';
 const REMOVE_REJECTED_ARTISTS = 'REMOVE_REJECTED_ARTISTS';
-const RETRACT_SELECTED_NODE_EDGE = 'RETRACT_SELECTED_NODE_EDGE'
+const RETRACT_SELECTED_NODE_EDGE = 'RETRACT_SELECTED_NODE_EDGE';
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'POSITION_SELECTED_ARTIST_TO_CENTER';
 const CALCULATE_AND_EXPAND_EDGES = 'CALCULATE_AND_EXPAND_EDGES';
 const POPULATE_RELATED_ARTIST_NODES = 'POPULATE_RELATED_ARTIST_NODES';
@@ -86,9 +86,7 @@ export default function reducer(state = initialState, action) {
       return state.update('nodeGroups', nodeGroups => {
         const newWomb = fromJS({ id: nextGroupId, nodes: List() });
 
-        return nodeGroups
-          .delete(GRAVEYARD)
-          .push(newWomb);
+        return nodeGroups.delete(GRAVEYARD).push(newWomb);
       })
 
 
@@ -213,7 +211,7 @@ export function calculateAndExpandEdges() {
   // should be available as a data attribute, and I can find them by their classes.
   //
   // Doing this outside the reducer because it relies on the DOM.
-  const positions = findCoordinatesForNodes();
+  const positions = findCoordinatesForEdges();
 
   return {
     type: CALCULATE_AND_EXPAND_EDGES,
@@ -221,20 +219,12 @@ export function calculateAndExpandEdges() {
   };
 }
 
-export function fetchArtistInfo() {
-
-}
-
 export function retractRejectedNodeEdges() {
-  return {
-    type: RETRACT_REJECTED_NODE_EDGES
-  };
+  return { type: RETRACT_REJECTED_NODE_EDGES };
 }
 
 export function retractSelectedNodeEdge() {
-  return {
-    type: RETRACT_SELECTED_NODE_EDGE
-  }
+  return { type: RETRACT_SELECTED_NODE_EDGE };
 }
 
 export function populateRelatedArtistNodes() {
@@ -256,26 +246,17 @@ export function populateRelatedArtistNodes() {
 }
 
 export function removeRejectedArtists() {
-  return {
-    type: REMOVE_REJECTED_ARTISTS
-  };
+  return { type: REMOVE_REJECTED_ARTISTS };
 }
 
-export function positionSelectedArtistToCenter(direction) {
-  return {
-    type: POSITION_SELECTED_ARTIST_TO_CENTER,
-    direction
-  };
+export function positionSelectedArtistToCenter() {
+  return { type: POSITION_SELECTED_ARTIST_TO_CENTER };
 }
 
 export function restorePreviousNodeState() {
-  return {
-    type: RESTORE_PREVIOUS_NODE_STATE
-  }
+  return { type: RESTORE_PREVIOUS_NODE_STATE };
 }
 
 export function takeSnapshotOfState() {
-  return {
-    type: TAKE_SNAPSHOT_OF_STATE
-  };
+  return { type: TAKE_SNAPSHOT_OF_STATE };
 }
