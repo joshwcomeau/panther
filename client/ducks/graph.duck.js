@@ -38,7 +38,7 @@ export default function reducer(state = fromJS(nodesData), action) {
 
       // Next, find all affected edges and set them as retracting
       // If we don't have any edges, we can skip this bit.
-      if ( !state.get('edges') || !state.get('edges').length ) return state;
+      if ( !state.get('edges') || !state.get('edges').size ) return state;
 
       const rejectedNodeIds = state
         .getIn( ['nodeGroups', FUTURE, 'nodes'] )
@@ -47,9 +47,11 @@ export default function reducer(state = fromJS(nodesData), action) {
 
       return state.update('edges', edges => {
         return edges.map( edge => {
-          edge.expanding = false;
-          edge.retracting = rejectedNodeIds.indexOf(edge.toNodeId) !== -1
-          return edge;
+          const connectsToRejectedNode = rejectedNodeIds.indexOf(edge.get('toNodeId')) !== -1;
+
+          return edge
+            .set('expanding', false)
+            .set('retracting', connectsToRejectedNode);
         });
       });
 
@@ -82,15 +84,14 @@ export default function reducer(state = fromJS(nodesData), action) {
       });
 
       // If we don't have any edges, we can skip this bit.
-      if ( !state.get('edges') || !state.get('edges').length ) return state;
+      if ( !state.get('edges') || !state.get('edges').size ) return state;
 
       const selectedNodeId = state.getIn(['nodeGroups', PRESENT, 'nodes', '0', 'id']);
 
       return state.update('edges', edges => {
-        return edges.map( edge => {
-          edge.pulling = edge.toNodeId === selectedNodeId;
-          return edge;
-        });
+        return edges.map( edge => (
+          edge.set('pulling', edge.get('toNodeId') === selectedNodeId)
+        ));
       });
 
 
@@ -102,8 +103,8 @@ export default function reducer(state = fromJS(nodesData), action) {
         // We're making lines, essentially. One line per node for each node in the
         // NEXT group.
         // eg:
-        //      /-----> o
-        //     /
+        //     /-----> o
+        //    /
         //   o -------> o
         //
         // Because there is 1 node in this group and two nodes in the next group,
@@ -143,8 +144,7 @@ export default function reducer(state = fromJS(nodesData), action) {
         });
       });
 
-      console.log("Calculated edges", edges.slice())
-      return state.set('edges', edges);
+      return state.set('edges', fromJS(edges));
 
     default:
       return state;

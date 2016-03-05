@@ -1,44 +1,28 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-import { calculateLineLength } from '../../helpers/graph.duck.helpers';
+import Edge from './Edge.jsx';
 
 
-class Edges extends Component {
-  renderEdges() {
-    return this.props.edges.map( (edge, i) => {
-      const classes = classNames({
-        retracting: edge.retracting,
-        expanding:  edge.expanding,
-        pulling:    edge.pulling
-      });
+const Edges = ({edges}) => {
+  const edgesComponents = (edges || []).map( (edge, i) => (
+    <Edge
+      key={i}
+      x1={edge.get('x1')}
+      y1={edge.get('y1')}
+      x2={edge.get('x2')}
+      y2={edge.get('y2')}
+      retracting={edge.get('retracting')}
+      expanding={edge.get('expanding')}
+      pulling={edge.get('pulling')}
+    />
+  ));
 
-      let styles = {};
-
-      if ( edge.pulling || edge.retracting || edge.expanding ) {
-        const edgeLength = calculateLineLength(edge.x1, edge.y1, edge.x2, edge.y2);
-        styles.strokeDasharray  =  edgeLength,
-        styles.strokeDashoffset =  edgeLength
-      }
-
-      console.log("Edges rendering", performance.now())
-
-      return <line
-        key={i}
-        className={classes}
-        style={styles}
-        {...edge}
-      />;
-    })
-  }
-
-  render() {
-    return (
-      <svg id="edges">
-        { this.props.edges ? this.renderEdges() : null }
-      </svg>
-    )
-  }
-}
+  return (
+    <svg id="edges">
+      { edgesComponents }
+    </svg>
+  );
+};
 
 export default Edges;

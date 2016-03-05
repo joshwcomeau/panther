@@ -26,7 +26,7 @@ class NodeGroup extends Component {
       <FlipMove
         key={id}
         duration={1000}
-        easing="ease"
+        easing="ease-in-out"
         className="node-group"
       >
         { this.renderNodes(nodes) }

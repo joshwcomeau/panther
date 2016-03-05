@@ -5,12 +5,12 @@ import FlipMove from '../FlipMove';
 import NodeGroup from './NodeGroup.jsx';
 import EdgesContainer from '../../containers/EdgesContainer.jsx';
 
-const Graph = ({nodeGroups, actions}) => (
+const Graph = ({nodeGroups = [], actions}) => (
   <div id="graph">
     <div id="nodes">
       <FlipMove
         className="nodes-flip"
-        easing="ease"
+        easing="ease-in-out"
         duration={1000}
       >
         {
