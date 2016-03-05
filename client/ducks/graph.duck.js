@@ -8,23 +8,25 @@ import {
   findNodeGroupById, findPathToNode, findCoordinatesForNodes
 } from '../helpers/graph.duck.helpers';
 
-// TEMPORARY. Just for development purposes.
-import { nodesData } from '../temp_fixtures.js';
-
 
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-export const SELECT_ARTIST = 'panther/nodes/SELECT_ARTIST';
-const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'panther/nodes/MARK_UNCLICKED_ARTISTS_AS_REJECTED';
-const POSITION_SELECTED_ARTIST_TO_CENTER = 'panther/nodes/POSITION_SELECTED_ARTIST_TO_CENTER';
-const CALCULATE_AND_EXPAND_EDGES = 'panther/edges/CALCULATE_AND_EXPAND_EDGES';
-const RETRACT_EDGES = 'panther/edges/RETRACT_EDGES';
+export const SELECT_ARTIST = 'SELECT_ARTIST';
+const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
+const POSITION_SELECTED_ARTIST_TO_CENTER = 'POSITION_SELECTED_ARTIST_TO_CENTER';
+const CALCULATE_AND_EXPAND_EDGES = 'CALCULATE_AND_EXPAND_EDGES';
+const RETRACT_EDGES = 'RETRACT_EDGES';
 
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
-export default function reducer(state = fromJS(nodesData), action) {
+// TEMPORARY. Just for development purposes.
+import { nodesData } from '../temp_fixtures.js';
+// const initialState = fromJS(nodesData);
+const initialState = Map();
+
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
       // Update the nodes themselves with a `rejected` property
