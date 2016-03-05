@@ -4,6 +4,7 @@ import { put } from 'redux-saga/effects'
 import {
   SELECT_ARTIST,
   markUnclickedArtistsAsRejected,
+  retractEdges,
   removeRejectedArtists,
   positionSelectedArtistToCenter,
   populateRelatedArtistNodes,
@@ -29,9 +30,9 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 // Our worker saga. It does the actual orchestration
 export function* selectArtist(action) {
   yield put(markUnclickedArtistsAsRejected(action.node));
+  yield put(retractEdges());
 
   yield delay(repositionDelay);
-  console.log("Direction", action.direction);
   yield put(removeRejectedArtists());
   yield put(positionSelectedArtistToCenter(action.direction));
 

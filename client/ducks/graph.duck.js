@@ -15,6 +15,7 @@ import {
 /////////////////////////
 export const SELECT_ARTIST = 'SELECT_ARTIST';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
+const RETRACT_EDGES = 'RETRACT_EDGES';
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'POSITION_SELECTED_ARTIST_TO_CENTER';
 const CALCULATE_AND_EXPAND_EDGES = 'CALCULATE_AND_EXPAND_EDGES';
 const POPULATE_RELATED_ARTIST_NODES = 'POPULATE_RELATED_ARTIST_NODES';
@@ -33,16 +34,14 @@ const initialState = fromJS(nodesData);
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
-      // Update the nodes themselves with a `rejected` property
-      state = state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => {
-        return nodes.map( (node, index) => {
-          return node.get('id') !== action.node.get('id')
-            ? node.set( 'rejected', true )
-            : node;
-        });
-      });
+      return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
+        nodes.map( (node, index) => (
+          node.set( 'rejected', node.get('id') !== action.node.get('id') )
+        ))
+      ));
 
-      // Next, find all affected edges and set them as retracting
+    case RETRACT_EDGES:
+      // Find all edges connected to rejected nodes and retract them.
       // If we don't have any edges, we can skip this bit.
       if ( !state.get('edges') || !state.get('edges').size ) return state;
 
@@ -60,6 +59,7 @@ export default function reducer(state = initialState, action) {
             .set('retracting', connectsToRejectedNode);
         });
       });
+
 
     case REMOVE_REJECTED_ARTISTS:
       // TODO: Could make this more efficient by only checking groups that
@@ -199,6 +199,13 @@ export function calculateAndExpandEdges() {
 
 export function fetchArtistInfo() {
 
+}
+
+export function retractEdges() {
+  console.log("Retracting")
+  return {
+    type: RETRACT_EDGES
+  };
 }
 
 export function populateRelatedArtistNodes() {
