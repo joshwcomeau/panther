@@ -15,12 +15,14 @@ import {
 /////////////////////////
 export const SELECT_ARTIST = 'SELECT_ARTIST';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
-const RETRACT_EDGES = 'RETRACT_EDGES';
+const RETRACT_REJECTED_NODE_EDGES = 'RETRACT_REJECTED_NODE_EDGES';
+const REMOVE_REJECTED_ARTISTS = 'REMOVE_REJECTED_ARTISTS';
+const RETRACT_SELECTED_NODE_EDGE = 'RETRACT_SELECTED_NODE_EDGE'
 const POSITION_SELECTED_ARTIST_TO_CENTER = 'POSITION_SELECTED_ARTIST_TO_CENTER';
 const CALCULATE_AND_EXPAND_EDGES = 'CALCULATE_AND_EXPAND_EDGES';
 const POPULATE_RELATED_ARTIST_NODES = 'POPULATE_RELATED_ARTIST_NODES';
-const REMOVE_REJECTED_ARTISTS = 'REMOVE_REJECTED_ARTISTS';
-
+const TAKE_SNAPSHOT_OF_STATE = 'TAKE_SNAPSHOT_OF_STATE';
+const RESTORE_PREVIOUS_NODE_STATE = 'RESTORE_PREVIOUS_NODE_STATE';
 
 
 ///////////////////////////
@@ -40,7 +42,7 @@ export default function reducer(state = initialState, action) {
         ))
       ));
 
-    case RETRACT_EDGES:
+    case RETRACT_REJECTED_NODE_EDGES:
       // Find all edges connected to rejected nodes and retract them.
       // If we don't have any edges, we can skip this bit.
       if ( !state.get('edges') || !state.get('edges').size ) return state;
@@ -78,23 +80,23 @@ export default function reducer(state = initialState, action) {
       ));
 
     case POSITION_SELECTED_ARTIST_TO_CENTER:
-      // What needs to happen here will depend on the direction specified.
-
-      let groupToDelete = action.direction === 'forwards' ? GRAVEYARD : WOMB;
-
+    // What needs to happen here will depend on the direction specified.
       const nextGroupId = state.getIn(['nodeGroups', WOMB, 'id']) + 1;
 
+      return state.update('nodeGroups', nodeGroups => {
+        const newWomb = fromJS({ id: nextGroupId, nodes: List() });
 
-      state = state.update('nodeGroups', nodeGroups => {
         return nodeGroups
-          .delete(groupToDelete)
-          .push(fromJS({ id: nextGroupId, nodes: List() }));
-      });
+          .delete(GRAVEYARD)
+          .push(newWomb);
+      })
 
+
+    case RETRACT_SELECTED_NODE_EDGE:
       // If we don't have any edges, we can skip this bit.
       if ( !state.get('edges') || !state.get('edges').size ) return state;
 
-      const selectedNodeId = state.getIn(['nodeGroups', PRESENT, 'nodes', '0', 'id']);
+      const selectedNodeId = state.getIn(['nodeGroups', FUTURE, 'nodes', '0', 'id']);
 
       return state.update('edges', edges => {
         return edges.map( edge => (
@@ -155,6 +157,28 @@ export default function reducer(state = initialState, action) {
 
       return state.set('edges', fromJS(edges));
 
+
+    case RESTORE_PREVIOUS_NODE_STATE:
+      // Simple undo, reverts the nodes and edges from the previous state.
+      const previousState = state.getIn(['history', -1]);
+
+      return state
+        .set('nodeGroups', previousState.get('nodeGroups'))
+        // Remove this previous state from the history; it's been consumed.
+        .update('history', history => history.pop());
+
+
+    case TAKE_SNAPSHOT_OF_STATE:
+      // Create a fresh history if none exists
+      if ( !state.get('history') ) state = state.set('history', List());
+
+      return state.update('history', history => (
+        history.push(Map({
+          nodeGroups: state.get('nodeGroups'),
+          edges:      state.get('edges'),
+        }))
+      ));
+
     default:
       return state;
   }
@@ -172,7 +196,7 @@ export function selectArtist(node, direction) {
     type: SELECT_ARTIST,
     node,
     direction
-  }
+  };
 }
 
 // This action makes the non-selected artists disappear.
@@ -180,7 +204,7 @@ export function markUnclickedArtistsAsRejected(node) {
   return {
     type: MARK_UNCLICKED_ARTISTS_AS_REJECTED,
     node
-  }
+  };
 }
 
 export function calculateAndExpandEdges() {
@@ -201,11 +225,16 @@ export function fetchArtistInfo() {
 
 }
 
-export function retractEdges() {
-  console.log("Retracting")
+export function retractRejectedNodeEdges() {
   return {
-    type: RETRACT_EDGES
+    type: RETRACT_REJECTED_NODE_EDGES
   };
+}
+
+export function retractSelectedNodeEdge() {
+  return {
+    type: RETRACT_SELECTED_NODE_EDGE
+  }
 }
 
 export function populateRelatedArtistNodes() {
@@ -223,18 +252,30 @@ export function populateRelatedArtistNodes() {
   return {
     type: POPULATE_RELATED_ARTIST_NODES,
     nodes
-  }
+  };
 }
 
 export function removeRejectedArtists() {
   return {
     type: REMOVE_REJECTED_ARTISTS
-  }
+  };
 }
 
 export function positionSelectedArtistToCenter(direction) {
   return {
     type: POSITION_SELECTED_ARTIST_TO_CENTER,
     direction
+  };
+}
+
+export function restorePreviousNodeState() {
+  return {
+    type: RESTORE_PREVIOUS_NODE_STATE
   }
+}
+
+export function takeSnapshotOfState() {
+  return {
+    type: TAKE_SNAPSHOT_OF_STATE
+  };
 }

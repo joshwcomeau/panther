@@ -8,15 +8,7 @@ export const nodesData = {
       nodes: []
     },{
       id: 1,
-      nodes: [
-        {
-          id: '11',
-          name: faker.internet.userName(),
-          image: faker.image.avatar(),
-          genres: ['country'],
-          audioSamples: ['url1', 'url2', 'url3']
-        }
-      ]
+      nodes: []
     }, {
       id: 2,
       nodes: [

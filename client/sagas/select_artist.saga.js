@@ -4,11 +4,14 @@ import { put } from 'redux-saga/effects'
 import {
   SELECT_ARTIST,
   markUnclickedArtistsAsRejected,
-  retractEdges,
+  retractRejectedNodeEdges,
   removeRejectedArtists,
+  retractSelectedNodeEdge,
   positionSelectedArtistToCenter,
   populateRelatedArtistNodes,
-  calculateAndExpandEdges
+  calculateAndExpandEdges,
+  restorePreviousNodeState,
+  takeSnapshotOfState
 } from '../ducks/graph.duck';
 
 import { repositionDelay, repositionLength } from '../config/timing';
@@ -29,17 +32,28 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 // Our worker saga. It does the actual orchestration
 export function* selectArtist(action) {
+  if ( action.direction === 'forwards' ) {
+    yield put(takeSnapshotOfState());
+  }
+
   yield put(markUnclickedArtistsAsRejected(action.node));
-  yield put(retractEdges());
+  yield put(retractRejectedNodeEdges());
 
   yield delay(repositionDelay);
-  yield put(removeRejectedArtists());
-  yield put(positionSelectedArtistToCenter(action.direction));
+  if ( action.direction === 'forwards' ) {
+    yield put(removeRejectedArtists());
+    yield put(retractSelectedNodeEdge());
+    yield put(positionSelectedArtistToCenter());
+    yield put(populateRelatedArtistNodes());
 
-  yield put(populateRelatedArtistNodes())
+    yield delay(repositionLength);
+    yield put(calculateAndExpandEdges());
+  } else {
+    yield put(restorePreviousNodeState());
+    yield delay(repositionLength);
+    yield put(calculateAndExpandEdges());
+  }
 
-  yield delay(repositionLength);
-  yield put(calculateAndExpandEdges());
 }
 
 // Our watcher Saga: spawn a new incrementAsync task on each INCREMENT_ASYNC

@@ -59,14 +59,27 @@
       0px 2px 0px rgba(0,0,0,0.2),
       0px 0px 4px rgba(0,0,0,0.1)
     ;
+    animation: fadeIn 500ms forwards;
+
 
     &.rejected {
       animation: rejected 700ms;
     }
 
   }
-
 }
+
+@keyframes fadeIn {
+    from  {
+      transform: scale(0.5, 0.5);
+      opacity: 0.01;
+    }
+    to {
+      transform: scale(1, 1);
+      opacity: 1;
+    }
+}
+
 
 @keyframes rejected {
     from  {
