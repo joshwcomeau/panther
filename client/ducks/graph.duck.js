@@ -30,8 +30,8 @@ const RESTORE_PREVIOUS_NODE_STATE = 'RESTORE_PREVIOUS_NODE_STATE';
 /////////////////////////
 // TEMPORARY. Just for development purposes.
 import { nodesData } from '../temp_fixtures.js';
-const initialState = fromJS(nodesData);
-// const initialState = Map();
+// const initialState = fromJS(nodesData);
+const initialState = Map();
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {

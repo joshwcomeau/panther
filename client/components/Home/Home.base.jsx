@@ -1,8 +1,9 @@
 import React, { Component }     from 'react';
-import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 import classNames               from 'classnames';
 
 import GraphContainer           from '../../containers/GraphContainer.jsx';
+import SearchContainer          from '../../containers/SearchContainer.jsx';
+import Header                   from '../Header';
 
 export default function HomeBase(DevTools = null) {
   return class Home extends Component {
@@ -11,13 +12,22 @@ export default function HomeBase(DevTools = null) {
         'wrapped-for-devtools': process.env.NODE_ENV !== 'production'
       });
 
+      const isGraphRunning = this.props.graph.get('nodeGroups');
+
       return (
         <div id="layout" className={classes}>
-          <header>Panther</header>
+          <Header centered={isGraphRunning} />
 
-          <GraphContainer />
+          { isGraphRunning ? null : <SearchContainer /> }
+          { isGraphRunning ? <GraphContainer /> : null }
 
           { DevTools ? <DevTools /> : null }
+
+          <div className="background">
+            <div />
+            <div />
+            <div />
+          </div>
         </div>
       );
     }

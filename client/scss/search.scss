@@ -1,0 +1,21 @@
+#search {
+  position: absolute;
+  z-index: 1;
+  width: 33%;
+  min-width: 440px;
+  top: 200px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  padding: 0 40px;
+  color: $lightgray;
+
+  h1 {
+    font-size: 32px;
+  }
+
+  h3 {
+    margin: 35px 0;
+    font-size: 24px;
+  }
+}

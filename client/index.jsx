@@ -4,7 +4,7 @@ import { Provider }                     from 'react-redux';
 import classNames                       from 'classnames';
 
 import configureStore from './store';
-import Home           from './components/Home';
+import HomeContainer  from './containers/HomeContainer';
 
 require('./scss/main.scss');
 
@@ -12,6 +12,6 @@ const store = configureStore();
 
 render((
   <Provider store={store}>
-    <Home />
+    <HomeContainer />
   </Provider>
 ), document.getElementById('render-target'))

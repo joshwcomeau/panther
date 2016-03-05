@@ -36,11 +36,6 @@ class Graph extends Component {
           </FlipMove>
         </div>
         <EdgesContainer />
-        <div className="background">
-          <div />
-          <div />
-          <div />
-        </div>
       </div>
     )
   }
