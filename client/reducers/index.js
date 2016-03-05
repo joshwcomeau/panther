@@ -1,6 +1,7 @@
 import { Map, List, fromJS } from 'immutable';
 
 import graph from '../ducks/graph.duck';
+import search from '../ducks/search.duck';
 
 
 const rootReducer = ( state = Map(), action ) => {
@@ -10,6 +11,10 @@ const rootReducer = ( state = Map(), action ) => {
     // they take their slice of the state, as well as the action invoked.
     graph: graph(
       state.get('graph'),
+      action
+    ),
+    search: search(
+      state.get('search'),
       action
     )
   });

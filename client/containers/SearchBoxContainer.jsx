@@ -1,7 +1,7 @@
 import { bindActionCreators }   from 'redux';
 import { connect }              from 'react-redux';
 
-import Search                   from '../components/Search';
+import SearchBox                from '../components/Search/SearchBox.jsx';
 import * as Actions             from '../ducks/search.duck';
 import { selectActionCreators } from '../helpers/duck.helpers';
 
@@ -17,4 +17,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( Search );
+export default connect( mapStateToProps, mapDispatchToProps )( SearchBox );

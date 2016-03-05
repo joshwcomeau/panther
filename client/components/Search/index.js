@@ -1,9 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 
-const Search = ({search, actions}) => (
+import SearchBoxContainer from '../../containers/SearchBoxContainer';
+
+
+const Search = () => (
   <section id="search">
     <h1>Discover new music through an infinite suggestion graph.</h1>
     <h3>Enter the name of an artist you like:</h3>
+    <SearchBoxContainer />
   </section>
 );
 

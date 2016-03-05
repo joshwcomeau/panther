@@ -2,7 +2,7 @@ import React, { Component }     from 'react';
 import classNames               from 'classnames';
 
 import GraphContainer           from '../../containers/GraphContainer.jsx';
-import SearchContainer          from '../../containers/SearchContainer.jsx';
+import Search                   from '../../components/Search';
 import Header                   from '../Header';
 
 export default function HomeBase(DevTools = null) {
@@ -18,7 +18,7 @@ export default function HomeBase(DevTools = null) {
         <div id="layout" className={classes}>
           <Header centered={isGraphRunning} />
 
-          { isGraphRunning ? null : <SearchContainer /> }
+          { isGraphRunning ? null : <Search /> }
           { isGraphRunning ? <GraphContainer /> : null }
 
           { DevTools ? <DevTools /> : null }
