@@ -8,25 +8,8 @@ class SearchBox extends Component {
     this.props.actions.requestTypeaheadSuggestions(searchTerm)
   }
 
-  selectHandler(value, item) {
+  selectHandler(suggestion) {
     this.props.actions.selectTypeaheadSuggestion()
-  }
-
-  renderItem(item, isHighlighted) {
-    const classes = classNames([
-      'suggestion',
-      isHighlighted ? 'highlighted' : ''
-    ]);
-
-    return (
-      <div
-        className={classes}
-        key={item.abbr}
-        id={item.abbr}
-      >
-        {item.name}
-      </div>
-    );
   }
 
   renderSuggestions() {

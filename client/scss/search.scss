@@ -60,5 +60,22 @@
         transition: 250ms;
       }
     }
+
+    .suggestions {
+      .suggestion {
+        padding: 12px;
+        background: darken($navy, 2%);
+        border-bottom: 1px solid darken($navy, 4%);
+        cursor: pointer;
+
+        &:last-child {
+          border-bottom: 0;
+        }
+
+        &:hover {
+          background: darken($blue, 20%);
+        }
+      }
+    }
   }
 }
