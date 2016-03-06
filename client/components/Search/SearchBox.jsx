@@ -55,9 +55,10 @@ class SearchBox extends Component {
       confirmedIndex: selectedIndex
     });
 
-    console.log("Setting confirmed", selectedIndex)
+    const suggestion = this.props.search.getIn(['suggestions', selectedIndex]);
+    console.log("Setting confirmed", suggestion.toJS())
 
-    this.props.actions.selectTypeaheadSuggestion()
+    this.props.actions.initializeWithArtist(suggestion)
   }
 
   renderSuggestions() {

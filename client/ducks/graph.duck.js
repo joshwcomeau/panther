@@ -13,16 +13,17 @@ import {
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-export const SELECT_ARTIST = 'SELECT_ARTIST';
-const MARK_UNCLICKED_ARTISTS_AS_REJECTED = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
-const RETRACT_REJECTED_NODE_EDGES = 'RETRACT_REJECTED_NODE_EDGES';
-const REMOVE_REJECTED_ARTISTS = 'REMOVE_REJECTED_ARTISTS';
-const RETRACT_SELECTED_NODE_EDGE = 'RETRACT_SELECTED_NODE_EDGE';
-const POSITION_SELECTED_ARTIST_TO_CENTER = 'POSITION_SELECTED_ARTIST_TO_CENTER';
-const CALCULATE_AND_EXPAND_EDGES = 'CALCULATE_AND_EXPAND_EDGES';
-const POPULATE_RELATED_ARTIST_NODES = 'POPULATE_RELATED_ARTIST_NODES';
-const TAKE_SNAPSHOT_OF_STATE = 'TAKE_SNAPSHOT_OF_STATE';
-const RESTORE_PREVIOUS_NODE_STATE = 'RESTORE_PREVIOUS_NODE_STATE';
+export const INITIALIZE_WITH_ARTIST       = 'INITIALIZE_WITH_ARTIST';
+export const SELECT_ARTIST                = 'SELECT_ARTIST';
+const MARK_UNCLICKED_ARTISTS_AS_REJECTED  = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
+const RETRACT_REJECTED_NODE_EDGES         = 'RETRACT_REJECTED_NODE_EDGES';
+const REMOVE_REJECTED_ARTISTS             = 'REMOVE_REJECTED_ARTISTS';
+const RETRACT_SELECTED_NODE_EDGE          = 'RETRACT_SELECTED_NODE_EDGE';
+const POSITION_SELECTED_ARTIST_TO_CENTER  = 'POSITION_SELECTED_ARTIST_TO_CENTER';
+const CALCULATE_AND_EXPAND_EDGES          = 'CALCULATE_AND_EXPAND_EDGES';
+const POPULATE_RELATED_ARTIST_NODES       = 'POPULATE_RELATED_ARTIST_NODES';
+const TAKE_SNAPSHOT_OF_STATE              = 'TAKE_SNAPSHOT_OF_STATE';
+const RESTORE_PREVIOUS_NODE_STATE         = 'RESTORE_PREVIOUS_NODE_STATE';
 
 
 ///////////////////////////
@@ -35,6 +36,19 @@ const initialState = Map();
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
+    case INITIALIZE_WITH_ARTIST:
+      // The first thing we need is our 5 areas.
+      // We don't have a future yet (a saga is concurrently working on it),
+      // but we can prepare the stage in the meantime.
+      let nodeGroups = Array.from(new Array(5), (group, id) => ({
+        id,
+        nodes: []
+      }));
+
+      nodeGroups[PRESENT].nodes.push(action.artist);
+
+      return state.set('nodeGroups', fromJS(nodeGroups));
+
     case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
       return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
         nodes.map( (node, index) => (
@@ -186,6 +200,13 @@ export default function reducer(state = initialState, action) {
 ///////////////////////////
 // ACTION CREATORS ///////
 /////////////////////////
+
+export function initializeWithArtist(artist) {
+  return {
+    type: INITIALIZE_WITH_ARTIST,
+    artist
+  };
+}
 
 // This is our orchestration action that is caught by the Saga.
 // It does not have any direct effect on the state.

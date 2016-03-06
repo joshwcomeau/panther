@@ -1,5 +1,5 @@
 import { takeEvery } from 'redux-saga'
-import { put } from 'redux-saga/effects'
+import { call, put } from 'redux-saga/effects'
 
 import {
   SELECT_ARTIST,
@@ -53,10 +53,9 @@ export function* selectArtist(action) {
     yield delay(repositionLength);
     yield put(calculateAndExpandEdges());
   }
-
 }
 
-// Our watcher Saga: spawn a new incrementAsync task on each INCREMENT_ASYNC
+// Our watcher Saga
 export function* watchSelectArtist() {
-  yield* takeEvery(SELECT_ARTIST, selectArtist)
+  yield* takeEvery(SELECT_ARTIST, selectArtist);
 }

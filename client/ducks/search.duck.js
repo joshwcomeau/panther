@@ -22,11 +22,10 @@ const initialState = Map({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case REQUEST_TYPEAHEAD_SUGGESTIONS:
-      console.log("Setting", fromJS(action.term))
       return state.set('term', fromJS(action.term));
 
     case RECEIVE_TYPEAHEAD_SUGGESTIONS:
-      return state.set('suggestions', fromJS(action.suggestions));
+      return state.set('suggestions', fromJS(action.artists));
 
     case FAILURE_TYPEAHEAD_SUGGESTIONS:
       return state;
@@ -62,8 +61,8 @@ export function requestTypeaheadSuggestions(term) {
           type: 'artist',
           q: term
         },
-        onSuccess: receiveTypeaheadSuggestions,
-        onFailure: failureTypeaheadSuggestions
+        onSuccessAction: receiveTypeaheadSuggestions,
+        onFailureAction: failureTypeaheadSuggestions
       }
     }
   };
@@ -72,7 +71,7 @@ export function requestTypeaheadSuggestions(term) {
 export function receiveTypeaheadSuggestions(suggestions) {
   return {
     type: RECEIVE_TYPEAHEAD_SUGGESTIONS,
-    suggestions
+    artists: suggestions.artists.items.slice(0, 10)
   };
 }
 
