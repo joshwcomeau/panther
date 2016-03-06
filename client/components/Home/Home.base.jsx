@@ -16,8 +16,6 @@ export default function HomeBase(DevTools = null) {
 
       return (
         <div id="layout" className={classes}>
-          <Header centered={isGraphRunning} />
-
           { isGraphRunning ? null : <Search /> }
           { isGraphRunning ? <GraphContainer /> : null }
 

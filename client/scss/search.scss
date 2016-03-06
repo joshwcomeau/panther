@@ -3,12 +3,32 @@
   z-index: 1;
   width: 33%;
   min-width: 440px;
-  top: 200px;
+  height: 100%;
+  top: 0;
   left: 0;
   right: 0;
   margin: auto;
   padding: 0 40px;
   color: $lightgray;
+  background: $navy;
+
+  header {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    line-height: 200px;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    font-size: 80px;
+    letter-spacing: -3px;
+    font-weight: bold;
+    color: #FFF;
+    text-shadow: 1px 2px 0px rgba(0,0,0,0.2);
+    transition: 1s;
+}
 
   h1 {
     font-size: 32px;
@@ -20,16 +40,25 @@
   }
 
   #search-box {
+    position: relative;
+    width: 80%;
+    margin-left: 10%;
+
     input {
-      width: 80%;
-      margin-left: 10%;
+      width: 100%;
       background: transparent;
       border: none;
       outline: none;
-      padding: 20px 0;
+      padding: 8px;
       font-size: 24px;
       color: $white;
       border-bottom: 3px solid $blue;
+      transition: 500ms;
+
+      &:hover {
+        background: darken($navy, 2%);
+        transition: 250ms;
+      }
     }
   }
 }

@@ -3,27 +3,12 @@ import Autocomplete from 'react-autocomplete';
 import classNames from 'classnames';
 
 class SearchBox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      artists: [],
-      loading: false
-    };
-
-    this.changeHandler.bind(this);
-    this.selectHandler.bind(this);
-    this.renderItem.bind(this);
-  }
-
-  changeHandler(event, value) {
-    console.log(this)
-    this.setState({loading: true, artists: [{name: 'hi!'}]});
-    this.props.actions.retrieveTypeaheadSuggestions(value)
+  changeHandler(ev) {
+    const searchTerm = ev.target.value;
+    this.props.actions.requestTypeaheadSuggestions(searchTerm)
   }
 
   selectHandler(value, item) {
-    console.log(this)
-    // set the menu to only the selected item
     this.props.actions.selectTypeaheadSuggestion()
   }
 
@@ -44,17 +29,33 @@ class SearchBox extends Component {
     );
   }
 
+  renderSuggestions() {
+    return this.props.search.get('suggestions').map( suggestion => {
+      console.log(suggestion)
+      return (
+        <div
+          className="suggestion"
+          key={suggestion.get('id')}
+          onClick={this.selectHandler.bind(this, suggestion)}
+        >
+          { suggestion.get('name') }
+        </div>
+      )
+    });
+  }
+
   render() {
+    console.log("Received props", this.props.search.toJS())
     return (
       <div id="search-box">
-        <Autocomplete
-          ref="autocomplete"
-          items={this.state.artists}
-          getItemValue={(item) => item.name}
-          onSelect={this.selectHandler.bind(this)}
-          onChange={this.changeHandler.bind(this)}
-          renderItem={this.renderItem}
+        <input
+          className="typeahead"
+          onChange={::this.changeHandler}
+          value={this.props.search.get('term')}
         />
+        <div className="suggestions">
+          { this.props.search.get('suggestions') ? this.renderSuggestions() : null }
+        </div>
       </div>
     );
   }
