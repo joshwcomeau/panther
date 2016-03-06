@@ -4,7 +4,9 @@ import { Map, List, fromJS } from 'immutable';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-const RETRIEVE_TYPEAHEAD_SUGGESTIONS = 'RETRIEVE_TYPEAHEAD_SUGGESTIONS';
+const REQUEST_TYPEAHEAD_SUGGESTIONS = 'REQUEST_TYPEAHEAD_SUGGESTIONS';
+const RECEIVE_TYPEAHEAD_SUGGESTIONS = 'RECEIVE_TYPEAHEAD_SUGGESTIONS';
+const FAILURE_TYPEAHEAD_SUGGESTIONS = 'FAILURE_TYPEAHEAD_SUGGESTIONS';
 const CLEAR_TYPEAHEAD = 'CLEAR_TYPEAHEAD';
 const RECORD_VOICE = 'RECORD_VOICE';
 const SELECT_TYPEAHEAD_SUGGESTION = 'SELECT_TYPEAHEAD_SUGGESTION';
@@ -13,22 +15,32 @@ const SELECT_TYPEAHEAD_SUGGESTION = 'SELECT_TYPEAHEAD_SUGGESTION';
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
-const initialState = Map();
+const initialState = Map({
+  value: 'ya'
+});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case RETRIEVE_TYPEAHEAD_SUGGESTIONS:
-      break;
+    case REQUEST_TYPEAHEAD_SUGGESTIONS:
+      console.log("Setting term", action.term)
+      return state.set('term', fromJS(action.term));
+
+    case RECEIVE_TYPEAHEAD_SUGGESTIONS:
+      console.log("Setting suggestions!")
+      return state.set('suggestions', fromJS(action.suggestions));
+
+    case FAILURE_TYPEAHEAD_SUGGESTIONS:
+      return state;
 
     case CLEAR_TYPEAHEAD:
       // TODO: display some random artist names for inspiration
-      break;
+      return state;
 
     case RECORD_VOICE:
-      break;
+      return state;
 
     case SELECT_TYPEAHEAD_SUGGESTION:
-      break;
+      return state;
 
     default:
       return state;
@@ -40,15 +52,35 @@ export default function reducer(state = initialState, action) {
 // ACTION CREATORS ///////
 /////////////////////////
 
-export function retrieveTypeaheadSuggestions(artistName) {
-  // TODO: API middleware
+export function requestTypeaheadSuggestions(term) {
   return {
-    type: RETRIEVE_TYPEAHEAD_SUGGESTIONS,
+    type: REQUEST_TYPEAHEAD_SUGGESTIONS,
+    term,
     meta: {
-      api: {
-        findArtist: artistName
+      spotify: {
+        endpoint: 'search',
+        params: {
+          type: 'artist',
+          q: term
+        },
+        onSuccess: receiveTypeaheadSuggestions,
+        onFailure: failureTypeaheadSuggestions
       }
     }
+  };
+}
+
+export function receiveTypeaheadSuggestions(suggestions) {
+  return {
+    type: RECEIVE_TYPEAHEAD_SUGGESTIONS,
+    suggestions
+  };
+}
+
+export function failureTypeaheadSuggestions(error) {
+  return {
+    type: FAILURE_TYPEAHEAD_SUGGESTIONS,
+    error
   }
 }
 
