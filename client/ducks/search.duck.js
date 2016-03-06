@@ -22,11 +22,9 @@ const initialState = Map({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case REQUEST_TYPEAHEAD_SUGGESTIONS:
-      console.log("Setting term", action.term)
       return state.set('term', fromJS(action.term));
 
     case RECEIVE_TYPEAHEAD_SUGGESTIONS:
-      console.log("Setting suggestions!")
       return state.set('suggestions', fromJS(action.suggestions));
 
     case FAILURE_TYPEAHEAD_SUGGESTIONS:

@@ -31,7 +31,6 @@ class SearchBox extends Component {
 
   renderSuggestions() {
     return this.props.search.get('suggestions').map( suggestion => {
-      console.log(suggestion)
       return (
         <div
           className="suggestion"
@@ -45,7 +44,6 @@ class SearchBox extends Component {
   }
 
   render() {
-    console.log("Received props", this.props.search.toJS())
     return (
       <div id="search-box">
         <input
