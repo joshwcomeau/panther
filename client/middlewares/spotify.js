@@ -18,6 +18,8 @@ const spotify = store => next => action => {
 
   const url = `https://api.spotify.com/v1/${endpoint}?${paramString}`;
 
+  console.log("Fetching", url)
+
   fetchFromSpotify(url, action, next);
 
 };

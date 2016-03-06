@@ -72,8 +72,12 @@
           border-bottom: 0;
         }
 
-        &:hover {
+        &:hover, &.highlighted {
           background: darken($blue, 20%);
+        }
+
+        &.confirmed {
+          background: darken($green, 10%);
         }
       }
     }
