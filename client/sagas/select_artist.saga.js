@@ -1,8 +1,9 @@
 import { takeEvery } from 'redux-saga'
-import { call, put } from 'redux-saga/effects'
+import { take, call, put } from 'redux-saga/effects'
 
 import {
   SELECT_ARTIST,
+  setupInitialStage,
   markUnclickedArtistsAsRejected,
   retractRejectedNodeEdges,
   removeRejectedArtists,
@@ -21,17 +22,14 @@ import { repositionDelay, repositionLength } from '../config/timing';
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
-// When we click a node, a bunch of stuff needs to happen:
-//   - immediately fade out the NON-clicked nodes, over N1 ms.
-//   - immediately fetch the artist info from Spotify.
-//   - immediately fetch the artist's related artists.
-//   - after N1ms, reposition the nodes so that the clicked one is centered.
-//      this action should take N2ms
-//   - after N1+N2ms, IF the artist info is available, show the artist data.
-//     If not, wait until it is and then perform immediately.
 
-// Our worker saga. It does the actual orchestration
+export function* initializeWithArtist(artist) {
+  yield put(setupInitialStage(artist));
+  // TODO: Request related artists from API
+}
+
 export function* selectArtist(action) {
+  console.log("Regular artist take")
   if ( action.direction === 'forwards' ) {
     yield put(takeSnapshotOfState());
   }
@@ -57,5 +55,12 @@ export function* selectArtist(action) {
 
 // Our watcher Saga
 export function* watchSelectArtist() {
+  // The first time this action is triggered, the job is a bit different.
+  // We're setting up the structure, not moving forward to the next nodes.
+  // TODO: Some way of resetting this, so that the process can be restarted
+  // without refreshing the page.
+  const initialAction = yield take(SELECT_ARTIST);
+  yield initializeWithArtist(initialAction.artist)
+
   yield* takeEvery(SELECT_ARTIST, selectArtist);
 }

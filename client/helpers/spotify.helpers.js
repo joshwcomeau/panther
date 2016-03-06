@@ -6,11 +6,15 @@ const ROOT_URL = 'https://api.spotify.com/v1';
 
 export const spotifyRequest = throttle(
   ({ endpoint, params, onSuccess, onFailure }) => {
-    const paramString = toPairs(params).map(param => param.join('=')).join('&');
-    const url = `${ROOT_URL}/${endpoint}?${paramString}`;
+    let url = `${ROOT_URL}/${endpoint}`;
 
-    fetch(url)
-      .then(checkStatus)
+    if ( params ) {
+      const paramString = toPairs(params).map(param => param.join('=')).join('&');
+      url += `?${paramString}`;
+    }
+
+    fetch( url )
+      .then( checkStatus )
       .then( response => response.json() )
       .then( onSuccess )
       .catch( onFailure );

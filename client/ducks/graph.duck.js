@@ -13,8 +13,8 @@ import {
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-export const INITIALIZE_WITH_ARTIST       = 'INITIALIZE_WITH_ARTIST';
 export const SELECT_ARTIST                = 'SELECT_ARTIST';
+const SETUP_INITIAL_STAGE                 = 'SETUP_INITIAL_STAGE';
 const MARK_UNCLICKED_ARTISTS_AS_REJECTED  = 'MARK_UNCLICKED_ARTISTS_AS_REJECTED';
 const RETRACT_REJECTED_NODE_EDGES         = 'RETRACT_REJECTED_NODE_EDGES';
 const REMOVE_REJECTED_ARTISTS             = 'REMOVE_REJECTED_ARTISTS';
@@ -36,7 +36,7 @@ const initialState = Map();
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case INITIALIZE_WITH_ARTIST:
+    case SETUP_INITIAL_STAGE:
       // The first thing we need is our 5 areas.
       // We don't have a future yet (a saga is concurrently working on it),
       // but we can prepare the stage in the meantime.
@@ -201,21 +201,21 @@ export default function reducer(state = initialState, action) {
 // ACTION CREATORS ///////
 /////////////////////////
 
-export function initializeWithArtist(artist) {
+// This is our orchestration action that is caught by the Saga.
+// It does not have any direct effect on the state.
+export function selectArtist(artist, direction) {
   return {
-    type: INITIALIZE_WITH_ARTIST,
-    artist
+    type: SELECT_ARTIST,
+    artist,
+    direction
   };
 }
 
-// This is our orchestration action that is caught by the Saga.
-// It does not have any direct effect on the state.
-export function selectArtist(node, direction) {
+export function setupInitialStage(artist) {
   return {
-    type: SELECT_ARTIST,
-    node,
-    direction
-  };
+    type: SETUP_INITIAL_STAGE,
+    artist
+  }
 }
 
 // This action makes the non-selected artists disappear.
