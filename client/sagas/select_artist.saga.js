@@ -27,17 +27,23 @@ export function* initializeWithArtist(artist) {
   yield put(setupInitialStage(artist));
 
   // Fetch related artists
-  const url = `https://api.spotify.com/v1/artists/${artist.get('id')}/related-artists`;
-  yield call( fetch(url).then( response => response.json() ) );
+  const response = yield call( requestAPI, {
+    endpoint: `artists/${artist.get('id')}/related-artists`
+  });
+
+  const relatedArtists = response.artists.slice(0, 3);
+  yield put(populateRelatedArtistNodes(relatedArtists));
+  yield put(calculateAndExpandEdges());
+  console.log("Got response", response)
 }
 
 export function* selectArtist(action) {
-  console.log("Regular artist take")
+  console.log("Selecting", action)
   if ( action.direction === 'forwards' ) {
     yield put(takeSnapshotOfState());
   }
 
-  yield put(markUnclickedArtistsAsRejected(action.node));
+  yield put(markUnclickedArtistsAsRejected(action.artist));
   yield put(retractRejectedNodeEdges());
 
   yield delay(repositionDelay);
@@ -45,7 +51,13 @@ export function* selectArtist(action) {
     yield put(removeRejectedArtists());
     yield put(retractSelectedNodeEdge());
     yield put(positionSelectedArtistToCenter());
-    yield put(populateRelatedArtistNodes());
+
+    const response = yield call( requestAPI, {
+      endpoint: `artists/${action.artist.get('id')}/related-artists`
+    });
+
+    const relatedArtists = response.artists.slice(0, 3);
+    yield put(populateRelatedArtistNodes(relatedArtists));
 
     yield delay(repositionLength);
     yield put(calculateAndExpandEdges());
@@ -66,4 +78,28 @@ export function* watchSelectArtist() {
   yield initializeWithArtist(initialAction.artist)
 
   yield* takeEvery(SELECT_ARTIST, selectArtist);
+}
+
+
+// HELPERS
+// TODO: COnsolidate in a lib
+function requestAPI({endpoint, params}) {
+  let url = `https://api.spotify.com/v1/${endpoint}`;
+
+  if ( params ) {
+    const paramString = toPairs(params).map(param => param.join('=')).join('&');
+    url += `?${paramString}`;
+  }
+
+  return fetch(url).then(checkStatus).then( response => response.json() );
+}
+
+function checkStatus(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return response
+  } else {
+    var error = new Error(response.statusText)
+    error.response = response
+    throw error
+  }
 }

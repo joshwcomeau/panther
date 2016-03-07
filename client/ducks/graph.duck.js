@@ -51,9 +51,10 @@ export default function reducer(state = initialState, action) {
 
     case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
       return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
-        nodes.map( (node, index) => (
-          node.set( 'rejected', node.get('id') !== action.node.get('id') )
-        ))
+        nodes.map( (node, index) => {
+          console.log(node, action.node)
+          return node.set( 'rejected', node.get('id') !== action.node.get('id') )
+        })
       ));
 
     case RETRACT_REJECTED_NODE_EDGES:
@@ -89,8 +90,9 @@ export default function reducer(state = initialState, action) {
       ));
 
     case POPULATE_RELATED_ARTIST_NODES:
+
       return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
-        nodes.concat( action.nodes )
+        nodes.concat( fromJS(action.relatedArtists) )
       ));
 
     case POSITION_SELECTED_ARTIST_TO_CENTER:
@@ -248,21 +250,10 @@ export function retractSelectedNodeEdge() {
   return { type: RETRACT_SELECTED_NODE_EDGE };
 }
 
-export function populateRelatedArtistNodes() {
-  const numOfFutureNodes = Math.floor(Math.random() * 4)+2;
-  let nodes = [];
-  for ( let i=0; i<numOfFutureNodes; i++ ) {
-    nodes.push({
-      id: faker.random.number().toString(),
-      name: faker.company.companyName()
-    })
-  }
-
-  nodes = fromJS(nodes);
-
+export function populateRelatedArtistNodes(relatedArtists) {
   return {
     type: POPULATE_RELATED_ARTIST_NODES,
-    nodes
+    relatedArtists
   };
 }
 

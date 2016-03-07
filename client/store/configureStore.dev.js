@@ -5,7 +5,6 @@ import createSagaMiddleware                       from 'redux-saga'
 import rootReducer                    from '../reducers';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/api.saga';
-import spotifyMiddleware              from '../middlewares/spotify';
 import DevTools                       from '../containers/DevTools.jsx';
 
 
@@ -21,7 +20,6 @@ export default function configureStore() {
   let middlewares = [];
   middlewares.push( createSagaMiddleware(watchSelectArtist) );
   middlewares.push( createSagaMiddleware(search) );
-  middlewares.push( spotifyMiddleware );
   middlewares.push( thunkMiddleware );
 
   const store = createStore(
