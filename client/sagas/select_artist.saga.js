@@ -25,7 +25,10 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export function* initializeWithArtist(artist) {
   yield put(setupInitialStage(artist));
-  // TODO: Request related artists from API
+
+  // Fetch related artists
+  const url = `https://api.spotify.com/v1/artists/${artist.get('id')}/related-artists`;
+  yield call( fetch(url).then( response => response.json() ) );
 }
 
 export function* selectArtist(action) {

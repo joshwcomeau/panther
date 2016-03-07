@@ -13,12 +13,10 @@ export const spotifyRequest = throttle(
       url += `?${paramString}`;
     }
 
-    fetch( url )
+    return fetch( url )
       .then( checkStatus )
       .then( response => response.json() )
-      .then( onSuccess )
-      .catch( onFailure );
-  }, 500
+  }, 200
 );
 
 function checkStatus(response) {

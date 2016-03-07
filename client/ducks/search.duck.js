@@ -4,12 +4,11 @@ import { Map, List, fromJS } from 'immutable';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-const REQUEST_TYPEAHEAD_SUGGESTIONS = 'REQUEST_TYPEAHEAD_SUGGESTIONS';
+export const REQUEST_TYPEAHEAD_SUGGESTIONS = 'REQUEST_TYPEAHEAD_SUGGESTIONS';
 const RECEIVE_TYPEAHEAD_SUGGESTIONS = 'RECEIVE_TYPEAHEAD_SUGGESTIONS';
 const FAILURE_TYPEAHEAD_SUGGESTIONS = 'FAILURE_TYPEAHEAD_SUGGESTIONS';
 const CLEAR_TYPEAHEAD = 'CLEAR_TYPEAHEAD';
 const RECORD_VOICE = 'RECORD_VOICE';
-const SELECT_TYPEAHEAD_SUGGESTION = 'SELECT_TYPEAHEAD_SUGGESTION';
 
 
 ///////////////////////////
@@ -37,9 +36,6 @@ export default function reducer(state = initialState, action) {
     case RECORD_VOICE:
       return state;
 
-    case SELECT_TYPEAHEAD_SUGGESTION:
-      return state;
-
     default:
       return state;
   }
@@ -53,25 +49,14 @@ export default function reducer(state = initialState, action) {
 export function requestTypeaheadSuggestions(term) {
   return {
     type: REQUEST_TYPEAHEAD_SUGGESTIONS,
-    term,
-    meta: {
-      spotify: {
-        endpoint: 'search',
-        params: {
-          type: 'artist',
-          q: term
-        },
-        onSuccessAction: receiveTypeaheadSuggestions,
-        onFailureAction: failureTypeaheadSuggestions
-      }
-    }
+    term
   };
 }
 
-export function receiveTypeaheadSuggestions(suggestions) {
+export function receiveTypeaheadSuggestions(suggestedArtists) {
   return {
     type: RECEIVE_TYPEAHEAD_SUGGESTIONS,
-    artists: suggestions.artists.items.slice(0, 10)
+    artists: suggestedArtists
   };
 }
 
@@ -92,15 +77,5 @@ export function recordVoice() {
   // TODO: Figure this out
   return {
     type: RECORD_VOICE
-  };
-}
-
-export function selectTypeaheadSuggestion() {
-  // This will basically just hide the intro stuff so the graph can take over.
-  // We'll need, ideally in the component, a second action dispatched to
-  // go to the graph reducer.
-
-  return {
-    type: SELECT_TYPEAHEAD_SUGGESTION
   };
 }
