@@ -14,7 +14,7 @@ import {
   restorePreviousNodeState,
   takeSnapshotOfState
 } from '../ducks/graph.duck';
-
+import { fetchRelatedArtists } from '../helpers/api.helpers';
 import { repositionDelay, repositionLength } from '../config/timing';
 
 
@@ -27,9 +27,7 @@ export function* initializeWithArtist(artist) {
   yield put(setupInitialStage(artist));
 
   // Fetch related artists
-  const response = yield call( requestAPI, {
-    endpoint: `artists/${artist.get('id')}/related-artists`
-  });
+  const response = yield call( fetchRelatedArtists, artist.get('id') );
 
   yield put(populateRelatedArtistNodes(response.artists));
   yield put(calculateAndExpandEdges());
@@ -51,9 +49,7 @@ export function* selectArtist(action) {
     yield put(retractSelectedNodeEdge());
     yield put(positionSelectedArtistToCenter());
 
-    const response = yield call( requestAPI, {
-      endpoint: `artists/${action.artist.get('id')}/related-artists`
-    });
+    const response = yield call( fetchRelatedArtists, action.artist.get('id') );
 
     yield put(populateRelatedArtistNodes(response.artists));
 
@@ -77,28 +73,4 @@ export function* watchSelectArtist() {
   yield initializeWithArtist(initialAction.artist)
 
   yield* takeEvery(SELECT_ARTIST, selectArtist);
-}
-
-
-// HELPERS
-// TODO: COnsolidate in a lib
-function requestAPI({endpoint, params}) {
-  let url = `https://api.spotify.com/v1/${endpoint}`;
-
-  if ( params ) {
-    const paramString = toPairs(params).map(param => param.join('=')).join('&');
-    url += `?${paramString}`;
-  }
-
-  return fetch(url).then(checkStatus).then( response => response.json() );
-}
-
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response
-  } else {
-    var error = new Error(response.statusText)
-    error.response = response
-    throw error
-  }
 }
