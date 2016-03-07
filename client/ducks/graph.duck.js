@@ -38,21 +38,23 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case SETUP_INITIAL_STAGE:
       // The first thing we need is our 5 areas.
-      // We don't have a future yet (a saga is concurrently working on it),
+      // We don't have a future yet (saga will do it next),
       // but we can prepare the stage in the meantime.
       let nodeGroups = Array.from(new Array(5), (group, id) => ({
         id,
         nodes: []
       }));
 
+      // Add the artist to the stage, and mark it as seen
       nodeGroups[PRESENT].nodes.push(action.artist);
 
-      return state.set('nodeGroups', fromJS(nodeGroups));
+      return state
+        .set('nodeGroups', fromJS(nodeGroups))
+        .set('seenArtistIds', fromJS([action.artist.get('id')]));
 
     case MARK_UNCLICKED_ARTISTS_AS_REJECTED:
       return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
         nodes.map( (node, index) => {
-          console.log(node, action.node)
           return node.set( 'rejected', node.get('id') !== action.node.get('id') )
         })
       ));
@@ -90,10 +92,28 @@ export default function reducer(state = initialState, action) {
       ));
 
     case POPULATE_RELATED_ARTIST_NODES:
+      let seenArtistIds = state.get('seenArtistIds') || List();
+      let newSeenArtists = [];
 
-      return state.updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => (
-        nodes.concat( fromJS(action.relatedArtists) )
-      ));
+      return state
+        .updateIn(['nodeGroups', FUTURE, 'nodes'], nodes => {
+          // We want to exclude any artists we've seen in previous areas.
+          // Filter through, removing duplicates, and then take the first N
+          // TODO: Move this number to a constant somewhere
+          newSeenArtists = action.relatedArtists
+            .filter( related => (
+              !seenArtistIds.find( id => id === related.id )
+            ))
+            .slice(0, 4);
+
+          return nodes.concat( fromJS(newSeenArtists) )
+        })
+        .update('seenArtistIds', () => {
+          // Update our seen artists with ONLY the N actually shown to the user.
+          // The API might return 20 matches, but we don't want to mark all 20.
+          const newArtistIds = newSeenArtists.map( artist => artist.id );
+          return seenArtistIds.concat( fromJS(newArtistIds) );
+        });
 
     case POSITION_SELECTED_ARTIST_TO_CENTER:
     // What needs to happen here will depend on the direction specified.
@@ -178,6 +198,7 @@ export default function reducer(state = initialState, action) {
 
       return state
         .set('nodeGroups', previousState.get('nodeGroups'))
+        .set('seenArtistIds', previousState.get('seenArtistIds'))
         // Remove this previous state from the history; it's been consumed.
         .update('history', history => history.pop());
 
@@ -188,8 +209,8 @@ export default function reducer(state = initialState, action) {
 
       return state.update('history', history => (
         history.push(Map({
-          nodeGroups: state.get('nodeGroups'),
-          edges:      state.get('edges'),
+          nodeGroups:     state.get('nodeGroups'),
+          seenArtistIds:  state.get('seenArtistIds'),
         }))
       ));
 
@@ -203,8 +224,7 @@ export default function reducer(state = initialState, action) {
 // ACTION CREATORS ///////
 /////////////////////////
 
-// This is our orchestration action that is caught by the Saga.
-// It does not have any direct effect on the state.
+// SAGA ORCHESTRATION ACTION
 export function selectArtist(artist, direction) {
   return {
     type: SELECT_ARTIST,

@@ -26,7 +26,6 @@ class SearchBox extends Component {
   // Handle typeahead controls (moving around, selecting an entry)
   controlsHandler(ev) {
     let selected = this.state.selectedIndex;
-    console.log(selected, selected -1 )
 
     switch (ev.which) {
       case keys.UP:

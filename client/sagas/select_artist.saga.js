@@ -31,17 +31,16 @@ export function* initializeWithArtist(artist) {
     endpoint: `artists/${artist.get('id')}/related-artists`
   });
 
-  const relatedArtists = response.artists.slice(0, 3);
-  yield put(populateRelatedArtistNodes(relatedArtists));
+  yield put(populateRelatedArtistNodes(response.artists));
   yield put(calculateAndExpandEdges());
-  console.log("Got response", response)
 }
 
+
 export function* selectArtist(action) {
-  console.log("Selecting", action)
   if ( action.direction === 'forwards' ) {
     yield put(takeSnapshotOfState());
   }
+
 
   yield put(markUnclickedArtistsAsRejected(action.artist));
   yield put(retractRejectedNodeEdges());
@@ -56,8 +55,7 @@ export function* selectArtist(action) {
       endpoint: `artists/${action.artist.get('id')}/related-artists`
     });
 
-    const relatedArtists = response.artists.slice(0, 3);
-    yield put(populateRelatedArtistNodes(relatedArtists));
+    yield put(populateRelatedArtistNodes(response.artists));
 
     yield delay(repositionLength);
     yield put(calculateAndExpandEdges());
@@ -67,6 +65,7 @@ export function* selectArtist(action) {
     yield put(calculateAndExpandEdges());
   }
 }
+
 
 // Our watcher Saga
 export function* watchSelectArtist() {
