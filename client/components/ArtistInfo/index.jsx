@@ -1,12 +1,14 @@
 import React, { Component, PropTypes } from 'react';
+
 import ArtistAvatar from './ArtistAvatar.jsx';
+import Play from './Play';
+
 
 class ArtistInfo extends Component {
   getSmallestAcceptableImage() {
     const images = this.props.artist.get('images');
     const minWidth = window.innerWidth / 3;
     let image = images.reverse().find( image => {
-      console.log("min width is", minWidth, "image is", image.get('width'))
       return image.get('width') > minWidth
     });
 
@@ -14,13 +16,30 @@ class ArtistInfo extends Component {
 
     return image.get('url');
   }
+
+  renderPlayButtons() {
+    return [1, 2, 3].map( track => (
+      <Play
+        size={60}
+        progressCircleWidth={5}
+        progressCircleColor="#78A931"
+        idleBackgroundColor="#22272a"
+        activeBackgroundColor="#A9402D"
+        playIconColor="#1888C8"
+        stopIconColor="#FFFFFF"
+      />
+    ))
+  }
+
   render() {
     console.log("Artist info props", this.props.artist.toJS());
     return (
       <div id="artist-info">
         <ArtistAvatar src={this.getSmallestAcceptableImage()} />
         <div className="node-spacer" />
-        <div className="play-buttons" />
+        <div className="play-buttons">
+          { this.renderPlayButtons() }
+        </div>
       </div>
     )
   }
