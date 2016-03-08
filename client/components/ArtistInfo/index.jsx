@@ -19,6 +19,8 @@ class ArtistInfo extends Component {
     return (
       <div id="artist-info">
         <ArtistAvatar src={this.getSmallestAcceptableImage()} />
+        <div className="node-spacer" />
+        <div className="play-buttons" />
       </div>
     )
   }
