@@ -1,5 +1,6 @@
 import React, { Component }     from 'react';
 import classNames               from 'classnames';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import Search                   from '../../components/Search';
@@ -16,7 +17,15 @@ export default function HomeBase(DevTools = null) {
 
       return (
         <div id="layout" className={classes}>
-          { isGraphRunning ? null : <Search /> }
+          <ReactCSSTransitionGroup
+            transitionName="search-animation"
+            transitionAppear={true}
+            transitionAppearTimeout={750}
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={2500}
+          >
+            { isGraphRunning ? null : <Search /> }
+          </ReactCSSTransitionGroup>
           { isGraphRunning ? <GraphContainer /> : null }
 
           { DevTools ? <DevTools /> : null }

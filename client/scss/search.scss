@@ -83,3 +83,23 @@
     }
   }
 }
+
+.search-animation-enter {
+  opacity: 0.01;
+}
+
+.search-animation-enter.search-animation-enter-active {
+  opacity: 1;
+  transition: 500ms ease-in;
+}
+
+.search-animation-leave {
+  opacity: 1;
+  -webkit-filter: blur(0px);
+}
+
+.search-animation-leave.search-animation-leave-active {
+  opacity: 0.01;
+  -webkit-filter: blur(50px);
+  transition: 2500ms linear;
+}
