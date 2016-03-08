@@ -1,0 +1,19 @@
+#artist-info {
+  position: absolute;
+  z-index: 1;
+  width: 33%;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+
+  .artist-avatar {
+    width: 75%;
+    height: 0;
+    padding-bottom: 75%;
+    background-position: center center;
+    background-size: cover;
+  }
+}
