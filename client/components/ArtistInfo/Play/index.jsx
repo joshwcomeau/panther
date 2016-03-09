@@ -7,7 +7,8 @@ class PlayButton extends Component {
     super(props);
     this.state = {
       active: false,
-      percentage: 0
+      progress: 40
+
     };
   }
 
@@ -78,6 +79,10 @@ class PlayButton extends Component {
     const center = size / 2;
     const diameter = size - progressCircleWidth;
     const radius = diameter / 2;
+    const circumference = diameter * Math.PI;
+    const progressWidth = 1 - ((100 - this.state.progress) / 100 * circumference);
+
+    console.log("Proress", progressWidth, this.state, circumference)
 
     const circlePath = `
       M ${center}, ${center}
@@ -91,9 +96,10 @@ class PlayButton extends Component {
         d={circlePath}
         stroke={progressCircleColor}
         stroke-width={progressCircleWidth}
-        stroke-dasharray={200}
-        stroke-dashoffset={100}
+        stroke-dasharray={circumference}
+        stroke-dashoffset={progressWidth}
         fill="transparent"
+        transition="1s"
       />
     );
   }

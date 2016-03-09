@@ -33,7 +33,7 @@ class ArtistInfo extends Component {
   }
 
   render() {
-    console.log("Artist info props", this.props.artist.toJS());
+    console.log("Artist info props", this.props.artist);
     return (
       <div id="artist-info">
         <ArtistAvatar src={this.getSmallestAcceptableImage()} />

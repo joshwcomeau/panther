@@ -9,12 +9,13 @@ import {
   removeRejectedArtists,
   retractSelectedNodeEdge,
   positionSelectedArtistToCenter,
+  setTopTracks,
   populateRelatedArtistNodes,
   calculateAndExpandEdges,
   restorePreviousNodeState,
   takeSnapshotOfState
 } from '../ducks/graph.duck';
-import { fetchRelatedArtists } from '../helpers/api.helpers';
+import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
 import { repositionDelay, repositionLength } from '../config/timing';
 
 
@@ -49,9 +50,13 @@ export function* selectArtist(action) {
     yield put(retractSelectedNodeEdge());
     yield put(positionSelectedArtistToCenter());
 
-    const response = yield call( fetchRelatedArtists, action.artist.get('id') );
+    const [ related, top ] = yield [
+      call( fetchRelatedArtists, action.artist.get('id') ),
+      call( fetchTopTracks, action.artist.get('id') )
+    ];
 
-    yield put(populateRelatedArtistNodes(response.artists));
+    yield put(populateRelatedArtistNodes(related.artists));
+    yield put(setTopTracks(top.tracks))
 
     yield delay(repositionLength);
     yield put(calculateAndExpandEdges());

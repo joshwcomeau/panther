@@ -7,6 +7,15 @@ export function fetchRelatedArtists(artistId) {
   return fetchFromAPI({ endpoint: `artists/${artistId}/related-artists`});
 }
 
+export function fetchTopTracks(artistId) {
+  return fetchFromAPI({
+    endpoint: `artists/${artistId}/top-tracks`,
+    params: {
+      country: 'US'
+    }
+  });
+}
+
 export function fetchSearchResults(q, type = 'artist') {
   return fetchFromAPI({
     endpoint: 'search',
