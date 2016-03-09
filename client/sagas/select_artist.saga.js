@@ -15,6 +15,7 @@ import {
   restorePreviousNodeState,
   takeSnapshotOfState
 } from '../ducks/graph.duck';
+import { loadTracks } from '../ducks/samples.duck';
 import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
 import { repositionDelay, repositionLength } from '../config/timing';
 
@@ -28,13 +29,16 @@ export function* initializeWithArtist(artist) {
   yield put(setupInitialStage(artist));
 
   // Fetch related artists
+  console.log("About to fetch")
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artist.get('id') ),
     call( fetchTopTracks, artist.get('id') )
   ];
 
+  console.log("Fetched", top)
+
   yield put(populateRelatedArtistNodes(related.artists));
-  yield put(setTopTracks(top.tracks));
+  yield put(loadTracks(top.tracks));
 
   yield put(calculateAndExpandEdges());
 }
@@ -61,7 +65,7 @@ export function* selectArtist(action) {
     ];
 
     yield put(populateRelatedArtistNodes(related.artists));
-    yield put(setTopTracks(top.tracks));
+    yield put(loadTracks(top.tracks));
 
     yield delay(repositionLength);
     yield put(calculateAndExpandEdges());

@@ -21,7 +21,6 @@ const REMOVE_REJECTED_ARTISTS             = 'REMOVE_REJECTED_ARTISTS';
 const RETRACT_SELECTED_NODE_EDGE          = 'RETRACT_SELECTED_NODE_EDGE';
 const POSITION_SELECTED_ARTIST_TO_CENTER  = 'POSITION_SELECTED_ARTIST_TO_CENTER';
 const CALCULATE_AND_EXPAND_EDGES          = 'CALCULATE_AND_EXPAND_EDGES';
-const SET_TOP_TRACKS                      = 'SET_TOP_TRACKS';
 const POPULATE_RELATED_ARTIST_NODES       = 'POPULATE_RELATED_ARTIST_NODES';
 const TAKE_SNAPSHOT_OF_STATE              = 'TAKE_SNAPSHOT_OF_STATE';
 const RESTORE_PREVIOUS_NODE_STATE         = 'RESTORE_PREVIOUS_NODE_STATE';
@@ -91,11 +90,6 @@ export default function reducer(state = initialState, action) {
           ))
         ))
       ));
-
-    case SET_TOP_TRACKS:
-      return state.updateIn(['nodeGroups', PRESENT, 'nodes', 0], node => {
-        return node.set('tracks', fromJS(action.tracks));
-      });
 
     case POPULATE_RELATED_ARTIST_NODES:
       let seenArtistIds = state.get('seenArtistIds') || List();
@@ -274,20 +268,6 @@ export function retractRejectedNodeEdges() {
 
 export function retractSelectedNodeEdge() {
   return { type: RETRACT_SELECTED_NODE_EDGE };
-}
-
-export function setTopTracks(tracks) {
-  // We want to extract the pertinent info from the spotify dump
-  tracks = tracks.slice(0, 2).map( track => ({
-    duration: track.duration_ms,
-    url:      track.preview_url,
-    name:     track.name
-  }));
-
-  return {
-    type: SET_TOP_TRACKS,
-    tracks
-  }
 }
 
 export function populateRelatedArtistNodes(relatedArtists) {

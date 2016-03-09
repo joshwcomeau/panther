@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { Howl } from 'howler';
+import noop from 'lodash/noop';
 
 
 class PlayButton extends Component {
@@ -13,8 +14,15 @@ class PlayButton extends Component {
 
     this.howler = new Howl({
       urls: [ this.props.url ],
+      onPlay: this.props.onPlay || noop,
       format: 'mp3'
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ( this.props.active && !nextProps.active ) {
+      this.howler.stop();
+    }
   }
 
   componentWillUnmount() {

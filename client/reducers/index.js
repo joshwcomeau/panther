@@ -2,6 +2,7 @@ import { Map, List, fromJS } from 'immutable';
 
 import graph from '../ducks/graph.duck';
 import search from '../ducks/search.duck';
+import samples from '../ducks/samples.duck';
 
 
 const rootReducer = ( state = Map(), action ) => {
@@ -15,6 +16,10 @@ const rootReducer = ( state = Map(), action ) => {
     ),
     search: search(
       state.get('search'),
+      action
+    ),
+    samples: samples(
+      state.get('samples'),
       action
     )
   });

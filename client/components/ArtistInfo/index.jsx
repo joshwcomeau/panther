@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
 import ArtistAvatar from './ArtistAvatar.jsx';
-import Play from './Play';
+import SamplesContainer from '../../containers/SamplesContainer';
 
 
 class ArtistInfo extends Component {
@@ -17,32 +17,13 @@ class ArtistInfo extends Component {
     return image.get('url');
   }
 
-  renderPlayButtons() {
-    return this.props.artist.get('tracks').map( (track, index) => (
-      <Play
-        key={index}
-        url={track.get('url')}
-        duration={track.get('duration')}
-        size={60}
-        progressCircleWidth={5}
-        progressCircleColor="#78A931"
-        idleBackgroundColor="#191b1d"
-        activeBackgroundColor="#A9402D"
-        playIconColor="#FFFFFF"
-        stopIconColor="#FFFFFF"
-      />
-    ))
-  }
 
   render() {
-    console.log("Artist info props", this.props.artist);
     return (
       <div id="artist-info">
         <ArtistAvatar src={this.getSmallestAcceptableImage()} />
         <div className="node-spacer" />
-        <div className="play-buttons">
-          { this.props.artist.get('tracks') ? this.renderPlayButtons() : null }
-        </div>
+        <SamplesContainer />
       </div>
     )
   }
