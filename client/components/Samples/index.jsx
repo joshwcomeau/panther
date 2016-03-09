@@ -5,11 +5,13 @@ import PlayButton from './PlayButton.jsx';
 
 const Samples = ({ tracks, playing, actions}) => {
   console.log("Samples has tracs", tracks)
-  const buttons = tracks.map( (track, index) => (
+  const buttons = tracks.map( track => (
     <PlayButton
-      key={index}
+      key={track.get('id')}
+      audioId={track.get('id')}
+      duration={30000}
       url={track.get('url')}
-      duration={track.get('duration')}
+      active={track.get('id') === playing}
       size={60}
       progressCircleWidth={5}
       progressCircleColor="#78A931"
@@ -17,6 +19,8 @@ const Samples = ({ tracks, playing, actions}) => {
       activeBackgroundColor="#A9402D"
       playIconColor="#FFFFFF"
       stopIconColor="#FFFFFF"
+      play={actions.playTrack}
+      stop={actions.stop}
     />
   ))
 

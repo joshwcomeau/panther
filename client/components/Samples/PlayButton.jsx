@@ -8,30 +8,42 @@ class PlayButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      active: false,
-      progress: 40
+      progress: 0
     };
 
     this.howler = new Howl({
       urls: [ this.props.url ],
-      onPlay: this.props.onPlay || noop,
       format: 'mp3'
     });
+
+    this.updateProgress = this.updateProgress.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if ( this.props.active && !nextProps.active ) {
+      this.setState({ progress: 0 })
       this.howler.stop();
+      clearInterval(this.progressInterval);
+    } else if ( !this.props.active && nextProps.active ) {
+      this.setState({ progress: 0 })
+      this.howler.play();
+      this.progressInterval = setInterval(this.updateProgress, 1000);
     }
   }
 
   componentWillUnmount() {
     this.howler.unload();
+    clearInterval(this.progressInterval);
   }
 
   clickHandler() {
-    this.state.active ? this.howler.stop() : this.howler.play();
-    this.setState({ active: !this.state.active });
+    this.props.active ? this.props.stop() : this.props.play(this.props.audioId);
+  }
+
+  updateProgress() {
+    this.setState({
+      progress: (this.howler.pos() * 1000) / this.props.duration
+    })
   }
 
   renderStopButton() {
@@ -102,7 +114,7 @@ class PlayButton extends Component {
     const diameter = size - progressCircleWidth;
     const radius = diameter / 2;
     const circumference = diameter * Math.PI;
-    const progressWidth = 1 - ((100 - this.state.progress) / 100 * circumference);
+    const progressWidth = 1- (1 - this.state.progress) * circumference;
 
     const circlePath = `
       M ${center}, ${center}
@@ -130,8 +142,8 @@ class PlayButton extends Component {
     return (
       <svg width={size} height={size} onClick={::this.clickHandler}>
         { this.renderMainCircle() }
-        { this.renderProgressBar() }
-        { this.state.active ? this.renderStopButton() : this.renderPlayButton() }
+        { this.props.active ? this.renderProgressBar() : null }
+        { this.props.active ? this.renderStopButton() : this.renderPlayButton() }
       </svg>
     )
   }
