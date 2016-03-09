@@ -14,7 +14,9 @@ const RECORD_VOICE = 'RECORD_VOICE';
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
-const initialState = Map();
+const initialState = Map({
+  term: ''
+});
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
