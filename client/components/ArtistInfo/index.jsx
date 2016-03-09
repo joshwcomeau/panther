@@ -20,12 +20,13 @@ class ArtistInfo extends Component {
   renderPlayButtons() {
     return [1, 2, 3].map( track => (
       <Play
+        key={track}
         size={60}
         progressCircleWidth={5}
         progressCircleColor="#78A931"
-        idleBackgroundColor="#22272a"
+        idleBackgroundColor="#191b1d"
         activeBackgroundColor="#A9402D"
-        playIconColor="#1888C8"
+        playIconColor="#FFFFFF"
         stopIconColor="#FFFFFF"
       />
     ))

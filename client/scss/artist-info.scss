@@ -16,10 +16,9 @@
     position: relative;
     left: 0;
     right: 0;
-    width: 75%;
-    height: 0;
-    margin: auto;
-    padding-bottom: 75%;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
 
     background-position: center center;
     background-size: cover;
@@ -34,9 +33,13 @@
     position: relative;
     left: 0;
     right: 0;
-    width: 75%;
-    height: 0;
-    margin: auto;
-    padding-bottom: 75%;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+    text-align: center;
+
+    svg {
+      margin: 0 5px;
+    }
   }
 }

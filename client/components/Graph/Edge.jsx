@@ -34,7 +34,7 @@ const Edge = ({ retracting, expanding, pulling, x1, y1, x2, y2 }) => {
   }
 
   return <line
-    className={classes}
+    class={classes}
     style={styles}
     x1={x1}
     y1={y1}

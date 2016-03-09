@@ -83,6 +83,7 @@ class SearchBox extends Component {
     return (
       <div id="search-box">
         <input
+          type="text"
           className="typeahead"
           onKeyUp={::this.controlsHandler}
           onChange={::this.changeHandler}

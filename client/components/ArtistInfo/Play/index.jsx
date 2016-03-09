@@ -6,7 +6,8 @@ class PlayButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      active: false
+      active: false,
+      percentage: 0
     };
   }
 
@@ -44,7 +45,28 @@ class PlayButton extends Component {
     );
   }
 
-  render() {
+  renderMainCircle() {
+    const {
+      size,
+      progressCircleWidth,
+      progressCircleColor,
+      idleBackgroundColor,
+      activeBackgroundColor
+    } = this.props;
+
+    const radius = size / 2;
+
+    return (
+      <circle
+        cx={radius}
+        cy={radius}
+        r={radius}
+        fill={idleBackgroundColor}
+      />
+    );
+  }
+
+  renderProgressBar() {
     const {
       size,
       progressCircleWidth,
@@ -54,19 +76,36 @@ class PlayButton extends Component {
     } = this.props;
 
     const center = size / 2;
-    const radius = center - progressCircleWidth / 2;
+    const diameter = size - progressCircleWidth;
+    const radius = diameter / 2;
+
+    const circlePath = `
+      M ${center}, ${center}
+      m 0, -${radius}
+      a ${radius},${radius} 0 1,0 0,${diameter}
+      a ${radius},${radius} 0 1,0 0,-${diameter}
+    `;
+
+    return (
+      <path
+        d={circlePath}
+        stroke={progressCircleColor}
+        stroke-width={progressCircleWidth}
+        stroke-dasharray={200}
+        stroke-dashoffset={100}
+        fill="transparent"
+      />
+    );
+  }
+
+  render() {
+    const { size } = this.props;
 
     return (
       <svg width={size} height={size}>
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          stroke={progressCircleColor}
-          strokeWidth={progressCircleWidth}
-          fill={idleBackgroundColor}
-        />
-        { this.state ? this.renderStopButton() : this.renderPlayButton() }
+        { this.renderMainCircle() }
+        { this.renderProgressBar() }
+        { this.state.active ? this.renderStopButton() : this.renderPlayButton() }
       </svg>
     )
   }
