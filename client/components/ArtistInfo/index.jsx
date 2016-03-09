@@ -18,9 +18,11 @@ class ArtistInfo extends Component {
   }
 
   renderPlayButtons() {
-    return [1, 2, 3].map( track => (
+    return this.props.artist.get('tracks').map( (track, index) => (
       <Play
-        key={track}
+        key={index}
+        url={track.get('url')}
+        duration={track.get('duration')}
         size={60}
         progressCircleWidth={5}
         progressCircleColor="#78A931"
@@ -39,7 +41,7 @@ class ArtistInfo extends Component {
         <ArtistAvatar src={this.getSmallestAcceptableImage()} />
         <div className="node-spacer" />
         <div className="play-buttons">
-          { this.renderPlayButtons() }
+          { this.props.artist.get('tracks') ? this.renderPlayButtons() : null }
         </div>
       </div>
     )

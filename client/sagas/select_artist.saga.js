@@ -28,9 +28,14 @@ export function* initializeWithArtist(artist) {
   yield put(setupInitialStage(artist));
 
   // Fetch related artists
-  const response = yield call( fetchRelatedArtists, artist.get('id') );
+  const [ related, top ] = yield [
+    call( fetchRelatedArtists, artist.get('id') ),
+    call( fetchTopTracks, artist.get('id') )
+  ];
 
-  yield put(populateRelatedArtistNodes(response.artists));
+  yield put(populateRelatedArtistNodes(related.artists));
+  yield put(setTopTracks(top.tracks));
+
   yield put(calculateAndExpandEdges());
 }
 
@@ -56,7 +61,7 @@ export function* selectArtist(action) {
     ];
 
     yield put(populateRelatedArtistNodes(related.artists));
-    yield put(setTopTracks(top.tracks))
+    yield put(setTopTracks(top.tracks));
 
     yield delay(repositionLength);
     yield put(calculateAndExpandEdges());

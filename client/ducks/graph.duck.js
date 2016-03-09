@@ -94,7 +94,7 @@ export default function reducer(state = initialState, action) {
 
     case SET_TOP_TRACKS:
       return state.updateIn(['nodeGroups', PRESENT, 'nodes', 0], node => {
-        return node.set('tracks', action.tracks)
+        return node.set('tracks', fromJS(action.tracks));
       });
 
     case POPULATE_RELATED_ARTIST_NODES:
@@ -278,7 +278,7 @@ export function retractSelectedNodeEdge() {
 
 export function setTopTracks(tracks) {
   // We want to extract the pertinent info from the spotify dump
-  tracks = tracks.slice(0, 3).map( track => ({
+  tracks = tracks.slice(0, 2).map( track => ({
     duration: track.duration_ms,
     url:      track.preview_url,
     name:     track.name

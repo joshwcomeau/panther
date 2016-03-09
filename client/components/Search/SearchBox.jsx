@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Autocomplete from 'react-autocomplete';
 import classNames from 'classnames';
 import isNumber from 'lodash/isNumber';
 

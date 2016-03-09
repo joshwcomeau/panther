@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { Howl } from 'howler';
 
 
 class PlayButton extends Component {
@@ -8,8 +9,21 @@ class PlayButton extends Component {
     this.state = {
       active: false,
       progress: 40
-
     };
+
+    this.howler = new Howl({
+      urls: [ this.props.url ],
+      format: 'mp3'
+    });
+  }
+
+  componentWillUnmount() {
+    this.howler.unload();
+  }
+
+  clickHandler() {
+    this.state.active ? this.howler.stop() : this.howler.play();
+    this.setState({ active: !this.state.active });
   }
 
   renderStopButton() {
@@ -82,8 +96,6 @@ class PlayButton extends Component {
     const circumference = diameter * Math.PI;
     const progressWidth = 1 - ((100 - this.state.progress) / 100 * circumference);
 
-    console.log("Proress", progressWidth, this.state, circumference)
-
     const circlePath = `
       M ${center}, ${center}
       m 0, -${radius}
@@ -108,7 +120,7 @@ class PlayButton extends Component {
     const { size } = this.props;
 
     return (
-      <svg width={size} height={size}>
+      <svg width={size} height={size} onClick={::this.clickHandler}>
         { this.renderMainCircle() }
         { this.renderProgressBar() }
         { this.state.active ? this.renderStopButton() : this.renderPlayButton() }
