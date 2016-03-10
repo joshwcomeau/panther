@@ -48,17 +48,22 @@ export function* selectArtist(action) {
     yield put(takeSnapshotOfState());
   }
 
-  yield put(toggleArtist(false));
+  yield [
+    put(toggleArtist(false)),
+    put(markUnclickedArtistsAsRejected(action.artist)),
+    put(stop())
+  ];
 
-  yield put(markUnclickedArtistsAsRejected(action.artist));
-  yield put(stop());
   yield put(retractRejectedNodeEdges());
 
   yield delay(repositionDelay);
   if ( action.direction === 'forwards' ) {
     yield put(removeRejectedArtists());
-    yield put(retractSelectedNodeEdge());
-    yield put(positionSelectedArtistToCenter());
+
+    yield [
+      put(retractSelectedNodeEdge()),
+      put(positionSelectedArtistToCenter())
+    ];
 
     const [ related, top ] = yield [
       call( fetchRelatedArtists, action.artist.get('id') ),

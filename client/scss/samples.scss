@@ -1,0 +1,27 @@
+#samples {
+  position: relative;
+  left: 0;
+  right: 0;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+  text-align: center;
+
+  .button-wrapper {
+    display: inline-block;
+    position: relative;
+    margin: 0 5px;
+    opacity: 0;
+  }
+}
+
+@keyframes drop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(150px);
+    opacity: 0;
+  }
+}

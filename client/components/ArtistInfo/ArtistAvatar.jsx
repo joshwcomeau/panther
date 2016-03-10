@@ -23,7 +23,6 @@ const ArtistAvatar = ({images, artistVisible}) => {
 };
 
 function getSmallestAcceptableImage(images) {
-  console.log("Getting smallest", images, DEFAULT_AVATAR)
   if ( !images || !images.size ) return DEFAULT_AVATAR;
 
   const minWidth = window.innerWidth / 3;

@@ -7,11 +7,10 @@ import { selectActionCreators } from '../helpers/duck.helpers';
 
 
 function mapStateToProps(state) {
-  const samplesState = state.get('samples');
-
   return {
-    tracks:   samplesState.get('tracks'),
-    playing:  samplesState.get('playing')
+    tracks:         state.getIn(['samples', 'tracks']),
+    playing:        state.getIn(['samples', 'playing']),
+    artistVisible:  state.getIn(['artistInfo', 'artistVisible'])
   };
 }
 
