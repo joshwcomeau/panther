@@ -14,7 +14,7 @@
     "classnames": "^2.2.1",
     "faker": "^3.0.1",
     "history": "~1.17.0",
-    "howler": "^1.1.29",
+    "howler": "^2.0.0-beta8",
     "immutable": "^3.7.6",
     "lodash": "^4.5.0",
     "moment": "^2.11.2",

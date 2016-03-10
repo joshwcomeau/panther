@@ -5,6 +5,11 @@ import noop from 'lodash/noop';
 
 
 class PlayButton extends Component {
+  static defaultProps = {
+    stopIconColor: '#FFFFFF',
+    playIconColor: '#FFFFFF'
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -12,9 +17,11 @@ class PlayButton extends Component {
     };
 
     this.howler = new Howl({
-      urls: [ this.props.url ],
-      format: 'mp3'
+      src:    [ this.props.url ],
+      format: 'mp3',
+      onend:  this.props.stop
     });
+
 
     this.updateProgress = this.updateProgress.bind(this);
   }
@@ -23,17 +30,15 @@ class PlayButton extends Component {
     if ( this.props.active && !nextProps.active ) {
       this.setState({ progress: 0 })
       this.howler.stop();
-      clearInterval(this.progressInterval);
     } else if ( !this.props.active && nextProps.active ) {
       this.setState({ progress: 0 })
       this.howler.play();
-      this.progressInterval = setInterval(this.updateProgress, 1000);
+      this.updateProgress()
     }
   }
 
   componentWillUnmount() {
     this.howler.unload();
-    clearInterval(this.progressInterval);
   }
 
   clickHandler() {
@@ -41,42 +46,60 @@ class PlayButton extends Component {
   }
 
   updateProgress() {
-    this.setState({
-      progress: (this.howler.pos() * 1000) / this.props.duration
-    })
+    window.requestAnimationFrame( () => {
+      this.setState({
+        progress: (this.howler.seek() * 1000) / this.props.duration
+      })
+      if ( this.props.active ) this.updateProgress();
+    });
   }
 
-  renderStopButton() {
-    return (
-      <g>
-        <path d="M0 0h24v24H0z" fill="none"/>
-        <path d="M6 6h12v12H6z"/>
-      </g>
-    );
-  }
-
-  renderPlayButton() {
-    // Our play button will be 1/3rd the height and 1/4th the width.
-    const { size, progressCircleWidth } = this.props;
+  getPolygonPoints({ active, size, progressCircleWidth }) {
     const innerSize = size - progressCircleWidth * 2;
+    let points;
 
-    const p1 = [
-      innerSize * 7/20 +  progressCircleWidth,
-      innerSize * 1/4 +   progressCircleWidth
-    ];
-    const p2 = [
-      innerSize * 7/20 +  progressCircleWidth,
-      innerSize * 3/4 +   progressCircleWidth
-    ];
-    const p3 = [
-      innerSize * 31/40 + progressCircleWidth,
-      innerSize * 1/2 +   progressCircleWidth
-    ];
+    if ( active ) {
+      // Stop icon points
+      points = [
+        [
+          innerSize * 0.3 + progressCircleWidth,
+          innerSize * 0.3 + progressCircleWidth
+        ], [
+          innerSize * 0.3 + progressCircleWidth,
+          innerSize * 0.7 + progressCircleWidth
+        ], [
+          innerSize * 0.7 + progressCircleWidth,
+          innerSize * 0.7 + progressCircleWidth
+        ], [
+          innerSize * 0.7 + progressCircleWidth,
+          innerSize * 0.3 + progressCircleWidth
+        ]
+      ];
+    } else {
+      // Play icon points
+      points = [
+        [
+          innerSize * 7/20 +  progressCircleWidth,
+          innerSize * 1/4  +  progressCircleWidth
+        ], [
+          innerSize * 7/20 +  progressCircleWidth,
+          innerSize * 3/4  +  progressCircleWidth
+        ], [
+          innerSize * 31/40 + progressCircleWidth,
+          innerSize * 1/2   + progressCircleWidth
+        ]
+      ];
+    }
 
-    const points = [p1, p2, p3].map(p => p.join(',')).join(' ');
+    return points.map(p => p.join(',')).join(' ');
+  }
+
+  renderIcon() {
+    const { active, playIconColor, stopIconColor } = this.props;
+    const points = this.getPolygonPoints(this.props);
 
     return (
-      <polygon points={points} fill={this.props.playIconColor} />
+      <polygon points={points} fill={active ? playIconColor : stopIconColor} />
     );
   }
 
@@ -96,7 +119,7 @@ class PlayButton extends Component {
         cx={radius}
         cy={radius}
         r={radius}
-        fill={idleBackgroundColor}
+        fill={this.props.active ? activeBackgroundColor : idleBackgroundColor}
       />
     );
   }
@@ -114,7 +137,7 @@ class PlayButton extends Component {
     const diameter = size - progressCircleWidth;
     const radius = diameter / 2;
     const circumference = diameter * Math.PI;
-    const progressWidth = 1- (1 - this.state.progress) * circumference;
+    const progressWidth = Math.floor(1 - (1 - this.state.progress) * circumference);
 
     const circlePath = `
       M ${center}, ${center}
@@ -131,19 +154,18 @@ class PlayButton extends Component {
         stroke-dasharray={circumference}
         stroke-dashoffset={progressWidth}
         fill="transparent"
-        transition="1s"
       />
     );
   }
 
   render() {
-    const { size } = this.props;
+    const { size, active } = this.props;
 
     return (
       <svg width={size} height={size} onClick={::this.clickHandler}>
         { this.renderMainCircle() }
-        { this.props.active ? this.renderProgressBar() : null }
-        { this.props.active ? this.renderStopButton() : this.renderPlayButton() }
+        { active ? this.renderProgressBar() : null }
+        { this.renderIcon() }
       </svg>
     )
   }
