@@ -16,6 +16,7 @@ import {
   takeSnapshotOfState
 } from '../ducks/graph.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
+import { toggleArtist } from '../ducks/artist-info.duck';
 import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
 import { repositionDelay, repositionLength } from '../config/timing';
 
@@ -38,6 +39,7 @@ export function* initializeWithArtist(artist) {
   yield put(loadTracks(top.tracks));
 
   yield put(calculateAndExpandEdges());
+  yield put(toggleArtist(true));
 }
 
 
@@ -45,6 +47,8 @@ export function* selectArtist(action) {
   if ( action.direction === 'forwards' ) {
     yield put(takeSnapshotOfState());
   }
+
+  yield put(toggleArtist(false));
 
   yield put(markUnclickedArtistsAsRejected(action.artist));
   yield put(stop());
@@ -64,13 +68,13 @@ export function* selectArtist(action) {
     yield put(populateRelatedArtistNodes(related.artists));
     yield put(loadTracks(top.tracks));
 
-    yield delay(repositionLength);
-    yield put(calculateAndExpandEdges());
   } else {
     yield put(restorePreviousNodeState());
-    yield delay(repositionLength);
-    yield put(calculateAndExpandEdges());
   }
+
+  yield delay(repositionLength);
+  yield put(calculateAndExpandEdges());
+  yield put(toggleArtist(true));
 }
 
 

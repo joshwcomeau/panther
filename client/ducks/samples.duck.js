@@ -40,6 +40,7 @@ export default function reducer(state = initialState, action) {
 
 export function loadTracks(tracks) {
   // We want to extract the pertinent info from the spotify dump
+  // TODO: Filter out duplicates
   tracks = tracks.slice(0, 3).map( track => ({
     id:       track.id,
     url:      track.preview_url,

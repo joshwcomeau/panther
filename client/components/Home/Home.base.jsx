@@ -3,8 +3,8 @@ import classNames               from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import GraphContainer           from '../../containers/GraphContainer.jsx';
-import ArtistInfoContainer      from '../../containers/ArtistInfoContainer.jsx';
-import Search                   from '../../components/Search';
+import ArtistInfo               from '../ArtistInfo';
+import Search                   from '../Search';
 import Header                   from '../Header';
 
 export default function HomeBase(DevTools = null) {
@@ -28,7 +28,7 @@ export default function HomeBase(DevTools = null) {
             { isGraphRunning ? null : <Search /> }
           </ReactCSSTransitionGroup>
           { isGraphRunning ? <GraphContainer /> : null }
-          { isGraphRunning ? <ArtistInfoContainer /> : null }
+          { isGraphRunning ? <ArtistInfo /> : null }
 
 
           { DevTools ? <DevTools /> : null }

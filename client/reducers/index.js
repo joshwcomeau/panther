@@ -3,6 +3,7 @@ import { Map, List, fromJS } from 'immutable';
 import graph from '../ducks/graph.duck';
 import search from '../ducks/search.duck';
 import samples from '../ducks/samples.duck';
+import artistInfo from '../ducks/artist-info.duck';
 
 
 const rootReducer = ( state = Map(), action ) => {
@@ -20,6 +21,10 @@ const rootReducer = ( state = Map(), action ) => {
     ),
     samples: samples(
       state.get('samples'),
+      action
+    ),
+    artistInfo: artistInfo(
+      state.get('artistInfo'),
       action
     )
   });
