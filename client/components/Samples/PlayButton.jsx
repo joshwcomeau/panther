@@ -22,7 +22,6 @@ class PlayButton extends Component {
       onend:  this.props.stop
     });
 
-
     this.updateProgress = this.updateProgress.bind(this);
   }
 
@@ -31,9 +30,8 @@ class PlayButton extends Component {
       this.setState({ progress: 0 })
       this.howler.stop();
     } else if ( !this.props.active && nextProps.active ) {
-      this.setState({ progress: 0 })
+      this.setState({ progress: 0 }, this.updateProgress)
       this.howler.play();
-      this.updateProgress()
     }
   }
 
@@ -46,11 +44,15 @@ class PlayButton extends Component {
   }
 
   updateProgress() {
+    // Stop immediately if this button is no longer active
+    if ( !this.props.active ) return;
+
     window.requestAnimationFrame( () => {
       this.setState({
         progress: (this.howler.seek() * 1000) / this.props.duration
       })
-      if ( this.props.active ) this.updateProgress();
+
+      this.updateProgress();
     });
   }
 
@@ -99,7 +101,11 @@ class PlayButton extends Component {
     const points = this.getPolygonPoints(this.props);
 
     return (
-      <polygon points={points} fill={active ? playIconColor : stopIconColor} />
+      <polygon
+        points={points}
+        style={{ cursor: 'pointer' }}
+        fill={active ? playIconColor : stopIconColor}
+      />
     );
   }
 
@@ -119,6 +125,7 @@ class PlayButton extends Component {
         cx={radius}
         cy={radius}
         r={radius}
+        style={{ cursor: 'pointer' }}
         fill={this.props.active ? activeBackgroundColor : idleBackgroundColor}
       />
     );
