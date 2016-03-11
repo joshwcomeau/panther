@@ -4,7 +4,7 @@ import isBoolean from 'lodash/isBoolean';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-const TOGGLE_ARTIST = 'TOGGLE_ARTIST';
+export const TOGGLE_ARTIST = 'TOGGLE_ARTIST';
 
 
 ///////////////////////////

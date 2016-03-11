@@ -1,11 +1,11 @@
 {
-  "name": "seedling-front",
+  "name": "panther-audio",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development nodemon server.js",
-    "test": "NODE_ENV=test mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive",
+    "test": "NODE_ENV=test mocha --compilers js:babel-core/register --require ./test/test-helper.js --recursive",
     "deploy": "NODE_ENV=production fly production"
   },
   "author": "Joshua Comeau",
