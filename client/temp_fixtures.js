@@ -1,5 +1,5 @@
 import faker from 'faker';
-
+import { GRAVEYARD, PAST, PRESENT, FUTURE } from './config/regions';
 
 export const vertexData = {
   vertices: [

@@ -6,7 +6,10 @@ import * as Actions             from '../ducks/graph.duck';
 import { selectActionCreators } from '../helpers/duck.helpers';
 
 function mapStateToProps(state) {
-  return { nodeGroups: state.get('graph').get('nodeGroups') };
+  return {
+    vertices: state.get('graph').get('vertices'),
+    edges:    state.get('graph').get('edges')
+  };
 }
 
 function mapDispatchToProps(dispatch) {

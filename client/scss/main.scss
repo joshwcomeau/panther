@@ -5,8 +5,7 @@
 @import 'artist-info';
 @import 'search';
 @import 'samples';
-@import 'nodes';
-@import 'edges';
+@import 'graph';
 
 html, body, #render-target, #layout {
   height: 100%;
@@ -20,16 +19,6 @@ body, input, select, option, textarea {
   &.wrapped-for-devtools {
     width: 70%;
   }
-}
-
-#graph {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
 }
 
 .background {

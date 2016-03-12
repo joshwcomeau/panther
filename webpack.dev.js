@@ -30,6 +30,11 @@ module.exports = {
 
   module: {
     loaders: [
+      // Snap hack. Ugh.
+      {
+        test: require.resolve('snapsvg'),
+        loader: 'imports-loader?this=>window,fix=>module.exports=0'
+      },
       // JAVASCRIPT
       {
         test:     /\.jsx?$/,
