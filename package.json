@@ -28,7 +28,6 @@
     "redux-saga": "^0.9.1",
     "redux-thunk": "^1.0.0",
     "reselect": "^2.0.1",
-    "snapsvg": "^0.4.0",
     "web-animations-js": "^2.1.4",
     "whatwg-fetch": "^0.11.0"
   },
@@ -52,7 +51,6 @@
     "chai-immutable": "^1.5.3",
     "css-loader": "^0.23.0",
     "express": "^4.13.4",
-    "imports-loader": "^0.6.5",
     "json-loader": "^0.5.4",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
