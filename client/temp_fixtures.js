@@ -1,35 +1,57 @@
 import faker from 'faker';
 
 
-export const nodesData = {
-  nodeGroups: [
+export const vertexData = {
+  vertices: [
     {
-      id: 0,
-      nodes: []
-    },{
-      id: 1,
-      nodes: []
+      id: 'a',
+      name: 'ghostman',
+      region: GRAVEYARD,
+      regionIndex: 0,
+      rejected: false
     }, {
-      id: 2,
-      nodes: [
-        {
-          id: '12',
-          name: faker.internet.userName(),
-          image: faker.image.avatar(),
-          genres: ['electronica', 'nu wave'],
-          audioSamples: ['url1', 'url2', 'url3']
-        }
-      ]
+      id: 'b',
+      name: 'Yesterdays News',
+      region: PAST,
+      regionIndex: 0,
+      rejected: false
     }, {
-      id: 3,
-      nodes: [
-        { id: '13', name: faker.company.companyName() },
-        { id: '14', name: faker.company.companyName() },
-        { id: '15', name: faker.company.companyName() }
-      ]
+      id: 'c',
+      name: 'Front and Center',
+      region: PRESENT,
+      regionIndex: 0,
+      rejected: false
     }, {
-      id: 4,
-      nodes: []
+      id: 'd',
+      name: 'Potential Future 1',
+      region: FUTURE,
+      regionIndex: 0,
+      rejected: false
+    }, {
+      id: 'e',
+      name: 'Potential Future 2',
+      region: FUTURE,
+      regionIndex: 1,
+      rejected: false
+    }, {
+      id: 'f',
+      name: 'Potential Future 3',
+      region: FUTURE,
+      regionIndex: 2,
+      rejected: false
+    }
+  ],
+  edges: [
+    {
+      from: 'a', to: 'b'
+    }, {
+      from: 'b', to: 'c'
+    }, {
+      from: 'c', to: 'd'
+    }, {
+      from: 'c', to: 'e'
+    }, {
+      from: 'c', to: 'f'
     }
   ]
 };
