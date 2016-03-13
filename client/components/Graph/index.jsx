@@ -14,6 +14,12 @@ class Graph extends Component {
     this.state = this.updateNodesFromStore(props)
   }
 
+  componentDidMount() {
+    this.resizeHandler = window.addEventListener('resize', () => {
+      this.setState(this.updateNodesFromStore());
+    });
+  }
+
   updateResponsiveSizes() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -21,7 +27,7 @@ class Graph extends Component {
     // Our radius will depend on window size eventually, with steps?
     // for now, make it percentage based. For this to work, it has to be
     // the smaller of width/height
-    this.vertexRadiusSize = min([width, height]) * 1/8;
+    this.vertexRadiusSize = min([width, height]) * 1/10;
     this.regionCoords = {
       [GRAVEYARD]:  width * -1/4 - this.vertexRadiusSize,
       [PAST]:       width * 1/6 - this.vertexRadiusSize,
@@ -35,19 +41,17 @@ class Graph extends Component {
     ];
   }
 
-  updateNodesFromStore(props) {
+  updateNodesFromStore(props = this.props) {
     this.updateResponsiveSizes();
 
     return {
       vertices: props.vertices.map( v => {
-        // Add x/y properties based on region and regionIndex
-        console.log(this.regionCoords, this.regionIndexCoords, this.vertexRadiusSize)
         return v
           .set( 'x', this.regionCoords[v.get('region')] )
           .set( 'y', this.regionIndexCoords[v.get('regionIndex')] )
-          .set( 'r', this.vertexRadiusSize )
+          .set( 'r', this.vertexRadiusSize );
       })
-    }
+    };
   }
 
   moveTo(ev) {
@@ -93,7 +97,14 @@ class Graph extends Component {
                   fill="#FFFFFF"
 
                 />
-              <text x="50%" y="50%" text-anchor="middle">{v.get('name')}</text>
+                <text
+                  x="50%"
+                  y="50%"
+                  text-anchor="middle"
+                  style={{ fontSize: '14px', fontWeight: 'bold'}}
+                >
+                  {v.get('name')}
+                </text>
               </svg>
             )
           })
