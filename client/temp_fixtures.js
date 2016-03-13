@@ -7,19 +7,19 @@ export const vertexData = {
       id: 'a',
       name: 'ghostman',
       region: GRAVEYARD,
-      regionIndex: 0,
+      regionIndex: 1,
       rejected: false
     }, {
       id: 'b',
       name: 'Yesterdays News',
       region: PAST,
-      regionIndex: 0,
+      regionIndex: 1,
       rejected: false
     }, {
       id: 'c',
       name: 'Front and Center',
       region: PRESENT,
-      regionIndex: 0,
+      regionIndex: 1,
       rejected: false
     }, {
       id: 'd',
