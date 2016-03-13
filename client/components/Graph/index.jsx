@@ -67,7 +67,7 @@ class Graph extends Component {
 
   moveTo(ev) {
     animateShapes(this.state, ::this.setState, {
-      vertices: this.state.vertices.map( v => v.update('x', x => x + 25))
+      vertices: this.state.vertices.map( v => v.update('x', x => Math.random() * 1000))
     }, 1000)
   }
 
@@ -118,7 +118,7 @@ class Graph extends Component {
                 <circle
                   cx="50%"
                   cy="50%"
-                  r="50%"
+                  r="48%"
                   fill="#FFFFFF"
 
                 />
@@ -171,7 +171,7 @@ function animateShapes(origin, setState, final, duration, easingFunction = easeI
         const originVertex  = origin.vertices.get(vertexIndex);
         const finalVertex   = final.vertices.get(vertexIndex);
 
-        vertex = vertex
+        return vertex
           .set('x', easingFunction(
             time,
             originVertex.get('x'),
@@ -184,13 +184,26 @@ function animateShapes(origin, setState, final, duration, easingFunction = easeI
             finalVertex.get('y') - originVertex.get('y'),
             duration
           ));
+      });
 
-        return vertex;
+      const newEdges = origin.edges.map( (edge, edgeIndex) => {
+        const from  = newVertices.find( v => v.get('id') === edge.get('from'));
+        const to    = newVertices.find( v => v.get('id') === edge.get('to'));
+        const radius = from.get('r');
+
+        return edge
+          .set( 'x1', from.get('x') + radius )
+          .set( 'y1', from.get('y') + radius )
+          .set( 'x2', to.get('x') + radius )
+          .set( 'y2', to.get('y') + radius );
+
+        return edge;
       });
 
 
       setState({
-        vertices: newVertices
+        vertices: newVertices,
+        edges: newEdges
       }, () => {
         if ( time < duration ) updatePosition();
       });
