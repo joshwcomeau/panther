@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
+import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
+
 import VertexShadow from './VertexShadow.jsx';
 
 
@@ -11,18 +13,12 @@ class Vertex extends Component {
   }
 
   clickHandler() {
-    // TODO
-    return;
-
-
-    // Ignore clicks on the present node.
-    if ( this.props.group === PRESENT ) return;
-
-    // If we click a node in the FUTURE, we're going forwards.
-    // If we click a node in the PAST, we're going backwards.
-    const direction = this.props.group === FUTURE ? 'forwards' : 'backwards';
-
-    this.props.clickVertex(this.props.data, direction);
+    switch (this.props.region) {
+      case FUTURE:
+        return this.props.actions.selectArtist(this.props.artist);
+      case PAST:
+        // TODO
+    }
   }
 
   render() {
@@ -40,6 +36,7 @@ class Vertex extends Component {
           x={x}
           y={y}
           filter={`url(#${shadowFilterId})`}
+          onClick={this.clickHandler}
         >
           <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />
 

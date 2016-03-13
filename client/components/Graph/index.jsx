@@ -146,6 +146,7 @@ class Graph extends Component {
             x={v.get('x')}
             y={v.get('y')}
             radius={v.get('radius')}
+            region={v.get('region')}
           />
         ))}
       </svg>

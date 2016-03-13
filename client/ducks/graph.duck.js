@@ -4,7 +4,9 @@ import flatten from 'lodash/flatten';
 import faker from 'faker';
 
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
-
+import {
+  getPreviousRegion, recalculateEdges
+} from '../helpers/graph.duck.helpers';
 
 ///////////////////////////
 // ACTION TYPES //////////
@@ -12,9 +14,8 @@ import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
 export const SELECT_ARTIST                  = 'SELECT_ARTIST';
 export const SETUP_INITIAL_STAGE            = 'SETUP_INITIAL_STAGE';
 export const UPDATE_REPOSITION_STATUS       = 'UPDATE_REPOSITION_STATUS';
-export const ADD_RELATED_ARTISTS_TO_GRAPH = 'ADD_RELATED_ARTISTS_TO_GRAPH';
-export const MARK_ARTISTS_AS_REJECTED       = 'MARK_ARTISTS_AS_REJECTED';
-export const UPDATE_VERTEX_POSITIONS        = 'UPDATE_VERTEX_POSITIONS';
+export const ADD_RELATED_ARTISTS_TO_GRAPH   = 'ADD_RELATED_ARTISTS_TO_GRAPH';
+export const CENTER_GRAPH_AROUND_VERTEX     = 'CENTER_GRAPH_AROUND_VERTEX';
 
 
 ///////////////////////////
@@ -31,7 +32,6 @@ const initialState = fromJS({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
   case SETUP_INITIAL_STAGE:
-    console.log("Setting up", action)
     const initialVertices = fromJS([{
       id:           action.artist.get('id'),
       region:       PRESENT,
@@ -73,19 +73,31 @@ export default function reducer(state = initialState, action) {
       })
 
 
-  case MARK_ARTISTS_AS_REJECTED:
-    // The idea here is when we click a node, the un-clicked future nodes
-    // are no longer required. We mark them as rejected, so that they can
-    // fade away and their edge can retract.
-    return state;
+  case CENTER_GRAPH_AROUND_VERTEX:
+    // Few orders of business here:
+    // - Remove unclicked vertices in FUTURE
+    // - Remove the graveyard vertex, if applicable
+    // - Move everything down (PRESENT -> PAST, PAST -> GRAVEYARD)
+    // - Ensure that our FUTURE-PRESENT node has the right regionIndex (1)
+    // - Recalculate edges
+    const id = action.artist.get('id');
 
-  case UPDATE_VERTEX_POSITIONS:
-    // This is our queue to update our vertex/edge state to match the new
-    // reality. We just marked our artists as rejected and waited for the
-    // edges to retract and vertices to disappear, and now it's time to
-    // replace the old state with the new, so that the nodes can animate to
-    // their new positions.
-    return state;
+    state = state
+      .update('vertices', vertices => (
+        vertices
+          .filter( vertex => (
+            vertex.get('id') === id
+            ||
+            ( vertex.get('region') !== FUTURE && vertex.get('region') !== GRAVEYARD )
+          ))
+          .map( vertex => (
+            vertex.update('region', getPreviousRegion)
+          ))
+          .setIn([-1, 'regionIndex'], 1)
+      ));
+
+    return state.update('edges', edges => recalculateEdges(state.get('vertices')));
+
 
 
   default:
@@ -124,4 +136,11 @@ export function addRelatedArtistsToGraph(artists) {
     type: ADD_RELATED_ARTISTS_TO_GRAPH,
     artists
   };
+}
+
+export function centerGraphAroundVertex(artist) {
+  return {
+    type: CENTER_GRAPH_AROUND_VERTEX,
+    artist
+  }
 }

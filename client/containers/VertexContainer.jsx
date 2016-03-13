@@ -15,7 +15,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: { selectArtist }
+    actions: bindActionCreators({ selectArtist }, dispatch)
   }
 }
 

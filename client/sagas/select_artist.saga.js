@@ -7,7 +7,7 @@ import {
   updateRepositionStatus,
   addRelatedArtistsToGraph,
   markArtistsAsRejected,
-  updateVertexPositions
+  centerGraphAroundVertex
 } from '../ducks/graph.duck';
 import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
@@ -49,6 +49,13 @@ export function* initializeWithArtist(artist) {
 
 
 export function* selectArtist(action) {
+  // We've selected an artist, which means the state needs to change in
+  // a few ways.
+  const artistId = action.artist.get('id');
+
+  put(centerGraphAroundVertex(action.artist))
+
+
   // if ( action.direction === 'forwards' ) {
   //   yield put(takeSnapshotOfState());
   // }
