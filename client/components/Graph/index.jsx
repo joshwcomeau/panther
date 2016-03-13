@@ -4,6 +4,7 @@ import min from 'lodash/min'
 
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
 import { easeInOutQuart, linear } from '../../helpers/easing.helpers';
+import { recalculateEdges } from '../../helpers/graph.duck.helpers';
 
 import VertexContainer from '../../containers/VertexContainer.jsx';
 import Edge from './Edge.jsx';
@@ -22,10 +23,72 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(this.calculateVertexAndEdgePositions(nextProps));
-    // this.animate({
-    //   vertices: this.state.vertices.map( v => v.update('x', x => Math.random() * 1000))
-    // })
+    // Don't animate on the first invocation.
+    this.animate(nextProps)
+  }
+
+  animate(nextProps) {
+    // TODO: Move this to a config file
+    const duration = 1000;
+    const easingFunction = easeInOutQuart;
+
+    const startTime = new Date().getTime();
+
+    // // Only animate vertices that have _moved_.
+    // // For now, ignore new vertices and destroyed vertices.
+    // const this.state.vertices = this.state.vertices.filter( vertex => {
+    //   return nextProps.vertices.find( nextVertex => {
+    //     return nextVertex.get('id') === vertex.get('id');
+    //   });
+    // });
+    //
+    // Calculate X/Y coordinates for nextVertices
+    nextProps = this.calculateVertexAndEdgePositions(nextProps)
+
+    const {
+      radius, regionCoords, regionIndexCoords
+    } = this.calculateResponsiveRadiusAndRegions()
+
+
+    const updatePosition = () => {
+      requestAnimationFrame( () => {
+        const time = new Date().getTime() - startTime;
+
+        if ( time > duration ) return;
+
+        // TODO: retract disappeared nodes first
+
+        // Figure out the new center points for our vertices
+        const newVertices = nextProps.vertices.map( vertex => {
+          const finalVertex   = nextProps.vertices.find( v => v.get('id') === vertex.get('id'));
+
+          const originVertex  = this.state.vertices.find( v => v.get('id') === vertex.get('id')) || finalVertex;
+
+          return vertex
+            .set('x', easingFunction(
+              time,
+              originVertex.get('x'),
+              finalVertex.get('x') - originVertex.get('x'),
+              duration
+            ))
+            .set('y', easingFunction(
+              time,
+              originVertex.get('y'),
+              finalVertex.get('y') - originVertex.get('y'),
+              duration
+            ));
+        });
+
+        const newEdges = this.updateEdgesFromVertices(newVertices, recalculateEdges(newVertices));
+
+        this.setState({
+          vertices: newVertices,
+          edges:    newEdges
+        }, updatePosition);
+      });
+    }
+
+    updatePosition();
   }
 
   calculateResponsiveRadiusAndRegions() {
@@ -85,55 +148,7 @@ class Graph extends Component {
     return { vertices, edges };
   }
 
-  animate(nextProps) {
-    // TODO: Move this to a config file
-    const duration = 1000;
-    const easingFunction = easeInOutQuart;
 
-    const startTime = new Date().getTime();
-
-    const updatePosition = () => {
-      requestAnimationFrame( () => {
-        const time = new Date().getTime() - startTime;
-
-        if ( time > duration ) return;
-
-        // TODO: Start by doing the retractions, for disappeared nodes.
-
-        // Figure out the new center points for our vertices
-        const newVertices = this.state.vertices.map( (vertex, vertexIndex) => {
-          // TODO: Replace these with .find calls, since we won't be guaranteed
-          // that the index is the same.
-          const originVertex  = this.state.vertices.get(vertexIndex);
-          const finalVertex   = nextProps.vertices.get(vertexIndex);
-
-          return vertex
-            .set('x', easingFunction(
-              time,
-              originVertex.get('x'),
-              finalVertex.get('x') - originVertex.get('x'),
-              duration
-            ))
-            .set('y', easingFunction(
-              time,
-              originVertex.get('y'),
-              finalVertex.get('y') - originVertex.get('y'),
-              duration
-            ));
-        });
-
-        const newEdges = this.updateEdgesFromVertices(newVertices, this.state.edges);
-
-        this.setState({
-          vertices: newVertices,
-          edges:    newEdges
-        }, updatePosition);
-      });
-    }
-
-    updatePosition();
-
-  }
 
   render() {
     return (

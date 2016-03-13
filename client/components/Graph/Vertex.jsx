@@ -35,7 +35,6 @@ class Vertex extends Component {
           height={radius * 2}
           x={x}
           y={y}
-          filter={`url(#${shadowFilterId})`}
           onClick={this.clickHandler}
         >
           <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />

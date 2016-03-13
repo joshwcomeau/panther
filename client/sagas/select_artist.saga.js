@@ -1,5 +1,5 @@
 import { takeEvery } from 'redux-saga'
-import { take, call, put } from 'redux-saga/effects'
+import { take, call, put, select } from 'redux-saga/effects'
 
 import {
   SELECT_ARTIST,
@@ -17,6 +17,18 @@ import { repositionDelay, repositionLength } from '../config/timing';
 
 // a utility function: return a Promise that will resolve after 1 second
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+function takeFirstFewUnseenArtists(relatedArtists, artistsInState) {
+  let unseenArtists = [];
+
+  while ( relatedArtists.length && unseenArtists.length < 3 ) {
+    let artist = relatedArtists.shift()
+
+    if ( !artistsInState.get(artist.id) ) unseenArtists.push(artist);
+  }
+
+  return unseenArtists;
+}
 
 
 
@@ -53,8 +65,27 @@ export function* selectArtist(action) {
   // a few ways.
   const artistId = action.artist.get('id');
 
-  put(centerGraphAroundVertex(action.artist))
+  yield put(centerGraphAroundVertex(action.artist));
 
+  // Fetch related artists
+  const [ related, top ] = yield [
+    call( fetchRelatedArtists, artistId ),
+    call( fetchTopTracks, artistId )
+  ];
+
+  // TODO: We want to avoid showing related artists that we've already seen.
+  // Use Select to query the store's state, and use it to figure out which
+  // first 3 artists we can use of the ones returned by Spotify
+  // http://yelouafi.github.io/redux-saga/docs/api/index.html#selectselector-args
+  // For now I'm just taking the first 3
+  const artistsInState = yield select( state => state.get('artists'));
+  const first3Related = takeFirstFewUnseenArtists(related.artists, artistsInState);
+
+  yield [
+    put(addArtists(first3Related)),
+    put(addRelatedArtistsToGraph(first3Related)),
+    put(loadTracks(top.tracks))
+  ];
 
   // if ( action.direction === 'forwards' ) {
   //   yield put(takeSnapshotOfState());
