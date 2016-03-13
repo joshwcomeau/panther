@@ -2,58 +2,55 @@ import React, { Component, PropTypes } from 'react';
 import { List, Map, fromJS } from 'immutable';
 import min from 'lodash/min'
 
-import { repositionLength } from '../../config/timing';
-import { repositionEasing } from '../../config/easing';
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
+import { easeInOutQuart } from '../../helpers/easing.helpers';
 
-const radiusPercentage = 8;
 
 class Graph extends Component {
   constructor(props) {
     super(props);
-    this.state = this.updateNodesFromStore(props)
+    this.state = this.calculateVertexAndEdgePositions(props)
+
+    this.animate = ::this.animate;
   }
 
   componentDidMount() {
     this.resizeHandler = window.addEventListener('resize', () => {
-      this.setState(this.updateNodesFromStore());
+      this.setState(this.calculateVertexAndEdgePositions());
     });
   }
 
-  updateResponsiveSizes() {
+  calculateResponsiveRadiusAndRegions() {
     const width = window.innerWidth;
     const height = window.innerHeight;
+    const radiusPercentageRatio = 0.1;
 
-    // Our radius will depend on window size eventually, with steps?
-    // for now, make it percentage based. For this to work, it has to be
-    // the smaller of width/height
-    this.vertexRadiusSize = min([width, height]) * 1/10;
-    this.regionCoords = {
-      [GRAVEYARD]:  width * -1/4 - this.vertexRadiusSize,
-      [PAST]:       width * 1/6 - this.vertexRadiusSize,
-      [PRESENT]:    width * 3/6 - this.vertexRadiusSize,
-      [FUTURE]:     width * 5/6 - this.vertexRadiusSize
-    };
-    this.regionIndexCoords = [
-      height * 3/12 - this.vertexRadiusSize,
-      height * 6/12 - this.vertexRadiusSize,
-      height * 9/12 - this.vertexRadiusSize
-    ];
+    const radius = min([width, height]) * radiusPercentageRatio;
+
+    // TODO: A mobile mode where the nodes stack in rows instead of columns.
+    return {
+      radius,
+      regionCoords: {
+        [GRAVEYARD]:  width * -1/4 - radius,
+        [PAST]:       width * 1/6 - radius,
+        [PRESENT]:    width * 3/6 - radius,
+        [FUTURE]:     width * 5/6 - radius
+      },
+      regionIndexCoords: [
+        height * 3/12 - radius,
+        height * 6/12 - radius,
+        height * 9/12 - radius
+      ]
+    }
   }
 
-  updateNodesFromStore(props = this.props) {
-    this.updateResponsiveSizes();
+  updateEdgesFromVertices(vertices, edges) {
+    // All vertices have the same radius. Just pick it from the first
+    const radius = vertices.getIn([0, 'r']);
 
-    const vertices = props.vertices.map( v => v
-      .set( 'x', this.regionCoords[v.get('region')] )
-      .set( 'y', this.regionIndexCoords[v.get('regionIndex')] )
-      .set( 'r', this.vertexRadiusSize )
-    );
-
-    const edges = props.edges.map( e => {
+    return edges.map( e => {
       const from  = vertices.find( v => v.get('id') === e.get('from'));
       const to    = vertices.find( v => v.get('id') === e.get('to'));
-      const radius = this.vertexRadiusSize;
 
       return e
         .set( 'x1', from.get('x') + radius )
@@ -61,14 +58,80 @@ class Graph extends Component {
         .set( 'x2', to.get('x') + radius )
         .set( 'y2', to.get('y') + radius );
     });
+  }
+
+  calculateVertexAndEdgePositions(props = this.props) {
+    const {
+      radius,
+      regionCoords,
+      regionIndexCoords
+    } = this.calculateResponsiveRadiusAndRegions();
+
+    const vertices = props.vertices.map( v => v
+      .set( 'x', regionCoords[v.get('region')] )
+      .set( 'y', regionIndexCoords[v.get('regionIndex')] )
+      .set( 'r', radius )
+    );
+
+    const edges = this.updateEdgesFromVertices(vertices, props.edges);
 
     return { vertices, edges };
   }
 
+  animate(nextProps) {
+    // TODO: Move this to a config file
+    const duration = 1000;
+    const easingFunction = easeInOutQuart;
+
+    const startTime = new Date().getTime();
+
+    const updatePosition = () => {
+      requestAnimationFrame( () => {
+        const time = new Date().getTime() - startTime;
+
+        // TODO: Start by doing the retractions, for disappeared nodes.
+
+        // Figure out the new center points for our vertices
+        const newVertices = this.state.vertices.map( (vertex, vertexIndex) => {
+          // TODO: Replace these with .find calls, since we won't be guaranteed
+          // that the index is the same.
+          const originVertex  = this.state.vertices.get(vertexIndex);
+          const finalVertex   = nextProps.vertices.get(vertexIndex);
+
+          return vertex
+            .set('x', easingFunction(
+              time,
+              originVertex.get('x'),
+              finalVertex.get('x') - originVertex.get('x'),
+              duration
+            ))
+            .set('y', easingFunction(
+              time,
+              originVertex.get('y'),
+              finalVertex.get('y') - originVertex.get('y'),
+              duration
+            ));
+        });
+
+        const newEdges = this.updateEdgesFromVertices(newVertices, this.state.edges);
+
+        this.setState({
+          vertices: newVertices,
+          edges:    newEdges
+        }, () => {
+          if ( time < duration ) updatePosition();
+        });
+      });
+    }
+
+    updatePosition();
+
+  }
+
   moveTo(ev) {
-    animateShapes(this.state, ::this.setState, {
+    this.animate({
       vertices: this.state.vertices.map( v => v.update('x', x => Math.random() * 1000))
-    }, 1000)
+    })
   }
 
   render() {
@@ -139,95 +202,12 @@ class Graph extends Component {
   }
 };
 
-function calculateXFromRegion(region, radius) {
-  switch (region) {
-    case GRAVEYARD: this.graveyardX
-    case PAST:      return 100 / 6 - radius + "%";
-    case PRESENT:   return 300 / 6 - radius + "%";
-    case FUTURE:    return 500 / 6 - radius + "%";
-  }
-}
-
-function calculateYFromRegionIndex(regionIndex, radius) {
-  console.log("RegionIndex", regionIndex)
-  switch (regionIndex) {
-    case 0:      return 150 / 6 - radius + "%";
-    case 1:   return 300 / 6 - radius + "%";
-    case 2:    return 450 / 6 - radius + "%";
-  }
-}
 
 function animateShapes(origin, setState, final, duration, easingFunction = easeInOutQuart) {
   const startTime = new Date().getTime();
 
-  function updatePosition() {
-    requestAnimationFrame( () => {
-      const time = new Date().getTime() - startTime;
-
-      // Figure out the new center points for our vertices
-      const newVertices = origin.vertices.map( (vertex, vertexIndex) => {
-        // TODO: Replace these with .find calls, since we won't be guaranteed
-        // that the index is the same.
-        const originVertex  = origin.vertices.get(vertexIndex);
-        const finalVertex   = final.vertices.get(vertexIndex);
-
-        return vertex
-          .set('x', easingFunction(
-            time,
-            originVertex.get('x'),
-            finalVertex.get('x') - originVertex.get('x'),
-            duration
-          ))
-          .set('y', easingFunction(
-            time,
-            originVertex.get('y'),
-            finalVertex.get('y') - originVertex.get('y'),
-            duration
-          ));
-      });
-
-      const newEdges = origin.edges.map( (edge, edgeIndex) => {
-        const from  = newVertices.find( v => v.get('id') === edge.get('from'));
-        const to    = newVertices.find( v => v.get('id') === edge.get('to'));
-        const radius = from.get('r');
-
-        return edge
-          .set( 'x1', from.get('x') + radius )
-          .set( 'y1', from.get('y') + radius )
-          .set( 'x2', to.get('x') + radius )
-          .set( 'y2', to.get('y') + radius );
-
-        return edge;
-      });
-
-
-      setState({
-        vertices: newVertices,
-        edges: newEdges
-      }, () => {
-        if ( time < duration ) updatePosition();
-      });
-    });
-  }
-
-  updatePosition();
 }
 
-//  t: current time
-//  b: beginning value
-//  c: change in value
-//  d: duration
-//
-function easeInOutQuart(t, b, c, d) {
-  if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
-  return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
-}
-
-function linear(t, b, c, d) {
-  if ( t > d ) return b + c;
-  const ratio = t / d;
-  return b + (c * ratio);
-}
 
 
 export default Graph;
