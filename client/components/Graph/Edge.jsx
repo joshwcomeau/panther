@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-import { calculateLineLength } from '../../helpers/graph.duck.helpers';
+import { calculateLineLength } from '../../helpers/graph.helpers';
 
 
 const Edge = ({ data }) => {

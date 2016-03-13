@@ -11,6 +11,8 @@ import {
 } from '../ducks/graph.duck';
 import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
+
+import { takeFirstFewUnseenArtists } from '../helpers/artists.helpers';
 import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
 import { repositionDelay, repositionLength } from '../config/timing';
 
@@ -18,66 +20,16 @@ import { repositionDelay, repositionLength } from '../config/timing';
 // a utility function: return a Promise that will resolve after 1 second
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-function takeFirstFewUnseenArtists(relatedArtists, artistsInState) {
-  let unseenArtists = [];
-
-  while ( relatedArtists.length && unseenArtists.length < 3 ) {
-    let artist = relatedArtists.shift()
-
-    if ( !artistsInState.get(artist.id) ) unseenArtists.push(artist);
-  }
-
-  return unseenArtists;
-}
 
 
-
-export function* initializeWithArtist(artist) {
-  yield [
-    put(addArtists(artist)),
-    put(setupInitialStage(artist)),
-    put(updateRepositionStatus('setup'))
-  ];
-
-  // Fetch related artists
-  const [ related, top ] = yield [
-    call( fetchRelatedArtists, artist.get('id') ),
-    call( fetchTopTracks, artist.get('id') )
-  ];
-
-  // TODO: We want to avoid showing related artists that we've already seen.
-  // Use Select to query the store's state, and use it to figure out which
-  // first 3 artists we can use of the ones returned by Spotify
-  // http://yelouafi.github.io/redux-saga/docs/api/index.html#selectselector-args
-  // For now I'm just taking the first 3
-  const first3Related = related.artists.slice(0, 3);
-
-  yield [
-    put(addArtists(first3Related)),
-    put(addRelatedArtistsToGraph(first3Related)),
-    put(loadTracks(top.tracks))
-  ];
-}
-
-
-export function* selectArtist(action) {
-  // We've selected an artist, which means the state needs to change in
-  // a few ways.
-  const artistId = action.artist.get('id');
-
-  yield put(centerGraphAroundVertex(action.artist));
-
+function* fetchArtistAndTrackInfo(artistId) {
   // Fetch related artists
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artistId ),
-    call( fetchTopTracks, artistId )
+    call( fetchTopTracks, artistId ),
+    delay(1000)
   ];
 
-  // TODO: We want to avoid showing related artists that we've already seen.
-  // Use Select to query the store's state, and use it to figure out which
-  // first 3 artists we can use of the ones returned by Spotify
-  // http://yelouafi.github.io/redux-saga/docs/api/index.html#selectselector-args
-  // For now I'm just taking the first 3
   const artistsInState = yield select( state => state.get('artists'));
   const first3Related = takeFirstFewUnseenArtists(related.artists, artistsInState);
 
@@ -87,42 +39,23 @@ export function* selectArtist(action) {
     put(loadTracks(top.tracks))
   ];
 
-  // if ( action.direction === 'forwards' ) {
-  //   yield put(takeSnapshotOfState());
-  // }
-  //
-  // yield [
-  //   put(toggleArtist(false)),
-  //   put(markUnclickedArtistsAsRejected(action.artist)),
-  //   put(stop())
-  // ];
-  //
-  // yield put(retractRejectedNodeEdges());
-  //
-  // yield delay(repositionDelay);
-  // if ( action.direction === 'forwards' ) {
-  //   yield put(removeRejectedArtists());
-  //
-  //   yield [
-  //     put(retractSelectedNodeEdge()),
-  //     put(positionSelectedArtistToCenter())
-  //   ];
-  //
-  //   const [ related, top ] = yield [
-  //     call( fetchRelatedArtists, action.artist.get('id') ),
-  //     call( fetchTopTracks, action.artist.get('id') )
-  //   ];
-  //
-  //   yield put(populateRelatedArtistNodes(related.artists));
-  //   yield put(loadTracks(top.tracks));
-  //
-  // } else {
-  //   yield put(restorePreviousNodeState());
-  // }
-  //
-  // yield delay(repositionLength);
-  // yield put(calculateAndExpandEdges());
-  // yield put(toggleArtist(true));
+}
+
+
+function* initializeWithArtist(artist) {
+  yield [
+    put(addArtists(artist)),
+    put(setupInitialStage(artist)),
+    put(updateRepositionStatus('setup'))
+  ];
+
+  yield fetchArtistAndTrackInfo(artist.get('id'));
+}
+
+
+export function* selectArtist(action) {
+  yield put(centerGraphAroundVertex(action.artist));
+  yield fetchArtistAndTrackInfo(action.artist.get('id'));
 }
 
 

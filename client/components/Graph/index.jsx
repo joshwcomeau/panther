@@ -3,8 +3,8 @@ import { List, Map, fromJS } from 'immutable';
 import min from 'lodash/min'
 
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
-import { easeInOutQuart, linear } from '../../helpers/easing.helpers';
-import { recalculateEdges } from '../../helpers/graph.duck.helpers';
+import { easeInOutCubic } from '../../helpers/easing.helpers';
+import { recalculateEdges } from '../../helpers/graph.helpers';
 
 import VertexContainer from '../../containers/VertexContainer.jsx';
 import Edge from './Edge.jsx';
@@ -30,7 +30,7 @@ class Graph extends Component {
   animate(nextProps) {
     // TODO: Move this to a config file
     const duration = 1000;
-    const easingFunction = easeInOutQuart;
+    const easingFunction = easeInOutCubic;
 
     const startTime = new Date().getTime();
 
@@ -49,6 +49,8 @@ class Graph extends Component {
       radius, regionCoords, regionIndexCoords
     } = this.calculateResponsiveRadiusAndRegions()
 
+    const originVertices = this.state.vertices.slice();
+
 
     const updatePosition = () => {
       requestAnimationFrame( () => {
@@ -62,7 +64,7 @@ class Graph extends Component {
         const newVertices = nextProps.vertices.map( vertex => {
           const finalVertex   = nextProps.vertices.find( v => v.get('id') === vertex.get('id'));
 
-          const originVertex  = this.state.vertices.find( v => v.get('id') === vertex.get('id')) || finalVertex;
+          const originVertex  = originVertices.find( v => v.get('id') === vertex.get('id')) || finalVertex;
 
           return vertex
             .set('x', easingFunction(
@@ -149,8 +151,8 @@ class Graph extends Component {
     } = this.calculateResponsiveRadiusAndRegions();
 
     const vertices = props.vertices.map( v => v
-      .set( 'x',  regionCoords[v.get('region')] +
-                  regionOffset[v.get('region')][v.get('regionIndex')])
+      .set( 'x',  regionCoords[v.get('region')]
+                + regionOffset[v.get('region')][v.get('regionIndex')])
       .set( 'y', regionIndexCoords[v.get('regionIndex')] )
       .set( 'radius', radius )
     );

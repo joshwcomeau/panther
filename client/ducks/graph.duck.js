@@ -6,7 +6,7 @@ import faker from 'faker';
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
 import {
   getPreviousRegion, recalculateEdges
-} from '../helpers/graph.duck.helpers';
+} from '../helpers/graph.helpers';
 
 ///////////////////////////
 // ACTION TYPES //////////
