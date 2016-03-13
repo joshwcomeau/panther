@@ -3,15 +3,16 @@ import { List, Map, fromJS } from 'immutable';
 import min from 'lodash/min'
 
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
-import { easeInOutQuart } from '../../helpers/easing.helpers';
+import { easeInOutQuart, linear } from '../../helpers/easing.helpers';
+
+import Vertex from './Vertex.jsx';
+import Edge from './Edge.jsx';
 
 
 class Graph extends Component {
   constructor(props) {
     super(props);
     this.state = this.calculateVertexAndEdgePositions(props)
-
-    this.animate = ::this.animate;
   }
 
   componentDidMount() {
@@ -23,25 +24,24 @@ class Graph extends Component {
   calculateResponsiveRadiusAndRegions() {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const radiusPercentageRatio = 0.1;
 
-    const radius = min([width, height]) * radiusPercentageRatio;
+    const radius = min([width, height]) * 1/10;
 
     // TODO: A mobile mode where the nodes stack in rows instead of columns.
     return {
       radius,
       regionCoords: {
         [GRAVEYARD]:  width * -1/4 - radius,
-        [PAST]:       width * 1/6 - radius,
-        [PRESENT]:    width * 3/6 - radius,
-        [FUTURE]:     width * 5/6 - radius
+        [PAST]:       width *  1/6 - radius,
+        [PRESENT]:    width *  3/6 - radius,
+        [FUTURE]:     width *  5/6 - radius
       },
       regionIndexCoords: [
         height * 3/12 - radius,
         height * 6/12 - radius,
         height * 9/12 - radius
       ]
-    }
+    };
   }
 
   updateEdgesFromVertices(vertices, edges) {
@@ -89,6 +89,8 @@ class Graph extends Component {
       requestAnimationFrame( () => {
         const time = new Date().getTime() - startTime;
 
+        if ( time > duration ) return;
+
         // TODO: Start by doing the retractions, for disappeared nodes.
 
         // Figure out the new center points for our vertices
@@ -118,9 +120,7 @@ class Graph extends Component {
         this.setState({
           vertices: newVertices,
           edges:    newEdges
-        }, () => {
-          if ( time < duration ) updatePosition();
-        });
+        }, updatePosition);
       });
     }
 
@@ -139,75 +139,11 @@ class Graph extends Component {
 
     return (
       <svg id="graph" onClick={(ev) => this.moveTo(ev)}>
-        {
-          this.state.edges.map( (e, i) => {
-            return (
-              <line
-                key={i}
-                x1={e.get('x1')}
-                y1={e.get('y1')}
-                x2={e.get('x2')}
-                y2={e.get('y2')}
-              />
-            )
-          })
-        }
-
-        <defs>
-          <filter id="dropshadow">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-            <feOffset dx="2" dy="2"/>
-            <feComponentTransfer>
-              <feFuncA type="linear" slope="0.5"/>
-            </feComponentTransfer>
-            <feMerge>
-              <feMergeNode/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        {
-          this.state.vertices.map( (v, i) => {
-            return (
-              <svg
-                key={i}
-                width={v.get('r') * 2}
-                height={v.get('r') * 2}
-                x={v.get('x')}
-                y={v.get('y')}
-                filter="url(#dropshadow)"
-              >
-
-                <circle
-                  cx="50%"
-                  cy="50%"
-                  r="48%"
-                  fill="#FFFFFF"
-
-                />
-                <text
-                  x="50%"
-                  y="50%"
-                  text-anchor="middle"
-                  style={{ fontSize: '14px', fontWeight: 'bold'}}
-                >
-                  {v.get('name')}
-                </text>
-              </svg>
-            )
-          })
-        }
+        { this.state.edges.map( (e, i) => <Edge key={i} data={e} /> ) }
+        { this.state.vertices.map( (v, i) => <Vertex key={i} data={v} /> ) }
       </svg>
     );
   }
 };
-
-
-function animateShapes(origin, setState, final, duration, easingFunction = easeInOutQuart) {
-  const startTime = new Date().getTime();
-
-}
-
-
 
 export default Graph;

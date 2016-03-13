@@ -8,6 +8,7 @@ export function easeInOutQuart(t, b, c, d) {
 }
 
 export function linear(t, b, c, d) {
+  console.log("Called")
   if ( t > d ) return b + c;
   const ratio = t / d;
   return b + (c * ratio);
