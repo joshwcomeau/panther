@@ -110,7 +110,17 @@ class Graph extends Component {
         height * 3/12 - radius,
         height * 6/12 - radius,
         height * 9/12 - radius
-      ]
+      ],
+      regionOffset: {
+        [GRAVEYARD]:  [0,0,0],
+        [PAST]:       [0,0,0],
+        [PRESENT]:    [0,0,0],
+        [FUTURE]:     [
+          width * -1/40,
+          width * 1/40,
+          width * -1/40
+        ]
+      }
     };
   }
 
@@ -134,11 +144,13 @@ class Graph extends Component {
     const {
       radius,
       regionCoords,
-      regionIndexCoords
+      regionIndexCoords,
+      regionOffset
     } = this.calculateResponsiveRadiusAndRegions();
 
     const vertices = props.vertices.map( v => v
-      .set( 'x', regionCoords[v.get('region')] )
+      .set( 'x',  regionCoords[v.get('region')] +
+                  regionOffset[v.get('region')][v.get('regionIndex')])
       .set( 'y', regionIndexCoords[v.get('regionIndex')] )
       .set( 'radius', radius )
     );

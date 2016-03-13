@@ -22,10 +22,12 @@ class Vertex extends Component {
   }
 
   render() {
-    const { radius, x, y, artist } = this.props;
+    const { region, radius, x, y, artist } = this.props;
     const artistName = artist.get('name');
 
     const shadowFilterId = 'drop-shadow';
+
+    const classes = classNames([ 'vertex', region.toLowerCase() ]);
 
     return (
       <g>
@@ -33,13 +35,14 @@ class Vertex extends Component {
         <svg
           width={radius * 2}
           height={radius * 2}
+          class={classes}
           x={x}
           y={y}
           onClick={this.clickHandler}
         >
           <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />
 
-          <text x="50%" y="50%" text-anchor="middle">{artistName}</text>
+          <text x="50%" y="51%" text-anchor="middle">{artistName}</text>
         </svg>
       </g>
     );

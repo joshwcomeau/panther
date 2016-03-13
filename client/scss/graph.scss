@@ -16,4 +16,18 @@
     font-size: 14px;
     font-weight: bold;
   }
+
+  .vertex {
+    &.past {
+      cursor: pointer;
+    }
+
+    &.present {
+      cursor: default;
+    }
+
+    &.future {
+      cursor: pointer;
+    }
+  }
 }
