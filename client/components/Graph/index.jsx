@@ -44,14 +44,25 @@ class Graph extends Component {
   updateNodesFromStore(props = this.props) {
     this.updateResponsiveSizes();
 
-    return {
-      vertices: props.vertices.map( v => {
-        return v
-          .set( 'x', this.regionCoords[v.get('region')] )
-          .set( 'y', this.regionIndexCoords[v.get('regionIndex')] )
-          .set( 'r', this.vertexRadiusSize );
-      })
-    };
+    const vertices = props.vertices.map( v => v
+      .set( 'x', this.regionCoords[v.get('region')] )
+      .set( 'y', this.regionIndexCoords[v.get('regionIndex')] )
+      .set( 'r', this.vertexRadiusSize )
+    );
+
+    const edges = props.edges.map( e => {
+      const from  = vertices.find( v => v.get('id') === e.get('from'));
+      const to    = vertices.find( v => v.get('id') === e.get('to'));
+      const radius = this.vertexRadiusSize;
+
+      return e
+        .set( 'x1', from.get('x') + radius )
+        .set( 'y1', from.get('y') + radius )
+        .set( 'x2', to.get('x') + radius )
+        .set( 'y2', to.get('y') + radius );
+    });
+
+    return { vertices, edges };
   }
 
   moveTo(ev) {
@@ -65,6 +76,20 @@ class Graph extends Component {
 
     return (
       <svg id="graph" onClick={(ev) => this.moveTo(ev)}>
+        {
+          this.state.edges.map( (e, i) => {
+            return (
+              <line
+                key={i}
+                x1={e.get('x1')}
+                y1={e.get('y1')}
+                x2={e.get('x2')}
+                y2={e.get('y2')}
+              />
+            )
+          })
+        }
+
         <defs>
           <filter id="dropshadow">
             <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
@@ -93,7 +118,7 @@ class Graph extends Component {
                 <circle
                   cx="50%"
                   cy="50%"
-                  r="40%"
+                  r="50%"
                   fill="#FFFFFF"
 
                 />

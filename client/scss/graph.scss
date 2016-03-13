@@ -6,4 +6,9 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+
+  line {
+    stroke: $blue;
+    stroke-width: 4;
+  }
 }
