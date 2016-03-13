@@ -21,6 +21,10 @@ class Graph extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(this.calculateVertexAndEdgePositions(nextProps));
+  }
+
   calculateResponsiveRadiusAndRegions() {
     const width = window.innerWidth;
     const height = window.innerHeight;

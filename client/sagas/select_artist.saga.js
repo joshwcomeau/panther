@@ -4,16 +4,10 @@ import { take, call, put } from 'redux-saga/effects'
 import {
   SELECT_ARTIST,
   setupInitialStage,
-  markUnclickedArtistsAsRejected,
-  retractRejectedNodeEdges,
-  removeRejectedArtists,
-  retractSelectedNodeEdge,
-  positionSelectedArtistToCenter,
-  setTopTracks,
-  populateRelatedArtistNodes,
-  calculateAndExpandEdges,
-  restorePreviousNodeState,
-  takeSnapshotOfState
+  updateRepositionStatus,
+  addRelatedArtists,
+  markArtistsAsRejected,
+  updateVertexPositions
 } from '../ducks/graph.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
 import { toggleArtist } from '../ducks/artist-info.duck';
@@ -27,7 +21,10 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
 export function* initializeWithArtist(artist) {
-  yield put(setupInitialStage(artist));
+  yield [
+    put(setupInitialStage(artist)),
+    put(updateRepositionStatus('setup'))
+  ];
 
   // Fetch related artists
   const [ related, top ] = yield [
@@ -35,51 +32,52 @@ export function* initializeWithArtist(artist) {
     call( fetchTopTracks, artist.get('id') )
   ];
 
-  yield put(populateRelatedArtistNodes(related.artists));
-  yield put(loadTracks(top.tracks));
+  console.log("Got related", related)
 
-  yield put(calculateAndExpandEdges());
-  yield put(toggleArtist(true));
+  yield [
+    put(addRelatedArtists(related.artists)),
+    put(loadTracks(top.tracks))
+  ];
 }
 
 
 export function* selectArtist(action) {
-  if ( action.direction === 'forwards' ) {
-    yield put(takeSnapshotOfState());
-  }
-
-  yield [
-    put(toggleArtist(false)),
-    put(markUnclickedArtistsAsRejected(action.artist)),
-    put(stop())
-  ];
-
-  yield put(retractRejectedNodeEdges());
-
-  yield delay(repositionDelay);
-  if ( action.direction === 'forwards' ) {
-    yield put(removeRejectedArtists());
-
-    yield [
-      put(retractSelectedNodeEdge()),
-      put(positionSelectedArtistToCenter())
-    ];
-
-    const [ related, top ] = yield [
-      call( fetchRelatedArtists, action.artist.get('id') ),
-      call( fetchTopTracks, action.artist.get('id') )
-    ];
-
-    yield put(populateRelatedArtistNodes(related.artists));
-    yield put(loadTracks(top.tracks));
-
-  } else {
-    yield put(restorePreviousNodeState());
-  }
-
-  yield delay(repositionLength);
-  yield put(calculateAndExpandEdges());
-  yield put(toggleArtist(true));
+  // if ( action.direction === 'forwards' ) {
+  //   yield put(takeSnapshotOfState());
+  // }
+  //
+  // yield [
+  //   put(toggleArtist(false)),
+  //   put(markUnclickedArtistsAsRejected(action.artist)),
+  //   put(stop())
+  // ];
+  //
+  // yield put(retractRejectedNodeEdges());
+  //
+  // yield delay(repositionDelay);
+  // if ( action.direction === 'forwards' ) {
+  //   yield put(removeRejectedArtists());
+  //
+  //   yield [
+  //     put(retractSelectedNodeEdge()),
+  //     put(positionSelectedArtistToCenter())
+  //   ];
+  //
+  //   const [ related, top ] = yield [
+  //     call( fetchRelatedArtists, action.artist.get('id') ),
+  //     call( fetchTopTracks, action.artist.get('id') )
+  //   ];
+  //
+  //   yield put(populateRelatedArtistNodes(related.artists));
+  //   yield put(loadTracks(top.tracks));
+  //
+  // } else {
+  //   yield put(restorePreviousNodeState());
+  // }
+  //
+  // yield delay(repositionLength);
+  // yield put(calculateAndExpandEdges());
+  // yield put(toggleArtist(true));
 }
 
 
