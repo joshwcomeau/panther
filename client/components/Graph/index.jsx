@@ -5,7 +5,7 @@ import min from 'lodash/min'
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
 import { easeInOutQuart, linear } from '../../helpers/easing.helpers';
 
-import Vertex from './Vertex.jsx';
+import VertexContainer from '../../containers/VertexContainer.jsx';
 import Edge from './Edge.jsx';
 
 
@@ -23,6 +23,9 @@ class Graph extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState(this.calculateVertexAndEdgePositions(nextProps));
+    // this.animate({
+    //   vertices: this.state.vertices.map( v => v.update('x', x => Math.random() * 1000))
+    // })
   }
 
   calculateResponsiveRadiusAndRegions() {
@@ -50,7 +53,7 @@ class Graph extends Component {
 
   updateEdgesFromVertices(vertices, edges) {
     // All vertices have the same radius. Just pick it from the first
-    const radius = vertices.getIn([0, 'r']);
+    const radius = vertices.getIn([0, 'radius']);
 
     return edges.map( e => {
       const from  = vertices.find( v => v.get('id') === e.get('from'));
@@ -74,7 +77,7 @@ class Graph extends Component {
     const vertices = props.vertices.map( v => v
       .set( 'x', regionCoords[v.get('region')] )
       .set( 'y', regionIndexCoords[v.get('regionIndex')] )
-      .set( 'r', radius )
+      .set( 'radius', radius )
     );
 
     const edges = this.updateEdgesFromVertices(vertices, props.edges);
@@ -132,19 +135,19 @@ class Graph extends Component {
 
   }
 
-  moveTo(ev) {
-    this.animate({
-      vertices: this.state.vertices.map( v => v.update('x', x => Math.random() * 1000))
-    })
-  }
-
   render() {
-    const { vertices, edges, actions } = this.props;
-
     return (
-      <svg id="graph" onClick={(ev) => this.moveTo(ev)}>
+      <svg id="graph">
         { this.state.edges.map( (e, i) => <Edge key={i} data={e} /> ) }
-        { this.state.vertices.map( (v, i) => <Vertex key={i} data={v} /> ) }
+        { this.state.vertices.map( v => (
+          <VertexContainer
+            key={v.get('id')}
+            id={v.get('id')}
+            x={v.get('x')}
+            y={v.get('y')}
+            radius={v.get('radius')}
+          />
+        ))}
       </svg>
     );
   }

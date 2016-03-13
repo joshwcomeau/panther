@@ -26,11 +26,8 @@ class Vertex extends Component {
   }
 
   render() {
-    const { data } = this.props;
-    const radius = data.get('r');
-    const x = data.get('x');
-    const y = data.get('y');
-    const artistName = data.get('name');
+    const { radius, x, y, artist } = this.props;
+    const artistName = artist.get('name');
 
     const shadowFilterId = 'drop-shadow';
 

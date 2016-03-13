@@ -5,12 +5,12 @@ import {
   SELECT_ARTIST,
   setupInitialStage,
   updateRepositionStatus,
-  addRelatedArtists,
+  addRelatedArtistsToGraph,
   markArtistsAsRejected,
   updateVertexPositions
 } from '../ducks/graph.duck';
+import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
-import { toggleArtist } from '../ducks/artist-info.duck';
 import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
 import { repositionDelay, repositionLength } from '../config/timing';
 
@@ -22,6 +22,7 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export function* initializeWithArtist(artist) {
   yield [
+    put(addArtists(artist)),
     put(setupInitialStage(artist)),
     put(updateRepositionStatus('setup'))
   ];
@@ -32,10 +33,16 @@ export function* initializeWithArtist(artist) {
     call( fetchTopTracks, artist.get('id') )
   ];
 
-  console.log("Got related", related)
+  // TODO: We want to avoid showing related artists that we've already seen.
+  // Use Select to query the store's state, and use it to figure out which
+  // first 3 artists we can use of the ones returned by Spotify
+  // http://yelouafi.github.io/redux-saga/docs/api/index.html#selectselector-args
+  // For now I'm just taking the first 3
+  const first3Related = related.artists.slice(0, 3);
 
   yield [
-    put(addRelatedArtists(related.artists)),
+    put(addArtists(first3Related)),
+    put(addRelatedArtistsToGraph(first3Related)),
     put(loadTracks(top.tracks))
   ];
 }

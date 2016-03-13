@@ -12,7 +12,7 @@ import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
 export const SELECT_ARTIST                  = 'SELECT_ARTIST';
 export const SETUP_INITIAL_STAGE            = 'SETUP_INITIAL_STAGE';
 export const UPDATE_REPOSITION_STATUS       = 'UPDATE_REPOSITION_STATUS';
-export const ADD_RELATED_ARTISTS            = 'ADD_RELATED_ARTISTS';
+export const ADD_RELATED_ARTISTS_TO_GRAPH = 'ADD_RELATED_ARTISTS_TO_GRAPH';
 export const MARK_ARTISTS_AS_REJECTED       = 'MARK_ARTISTS_AS_REJECTED';
 export const UPDATE_VERTEX_POSITIONS        = 'UPDATE_VERTEX_POSITIONS';
 
@@ -34,8 +34,6 @@ export default function reducer(state = initialState, action) {
     console.log("Setting up", action)
     const initialVertices = fromJS([{
       id:           action.artist.get('id'),
-      name:         action.artist.get('name'),
-      images:       action.artist.get('images'),
       region:       PRESENT,
       regionIndex:  1
     }])
@@ -46,14 +44,12 @@ export default function reducer(state = initialState, action) {
     // TODO: Is this actually necessary?
     return state.set('status', action.status);
 
-  case ADD_RELATED_ARTISTS:
+  case ADD_RELATED_ARTISTS_TO_GRAPH:
     return state
       .update('vertices', vertices => {
-        // Convert our Spotify artist stuff to vertices
+        // Create a new vertex for each related artist
         const newVertices = fromJS(action.artists.map( (artist, i) => ({
           id:           artist.id,
-          name:         artist.name,
-          images:       artist.images,
           region:       FUTURE,
           regionIndex:  i
         })));
@@ -61,12 +57,13 @@ export default function reducer(state = initialState, action) {
         return vertices.concat(newVertices);
       })
       .update('edges', edges => {
+        // Find the 'present' artist's ID
         const from = state
           .get('vertices')
           .find( v => v.get('region') === PRESENT )
           .get('id');
 
-        console.log("From", from)
+        // Create a new edge for each related artist
         const newEdges = fromJS(action.artists.map( artist => ({
           from,
           to: artist.id
@@ -122,10 +119,9 @@ export function updateRepositionStatus(status) {
   };
 }
 
-export function addRelatedArtists(artists) {
-  console.log("Action called with", artists.slice(0, 3))
+export function addRelatedArtistsToGraph(artists) {
   return {
-    type: ADD_RELATED_ARTISTS,
-    artists: artists.slice(0,3)
+    type: ADD_RELATED_ARTISTS_TO_GRAPH,
+    artists
   };
 }
