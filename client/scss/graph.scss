@@ -41,11 +41,6 @@
     &.future {
       cursor: pointer;
     }
-
-    &.rejected {
-      animation: rejected 500ms;
-    }
-
   }
 }
 
@@ -79,8 +74,8 @@
     opacity: 1;
   }
   to {
-    transform: scale(0.01, 0.01) rotate(25deg);
+    transform: scale(0, 0) rotate(25deg);
     transform-origin: 50% 50%;
-    opacity: 0.01;
+    opacity: 0.6;
   }
 }

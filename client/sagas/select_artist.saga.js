@@ -22,12 +22,12 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
 
-function* fetchArtistAndTrackInfo(artistId) {
+function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
   // Fetch related artists
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artistId ),
     call( fetchTopTracks, artistId ),
-    delay(1500)
+    delay(delayLength)
   ];
 
   const artistsInState = yield select( state => state.get('artists'));
@@ -49,13 +49,19 @@ function* initializeWithArtist(artist) {
     put(updateRepositionStatus('setup'))
   ];
 
-  yield fetchArtistAndTrackInfo(artist.get('id'));
+  yield fetchArtistAndTrackInfo({
+    artistId: artist.get('id'),
+    delayLength: 0
+  });
 }
 
 
 export function* selectArtist(action) {
   yield put(centerGraphAroundVertex(action.artist));
-  yield fetchArtistAndTrackInfo(action.artist.get('id'));
+  yield fetchArtistAndTrackInfo({
+    artistId: action.artist.get('id'),
+    delayLength: repositionDelay + repositionLength
+  });
 }
 
 

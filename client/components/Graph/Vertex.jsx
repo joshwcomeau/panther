@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
+import { rejectedFadeLength } from '../../config/timing';
 
 import VertexShadow from './VertexShadow.jsx';
 
@@ -28,6 +29,14 @@ class Vertex extends Component {
     const shadowFilterId = 'drop-shadow';
 
     const classes = classNames([ 'vertex', region.toLowerCase(), { rejected } ]);
+    let styles = {}
+
+    if ( rejected ) {
+      styles.animationName = 'rejected';
+      styles.animationDuration = rejectedFadeLength+'ms';
+      styles.animationFillMode = 'forwards';
+      styles.animationTimingFunction = 'ease';
+    }
 
     return (
       <g>
@@ -39,7 +48,7 @@ class Vertex extends Component {
           y={y}
           onClick={this.clickHandler}
         >
-          <g class={classes}>
+          <g class={classes} style={styles}>
             <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />
             <text x="50%" y="51%" text-anchor="middle">{artistName}</text>
           </g>
