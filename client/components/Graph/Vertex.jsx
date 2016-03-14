@@ -35,14 +35,14 @@ class Vertex extends Component {
         <svg
           width={radius * 2}
           height={radius * 2}
-          class={classes}
           x={x}
           y={y}
           onClick={this.clickHandler}
         >
-          <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />
-
-          <text x="50%" y="51%" text-anchor="middle">{artistName}</text>
+          <g class={classes}>
+            <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />
+            <text x="50%" y="51%" text-anchor="middle">{artistName}</text>
+          </g>
         </svg>
       </g>
     );
