@@ -14,7 +14,7 @@ import { loadTracks, stop } from '../ducks/samples.duck';
 
 import { takeFirstFewUnseenArtists } from '../helpers/artists.helpers';
 import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
-import { repositionDelay, repositionLength } from '../config/timing';
+import { repositionDelay, repositionLength, edgesExpandLength } from '../config/timing';
 
 
 // a utility function: return a Promise that will resolve after 1 second
@@ -39,14 +39,16 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
     put(loadTracks(top.tracks))
   ];
 
+  yield delay(edgesExpandLength);
+  yield put(updateRepositionStatus('idle'));
+
 }
 
 
 function* initializeWithArtist(artist) {
   yield [
     put(addArtists(artist)),
-    put(setupInitialStage(artist)),
-    put(updateRepositionStatus('setup'))
+    put(setupInitialStage(artist))
   ];
 
   yield fetchArtistAndTrackInfo({
@@ -58,6 +60,7 @@ function* initializeWithArtist(artist) {
 
 export function* selectArtist(action) {
   yield put(centerGraphAroundVertex(action.artist));
+
   yield fetchArtistAndTrackInfo({
     artistId: action.artist.get('id'),
     delayLength: repositionDelay + repositionLength

@@ -21,9 +21,6 @@ export const CENTER_GRAPH_AROUND_VERTEX     = 'CENTER_GRAPH_AROUND_VERTEX';
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
-// TEMPORARY. Just for development purposes.
-import { vertexData } from '../temp_fixtures.js';
-// const initialState = fromJS(vertexData);
 const initialState = fromJS({
   vertices: [],
   edges: []
@@ -38,10 +35,11 @@ export default function reducer(state = initialState, action) {
       regionIndex:  1
     }])
 
-    return state.set('vertices', initialVertices);
+    return state
+      .set('vertices', initialVertices)
+      .set('status', 'idle');
 
   case UPDATE_REPOSITION_STATUS:
-    // TODO: Is this actually necessary?
     return state.set('status', action.status);
 
   case ADD_RELATED_ARTISTS_TO_GRAPH:
@@ -71,6 +69,7 @@ export default function reducer(state = initialState, action) {
 
         return edges.concat(newEdges);
       })
+      .set('status', 'adding-related-artists');
 
 
   case CENTER_GRAPH_AROUND_VERTEX:
@@ -96,7 +95,9 @@ export default function reducer(state = initialState, action) {
           .setIn([-1, 'regionIndex'], 1)
       ));
 
-    return state.update('edges', edges => recalculateEdges(state.get('vertices')));
+    return state
+      .update('edges', edges => recalculateEdges(state.get('vertices')))
+      .set('status', 'repositioning');;
 
 
 

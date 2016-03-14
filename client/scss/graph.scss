@@ -30,6 +30,8 @@
   }
 
   .vertex {
+    animation: fadeIn 1200ms forwards;
+
     &.past {
       cursor: pointer;
     }

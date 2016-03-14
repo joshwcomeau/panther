@@ -25,17 +25,55 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // TODO: Find a way to only animate on relevant prop changes.
-    // Maybe the .status property?
+    console.log("Received new status at ", performance.now(), nextProps.status, nextProps.vertices.toJS())
     this.animate(nextProps)
   }
 
   animate(nextProps) {
-    // First order of business: Fading out and retracting dead vertices
-    this.animateRejection(nextProps, () => this.animateReorder(nextProps))
-
+    console.log("Animating", performance.now(), this.props.status, nextProps.status)
+    switch ( this.props.status ) {
+      case 'repositioning':
+        this.animateRejection(nextProps, () => this.animateReorder(nextProps));
+        break;
+      case 'adding-related-artists':
+        this.animateRelatedArtists(nextProps);
+        break;
+    }
   }
 
+  animateRelatedArtists(nextProps) {
+    // Calculate positions of the new vertices
+    nextProps = this.calculateVertexAndEdgePositions(nextProps);
+
+    // No changes necessary for vertices
+    const nextVertices = nextProps.vertices;
+
+    // Get the IDs of all new vertices
+    const newVertices = nextVertices.filter( nextVertex => {
+      return !this.state.vertices.find( vertex => (
+        vertex.get('id') === nextVertex.get('id')
+      ));
+    });
+
+    console.log("Found new vertices", newVertices.toJS());
+
+    // Set all edges that point to new vertices as 'expanding'
+    const nextEdges = nextProps.edges.map( edge => {
+      const pointsToNewVertex = newVertices.find( vertex => (
+        vertex.get('id') === edge.get('to')
+      ))
+
+      if ( pointsToNewVertex ) {
+        edge = edge.set('expanding', true);
+      }
+      return edge;
+    });
+
+    this.setState({
+      vertices: nextVertices,
+      edges:    nextEdges
+    });
+  }
 
   animateRejection(nextProps, callback) {
     const rejectedVertices = this.state.vertices.filter( vertex => (
@@ -51,7 +89,7 @@ class Graph extends Component {
     // Rather than do this animation in JS, I can use SVG line animation
     // and CSS keyframe animations. Just mark the vertices and edges, so
     // it can be dealt with in their components.
-    const newVertices = this.state.vertices.map( vertex => {
+    const nextVertices = this.state.vertices.map( vertex => {
       const isRejected = rejectedVertices.find( rejectedVertex => (
         vertex.get('id') === rejectedVertex.get('id')
       ));
@@ -60,7 +98,7 @@ class Graph extends Component {
       return vertex;
     });
 
-    const newEdges = this.state.edges.map( edge => {
+    const nextEdges = this.state.edges.map( edge => {
       const pointsToRejectedVertex = rejectedVertices.find( vertex => (
         vertex.get('id') === edge.get('to')
       ));
@@ -72,8 +110,8 @@ class Graph extends Component {
     });
 
     this.setState({
-      vertices: newVertices,
-      edges: newEdges
+      vertices: nextVertices,
+      edges: nextEdges
     }, () => {
       setTimeout(callback.bind(this), repositionDelay);
     });
@@ -86,7 +124,7 @@ class Graph extends Component {
     const startTime = new Date().getTime();
 
     // Calculate X/Y coordinates for nextVertices
-    nextProps = this.calculateVertexAndEdgePositions(nextProps)
+    nextProps = this.calculateVertexAndEdgePositions(nextProps);
 
     const {
       radius, regionCoords, regionIndexCoords
@@ -102,7 +140,7 @@ class Graph extends Component {
         if ( time > duration ) return;
 
         // Figure out the new center points for our vertices
-        const newVertices = nextProps.vertices.map( vertex => {
+        const nextVertices = nextProps.vertices.map( vertex => {
           const finalVertex   = nextProps.vertices.find( v => v.get('id') === vertex.get('id'));
 
           const originVertex  = originVertices.find( v => v.get('id') === vertex.get('id')) || finalVertex;
@@ -122,11 +160,11 @@ class Graph extends Component {
             ));
         });
 
-        const newEdges = this.updateEdgesFromVertices(newVertices, recalculateEdges(newVertices));
+        const nextEdges = this.updateEdgesFromVertices(nextVertices, recalculateEdges(nextVertices));
 
         this.setState({
-          vertices: newVertices,
-          edges:    newEdges
+          vertices: nextVertices,
+          edges:    nextEdges
         }, updatePosition);
       });
     }

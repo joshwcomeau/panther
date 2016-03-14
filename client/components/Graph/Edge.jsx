@@ -2,7 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 import { calculateLineLength } from '../../helpers/graph.helpers';
-import { edgesRetractLength, edgesRetractDelay } from '../../config/timing';
+import {
+  edgesRetractLength,
+  edgesRetractDelay,
+  edgesExpandLength
+} from '../../config/timing';
 
 
 const Edge = ({ retracting, expanding, x1, y1, x2, y2 }) => {
