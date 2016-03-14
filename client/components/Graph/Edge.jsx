@@ -2,15 +2,32 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 import { calculateLineLength } from '../../helpers/graph.helpers';
+import { edgesRetractLength } from '../../config/timing';
 
 
-const Edge = ({ data }) => {
+const Edge = ({ retracting, expanding, x1, y1, x2, y2 }) => {
+  const classes = classNames({ retracting, expanding });
+  let styles = {};
+
+  if ( retracting ) {
+    styles = setDashStyles(x1, y1, x2, y2);
+    styles.animationTimingFunction  = 'ease';
+    styles.animationDuration        = `${edgesRetractLength}ms`;
+  }
+
+  if ( expanding ) {
+    styles = setDashStyles(x1, y1, x2, y2);
+    styles.animationTimingFunction  = 'ease';
+    styles.animationDuration        = `${edgesExpandLength}ms`;
+  }
 
   return <line
-    x1={data.get('x1')}
-    y1={data.get('y1')}
-    x2={data.get('x2')}
-    y2={data.get('y2')}
+    class={classes}
+    style={styles}
+    x1={x1}
+    y1={y1}
+    x2={x2}
+    y2={y2}
   />;
 };
 

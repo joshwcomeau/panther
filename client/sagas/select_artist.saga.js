@@ -27,7 +27,7 @@ function* fetchArtistAndTrackInfo(artistId) {
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artistId ),
     call( fetchTopTracks, artistId ),
-    delay(1000)
+    delay(1500)
   ];
 
   const artistsInState = yield select( state => state.get('artists'));

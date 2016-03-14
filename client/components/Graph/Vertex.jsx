@@ -22,12 +22,12 @@ class Vertex extends Component {
   }
 
   render() {
-    const { region, radius, x, y, artist } = this.props;
+    const { region, radius, x, y, rejected, artist } = this.props;
     const artistName = artist.get('name');
 
     const shadowFilterId = 'drop-shadow';
 
-    const classes = classNames([ 'vertex', region.toLowerCase() ]);
+    const classes = classNames([ 'vertex', region.toLowerCase(), { rejected } ]);
 
     return (
       <g>

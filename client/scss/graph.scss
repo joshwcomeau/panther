@@ -10,6 +10,18 @@
   line {
     stroke: $blue;
     stroke-width: 4;
+
+    &.retracting {
+      animation-name: 'retract';
+      animation-direction: reverse;
+    }
+
+    &.expanding {
+      animation-name: 'expand';
+      animation-direction: reverse;
+      animation-fill-mode: forwards;
+    }
+
   }
 
   text {
@@ -29,5 +41,44 @@
     &.future {
       cursor: pointer;
     }
+
+    &.rejected {
+      animation: rejected 500ms;
+    }
+
+  }
+}
+
+@keyframes retract {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes expand {
+  from {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fadeIn {
+    from  {
+      transform: scale(0.5, 0.5);
+      opacity: 0.01;
+    }
+    to {
+      transform: scale(1, 1);
+      opacity: 1;
+    }
+}
+
+@keyframes rejected {
+  from  {
+    transform: scale(1, 1) rotate(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.01, 0.01) rotate(25deg);
+    opacity: 0.01;
   }
 }

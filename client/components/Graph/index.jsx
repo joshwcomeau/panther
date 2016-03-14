@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import { List, Map, fromJS } from 'immutable';
 import min from 'lodash/min'
 
-import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
 import { easeInOutCubic } from '../../helpers/easing.helpers';
 import { recalculateEdges } from '../../helpers/graph.helpers';
+import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
+import { repositionDelay, repositionLength } from '../../config/timing';
+
 
 import VertexContainer from '../../containers/VertexContainer.jsx';
 import Edge from './Edge.jsx';
@@ -23,25 +25,66 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // Don't animate on the first invocation.
+    // TODO: Find a way to only animate on relevant prop changes.
+    // Maybe the .status property?
     this.animate(nextProps)
   }
 
   animate(nextProps) {
-    // TODO: Move this to a config file
+    // First order of business: Fading out and retracting dead vertices
+    this.animateRejection(nextProps, () => this.animateReorder(nextProps))
+
+  }
+
+
+  animateRejection(nextProps, callback) {
+    const rejectedVertices = this.state.vertices.filter( vertex => (
+      !nextProps.vertices.find( nextVertex => (
+        vertex.get('id') === nextVertex.get('id')
+      ))
+    ));
+
+    if ( rejectedVertices.size === 0 ) {
+      return callback();
+    }
+
+    // Rather than do this animation in JS, I can use SVG line animation
+    // and CSS keyframe animations. Just mark the vertices and edges, so
+    // it can be dealt with in their components.
+    const newVertices = this.state.vertices.map( vertex => {
+      const isRejected = rejectedVertices.find( rejectedVertex => (
+        vertex.get('id') === rejectedVertex.get('id')
+      ));
+
+      if ( isRejected ) vertex = vertex.set('rejected', true);
+      return vertex;
+    });
+
+    const newEdges = this.state.edges.map( edge => {
+      const pointsToRejectedVertex = rejectedVertices.find( vertex => (
+        vertex.get('id') === edge.get('to')
+      ));
+
+      if ( pointsToRejectedVertex ) {
+        edge = edge.set('retracting', true);
+      }
+      return edge;
+    });
+
+    this.setState({
+      vertices: newVertices,
+      edges: newEdges
+    }, () => {
+      setTimeout(callback.bind(this), repositionDelay);
+    });
+  }
+
+  animateReorder(nextProps) {
     const duration = 1000;
     const easingFunction = easeInOutCubic;
 
     const startTime = new Date().getTime();
 
-    // // Only animate vertices that have _moved_.
-    // // For now, ignore new vertices and destroyed vertices.
-    // const this.state.vertices = this.state.vertices.filter( vertex => {
-    //   return nextProps.vertices.find( nextVertex => {
-    //     return nextVertex.get('id') === vertex.get('id');
-    //   });
-    // });
-    //
     // Calculate X/Y coordinates for nextVertices
     nextProps = this.calculateVertexAndEdgePositions(nextProps)
 
@@ -57,8 +100,6 @@ class Graph extends Component {
         const time = new Date().getTime() - startTime;
 
         if ( time > duration ) return;
-
-        // TODO: retract disappeared nodes first
 
         // Figure out the new center points for our vertices
         const newVertices = nextProps.vertices.map( vertex => {
@@ -167,7 +208,17 @@ class Graph extends Component {
   render() {
     return (
       <svg id="graph">
-        { this.state.edges.map( (e, i) => <Edge key={i} data={e} /> ) }
+        { this.state.edges.map( (e, i) => (
+          <Edge
+            key={i}
+            x1={e.get('x1')}
+            y1={e.get('y1')}
+            x2={e.get('x2')}
+            y2={e.get('y2')}
+            retracting={e.get('retracting')}
+            expanding={e.get('expanding')}
+          />
+        ))}
         { this.state.vertices.map( v => (
           <VertexContainer
             key={v.get('id')}
@@ -176,6 +227,7 @@ class Graph extends Component {
             y={v.get('y')}
             radius={v.get('radius')}
             region={v.get('region')}
+            rejected={v.get('rejected')}
           />
         ))}
       </svg>
