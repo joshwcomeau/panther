@@ -15,14 +15,19 @@ const Edge = ({ retracting, expanding, x1, y1, x2, y2 }) => {
 
   if ( retracting ) {
     styles = setDashStyles(x1, y1, x2, y2);
+    styles.animationName            = 'retract';
+    styles.animationDirection       = 'reverse';
     styles.animationTimingFunction  = 'ease';
     styles.animationDuration        = edgesRetractLength+'ms';
     styles.animationDelay           = edgesRetractDelay+'ms';
     styles.animationFillMode        = 'both';
+    console.log("Line retracting")
   }
 
-  if ( expanding ) {
+  else if ( expanding ) {
     styles = setDashStyles(x1, y1, x2, y2);
+    styles.animationName            = 'expand';
+    styles.animationDirection       = 'reverse';
     styles.animationTimingFunction  = 'ease';
     styles.animationDuration        = edgesExpandLength+'ms';
     styles.animationDelay           = edgesRetractDelay+'ms';

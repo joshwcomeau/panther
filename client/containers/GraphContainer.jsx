@@ -8,8 +8,7 @@ import { selectActionCreators } from '../helpers/duck.helpers';
 function mapStateToProps(state) {
   return {
     vertices: state.get('graph').get('vertices'),
-    edges:    state.get('graph').get('edges'),
-    status:   state.get('graph').get('status')
+    edges:    state.get('graph').get('edges')
   };
 }
 

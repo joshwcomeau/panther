@@ -25,20 +25,15 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("Received new status at ", performance.now(), nextProps.status, nextProps.vertices.toJS())
     this.animate(nextProps)
   }
 
   animate(nextProps) {
-    console.log("Animating", performance.now(), this.props.status, nextProps.status)
-    switch ( this.props.status ) {
-      case 'repositioning':
-        this.animateRejection(nextProps, () => this.animateReorder(nextProps));
-        break;
-      case 'adding-related-artists':
-        this.animateRelatedArtists(nextProps);
-        break;
-    }
+    this.animateRejection(nextProps, () => {
+      this.animateReorder(nextProps, () => {
+        this.animateRelatedArtists(nextProps)
+      })
+    })
   }
 
   animateRelatedArtists(nextProps) {
@@ -54,8 +49,6 @@ class Graph extends Component {
         vertex.get('id') === nextVertex.get('id')
       ));
     });
-
-    console.log("Found new vertices", newVertices.toJS());
 
     // Set all edges that point to new vertices as 'expanding'
     const nextEdges = nextProps.edges.map( edge => {
@@ -104,6 +97,7 @@ class Graph extends Component {
       ));
 
       if ( pointsToRejectedVertex ) {
+        console.log("Setting edge to retracting")
         edge = edge.set('retracting', true);
       }
       return edge;
@@ -117,7 +111,17 @@ class Graph extends Component {
     });
   }
 
-  animateReorder(nextProps) {
+  animateReorder(nextProps, callback) {
+    const hasRepositionedVertices = this.state.vertices.some( vertex => {
+      const nextVertex = nextProps.vertices.find( nextVertex => (
+        nextVertex.get('id') === vertex.get('id')
+      ));
+
+      return nextVertex && vertex.get('region') !== nextVertex.get('region');
+    });
+
+    if ( !hasRepositionedVertices ) return callback();
+
     const duration = 1000;
     const easingFunction = easeInOutCubic;
 
@@ -137,7 +141,7 @@ class Graph extends Component {
       requestAnimationFrame( () => {
         const time = new Date().getTime() - startTime;
 
-        if ( time > duration ) return;
+        if ( time > duration ) return callback();
 
         // Figure out the new center points for our vertices
         const nextVertices = nextProps.vertices.map( vertex => {
