@@ -4,7 +4,7 @@ import min from 'lodash/min'
 
 import { easeInOutCubic } from '../../helpers/easing.helpers';
 import { recalculateEdges } from '../../helpers/graph.helpers';
-import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
+import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
 import { repositionDelay, repositionLength } from '../../config/timing';
 
 
@@ -97,7 +97,6 @@ class Graph extends Component {
       ));
 
       if ( pointsToRejectedVertex ) {
-        console.log("Setting edge to retracting")
         edge = edge.set('retracting', true);
       }
       return edge;
@@ -186,6 +185,7 @@ class Graph extends Component {
     return {
       radius,
       regionCoords: {
+        [CATACOMBS]:  width * -1/4 - radius,
         [GRAVEYARD]:  width * -1/4 - radius,
         [PAST]:       width *  1/6 - radius,
         [PRESENT]:    width *  3/6 - radius,
@@ -197,6 +197,7 @@ class Graph extends Component {
         height * 9/12 - radius
       ],
       regionOffset: {
+        [CATACOMBS]:  [0,0,0],
         [GRAVEYARD]:  [0,0,0],
         [PAST]:       [0,0,0],
         [PRESENT]:    [0,0,0],

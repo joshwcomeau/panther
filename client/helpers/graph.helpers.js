@@ -1,6 +1,6 @@
 import { Map, List, fromJS } from 'immutable';
 
-import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
+import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
 
 
 export function calculateLineLength(x1, y1, x2, y2) {
@@ -8,16 +8,16 @@ export function calculateLineLength(x1, y1, x2, y2) {
 }
 
 export function getPreviousRegion(region) {
-  if ( region === GRAVEYARD ) return null;
+  if ( region === CATACOMBS ) return null;
 
-  const sortedRegions = [GRAVEYARD, PAST, PRESENT, FUTURE];
+  const sortedRegions = [CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE];
   return sortedRegions[sortedRegions.indexOf(region) - 1];
 }
 
 export function getNextRegion(region) {
   if ( region === FUTURE ) return null;
 
-  const sortedRegions = [GRAVEYARD, PAST, PRESENT, FUTURE];
+  const sortedRegions = [CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE];
   return sortedRegions[sortedRegions.indexOf(region) + 1];
 }
 

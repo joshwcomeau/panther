@@ -3,7 +3,7 @@ import zip from 'lodash/zip';
 import flatten from 'lodash/flatten';
 import faker from 'faker';
 
-import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
+import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../config/regions';
 import {
   getPreviousRegion, recalculateEdges
 } from '../helpers/graph.helpers';
@@ -87,7 +87,7 @@ export default function reducer(state = initialState, action) {
           .filter( vertex => (
             vertex.get('id') === id
             ||
-            ( vertex.get('region') !== FUTURE && vertex.get('region') !== GRAVEYARD )
+            ( vertex.get('region') !== FUTURE && vertex.get('region') !== CATACOMBS )
           ))
           .map( vertex => (
             vertex.update('region', getPreviousRegion)
