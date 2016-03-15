@@ -22,7 +22,7 @@ export default function HomeBase(DevTools = null) {
             transitionName="search-animation"
             transitionAppear={true}
             transitionAppearTimeout={750}
-            transitionEnterTimeout={500}
+            transitionEnterTimeout={0}
             transitionLeaveTimeout={2500}
           >
             { isGraphRunning ? null : <Search /> }

@@ -15,7 +15,7 @@ import Edge from './Edge.jsx';
 class Graph extends Component {
   constructor(props) {
     super(props);
-    this.state = this.calculateVertexAndEdgePositions(props)
+    this.state = this.calculateVertexAndEdgePositions(props);
   }
 
   componentDidMount() {
@@ -29,150 +29,150 @@ class Graph extends Component {
   }
 
   animate(nextProps) {
-    this.animateRejection(nextProps, () => {
-      this.animateReorder(nextProps, () => {
-        this.animateRelatedArtists(nextProps)
-      })
-    })
+    this.animateRejection(nextProps)
+      .then(this.animateReorder.bind(this, nextProps))
+      .then(this.animateRelatedArtists.bind(this, nextProps));
+  }
+
+  animateRejection(nextProps) {
+    return new Promise( (resolve, reject) => {
+      const rejectedVertices = this.state.vertices.filter( vertex => (
+        !nextProps.vertices.find( nextVertex => (
+          vertex.get('id') === nextVertex.get('id')
+        ))
+      ));
+
+      if ( rejectedVertices.size === 0 ) {
+        return resolve();
+      }
+
+      // Rather than do this animation in JS, I can use SVG line animation
+      // and CSS keyframe animations. Just mark the vertices and edges, so
+      // it can be dealt with in their components.
+      const nextVertices = this.state.vertices.map( vertex => {
+        const isRejected = rejectedVertices.find( rejectedVertex => (
+          vertex.get('id') === rejectedVertex.get('id')
+        ));
+
+        if ( isRejected ) vertex = vertex.set('rejected', true);
+        return vertex;
+      });
+
+      const nextEdges = this.state.edges.map( edge => {
+        const pointsToRejectedVertex = rejectedVertices.find( vertex => (
+          vertex.get('id') === edge.get('to')
+        ));
+
+        return pointsToRejectedVertex ? edge.set('retracting', true) : edge;
+      });
+
+      this.setState({
+        vertices: nextVertices,
+        edges: nextEdges
+      }, () => {
+        setTimeout(resolve, repositionDelay);
+      });
+
+    });
+  }
+
+  animateReorder(nextProps) {
+    return new Promise( (resolve, reject) => {
+      const hasRepositionedVertices = this.state.vertices.some( vertex => {
+        const nextVertex = nextProps.vertices.find( nextVertex => (
+          nextVertex.get('id') === vertex.get('id')
+        ));
+
+        return nextVertex && vertex.get('region') !== nextVertex.get('region');
+      });
+
+      if ( !hasRepositionedVertices ) return resolve();
+
+      const duration = 1000;
+      const easingFunction = easeInOutCubic;
+
+      const startTime = new Date().getTime();
+
+      // Calculate X/Y coordinates for nextVertices
+      nextProps = this.calculateVertexAndEdgePositions(nextProps);
+
+      const {
+        radius, regionCoords, regionIndexCoords
+      } = this.calculateResponsiveRadiusAndRegions()
+
+      const originVertices = this.state.vertices.slice();
+
+
+      const updatePosition = () => {
+        requestAnimationFrame( () => {
+          const time = new Date().getTime() - startTime;
+
+          if ( time > duration ) return resolve();
+
+          // Figure out the new center points for our vertices
+          const nextVertices = nextProps.vertices.map( vertex => {
+            const finalVertex   = nextProps.vertices.find( v => v.get('id') === vertex.get('id'));
+
+            const originVertex  = originVertices.find( v => v.get('id') === vertex.get('id')) || finalVertex;
+
+            return vertex
+              .set('x', easingFunction(
+                time,
+                originVertex.get('x'),
+                finalVertex.get('x') - originVertex.get('x'),
+                duration
+              ))
+              .set('y', easingFunction(
+                time,
+                originVertex.get('y'),
+                finalVertex.get('y') - originVertex.get('y'),
+                duration
+              ));
+          });
+
+          const nextEdges = this.updateEdgesFromVertices(nextVertices, recalculateEdges(nextVertices));
+
+          this.setState({
+            vertices: nextVertices,
+            edges:    nextEdges
+          }, updatePosition);
+        });
+      }
+
+      updatePosition();
+    });
   }
 
   animateRelatedArtists(nextProps) {
-    // Calculate positions of the new vertices
-    nextProps = this.calculateVertexAndEdgePositions(nextProps);
+    return new Promise( (resolve, reject) => {
 
-    // No changes necessary for vertices
-    const nextVertices = nextProps.vertices;
+      // Calculate positions of the new vertices
+      nextProps = this.calculateVertexAndEdgePositions(nextProps);
 
-    // Get the IDs of all new vertices
-    const newVertices = nextVertices.filter( nextVertex => {
-      return !this.state.vertices.find( vertex => (
-        vertex.get('id') === nextVertex.get('id')
-      ));
-    });
+      // No changes necessary for vertices
+      const nextVertices = nextProps.vertices;
 
-    // Set all edges that point to new vertices as 'expanding'
-    const nextEdges = nextProps.edges.map( edge => {
-      const pointsToNewVertex = newVertices.find( vertex => (
-        vertex.get('id') === edge.get('to')
-      ))
-
-      if ( pointsToNewVertex ) {
-        edge = edge.set('expanding', true);
-      }
-      return edge;
-    });
-
-    this.setState({
-      vertices: nextVertices,
-      edges:    nextEdges
-    });
-  }
-
-  animateRejection(nextProps, callback) {
-    const rejectedVertices = this.state.vertices.filter( vertex => (
-      !nextProps.vertices.find( nextVertex => (
-        vertex.get('id') === nextVertex.get('id')
-      ))
-    ));
-
-    if ( rejectedVertices.size === 0 ) {
-      return callback();
-    }
-
-    // Rather than do this animation in JS, I can use SVG line animation
-    // and CSS keyframe animations. Just mark the vertices and edges, so
-    // it can be dealt with in their components.
-    const nextVertices = this.state.vertices.map( vertex => {
-      const isRejected = rejectedVertices.find( rejectedVertex => (
-        vertex.get('id') === rejectedVertex.get('id')
-      ));
-
-      if ( isRejected ) vertex = vertex.set('rejected', true);
-      return vertex;
-    });
-
-    const nextEdges = this.state.edges.map( edge => {
-      const pointsToRejectedVertex = rejectedVertices.find( vertex => (
-        vertex.get('id') === edge.get('to')
-      ));
-
-      if ( pointsToRejectedVertex ) {
-        edge = edge.set('retracting', true);
-      }
-      return edge;
-    });
-
-    this.setState({
-      vertices: nextVertices,
-      edges: nextEdges
-    }, () => {
-      setTimeout(callback.bind(this), repositionDelay);
-    });
-  }
-
-  animateReorder(nextProps, callback) {
-    const hasRepositionedVertices = this.state.vertices.some( vertex => {
-      const nextVertex = nextProps.vertices.find( nextVertex => (
-        nextVertex.get('id') === vertex.get('id')
-      ));
-
-      return nextVertex && vertex.get('region') !== nextVertex.get('region');
-    });
-
-    if ( !hasRepositionedVertices ) return callback();
-
-    const duration = 1000;
-    const easingFunction = easeInOutCubic;
-
-    const startTime = new Date().getTime();
-
-    // Calculate X/Y coordinates for nextVertices
-    nextProps = this.calculateVertexAndEdgePositions(nextProps);
-
-    const {
-      radius, regionCoords, regionIndexCoords
-    } = this.calculateResponsiveRadiusAndRegions()
-
-    const originVertices = this.state.vertices.slice();
-
-
-    const updatePosition = () => {
-      requestAnimationFrame( () => {
-        const time = new Date().getTime() - startTime;
-
-        if ( time > duration ) return callback();
-
-        // Figure out the new center points for our vertices
-        const nextVertices = nextProps.vertices.map( vertex => {
-          const finalVertex   = nextProps.vertices.find( v => v.get('id') === vertex.get('id'));
-
-          const originVertex  = originVertices.find( v => v.get('id') === vertex.get('id')) || finalVertex;
-
-          return vertex
-            .set('x', easingFunction(
-              time,
-              originVertex.get('x'),
-              finalVertex.get('x') - originVertex.get('x'),
-              duration
-            ))
-            .set('y', easingFunction(
-              time,
-              originVertex.get('y'),
-              finalVertex.get('y') - originVertex.get('y'),
-              duration
-            ));
-        });
-
-        const nextEdges = this.updateEdgesFromVertices(nextVertices, recalculateEdges(nextVertices));
-
-        this.setState({
-          vertices: nextVertices,
-          edges:    nextEdges
-        }, updatePosition);
+      // Get the IDs of all new vertices
+      const newVertices = nextVertices.filter( nextVertex => {
+        return !this.state.vertices.find( vertex => (
+          vertex.get('id') === nextVertex.get('id')
+        ));
       });
-    }
 
-    updatePosition();
+      // Set all edges that point to new vertices as 'expanding'
+      const nextEdges = nextProps.edges.map( edge => {
+        const pointsToNewVertex = newVertices.find( vertex => (
+          vertex.get('id') === edge.get('to')
+        ));
+
+        return pointsToNewVertex ? edge.set('expanding', true) : edge;
+      });
+
+      this.setState({
+        vertices: nextVertices,
+        edges:    nextEdges
+      }, resolve);
+    });
   }
 
   calculateResponsiveRadiusAndRegions() {
