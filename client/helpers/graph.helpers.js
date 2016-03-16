@@ -21,13 +21,6 @@ export function getNextRegion(region) {
   return sortedRegions[sortedRegions.indexOf(region) + 1];
 }
 
-function getVerticesInNextRegion(vertices, currentRegion) {
-  const nextRegion = getNextRegion(currentRegion);
-  if ( !nextRegion ) return [];
-
-  return vertices.filter( vertex => vertex.get('region') === nextRegion);
-}
-
 export function recalculateEdges(vertices) {
   let edges = [];
 
@@ -45,4 +38,40 @@ export function recalculateEdges(vertices) {
   });
 
   return fromJS(edges);
+}
+
+export function findMatchingVertex(vertex, others) {
+  return others.find( otherVertex => otherVertex.get('id') === vertex.get('id') );
+}
+
+export function getRejectedVertices(vertices, nextVertices) {
+  return vertices.filter( vertex => !findMatchingVertex(vertex, nextVertices) );
+}
+
+export function markRejectedVertices(vertices, rejectedVertices) {
+  return vertices.map( vertex => {
+    const isRejected = findMatchingVertex(vertex, rejectedVertices);
+
+    return is_rejected ? vertex.set('rejected', true) : vertex;
+  });
+}
+
+export function markRetractingEdges(edges, rejectedVertices) {
+  return edges.map( edge => {
+    const pointsToRejectedVertex = rejectedVertices.find( vertex => (
+      vertex.get('id') === edge.get('to')
+    ));
+
+    return pointsToRejectedVertex ? edge.set('retracting', true) : edge;
+  });
+}
+
+
+
+
+function getVerticesInNextRegion(vertices, currentRegion) {
+  const nextRegion = getNextRegion(currentRegion);
+  if ( !nextRegion ) return [];
+
+  return vertices.filter( vertex => vertex.get('region') === nextRegion);
 }

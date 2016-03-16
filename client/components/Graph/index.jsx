@@ -2,10 +2,18 @@ import React, { Component, PropTypes } from 'react';
 import { List, Map, fromJS } from 'immutable';
 import min from 'lodash/min'
 
-import { easeInOutCubic } from '../../helpers/easing.helpers';
-import { recalculateEdges } from '../../helpers/graph.helpers';
 import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
 import { repositionDelay, repositionLength } from '../../config/timing';
+import { easeInOutCubic } from '../../helpers/easing.helpers';
+import {
+  filterVerticesNotInSecondGroup,
+  findMatchingVertex,
+  markRejectedVertices,
+  markRetractingEdges,
+  markExpandingEdges,
+  recalculateEdges,
+  verticesHaveChangedPositions
+} from '../../helpers/graph.helpers';
 
 
 import VertexContainer from '../../containers/VertexContainer.jsx';
@@ -36,35 +44,17 @@ class Graph extends Component {
 
   animateRejection(nextProps) {
     return new Promise( (resolve, reject) => {
-      const rejectedVertices = this.state.vertices.filter( vertex => (
-        !nextProps.vertices.find( nextVertex => (
-          vertex.get('id') === nextVertex.get('id')
-        ))
-      ));
+      const { vertices, edges } = this.state;
 
-      if ( rejectedVertices.size === 0 ) {
-        return resolve();
-      }
+      // Find all the vertices that do not exist in nextProps
+      const rejectedVertices = filterVerticesNotInSecondGroup(vertices, nextProps.vertices);
 
-      // Rather than do this animation in JS, I can use SVG line animation
-      // and CSS keyframe animations. Just mark the vertices and edges, so
-      // it can be dealt with in their components.
-      const nextVertices = this.state.vertices.map( vertex => {
-        const isRejected = rejectedVertices.find( rejectedVertex => (
-          vertex.get('id') === rejectedVertex.get('id')
-        ));
+      if ( rejectedVertices.size === 0 ) { return resolve(); }
 
-        if ( isRejected ) vertex = vertex.set('rejected', true);
-        return vertex;
-      });
-
-      const nextEdges = this.state.edges.map( edge => {
-        const pointsToRejectedVertex = rejectedVertices.find( vertex => (
-          vertex.get('id') === edge.get('to')
-        ));
-
-        return pointsToRejectedVertex ? edge.set('retracting', true) : edge;
-      });
+      // For rejections, we just assign properties to vertices/edges.
+      // The components handle their own transitions.
+      const nextVertices = markRejectedVertices(vertices, rejectedVertices);
+      const nextEdges    = markRetractingEdges(edges, rejectedVertices);
 
       this.setState({
         vertices: nextVertices,
@@ -78,15 +68,11 @@ class Graph extends Component {
 
   animateReorder(nextProps) {
     return new Promise( (resolve, reject) => {
-      const hasRepositionedVertices = this.state.vertices.some( vertex => {
-        const nextVertex = nextProps.vertices.find( nextVertex => (
-          nextVertex.get('id') === vertex.get('id')
-        ));
+      const { vertices, edges } = this.state;
 
-        return nextVertex && vertex.get('region') !== nextVertex.get('region');
-      });
+      const animationNeeded = verticesHaveChangedPositions(vertices, nextProps.vertices);
 
-      if ( !hasRepositionedVertices ) return resolve();
+      if ( !animationNeeded ) return resolve();
 
       const duration = 1000;
       const easingFunction = easeInOutCubic;
@@ -95,10 +81,6 @@ class Graph extends Component {
 
       // Calculate X/Y coordinates for nextVertices
       nextProps = this.calculateVertexAndEdgePositions(nextProps);
-
-      const {
-        radius, regionCoords, regionIndexCoords
-      } = this.calculateResponsiveRadiusAndRegions()
 
       const originVertices = this.state.vertices.slice();
 
@@ -150,23 +132,14 @@ class Graph extends Component {
       nextProps = this.calculateVertexAndEdgePositions(nextProps);
 
       // No changes necessary for vertices
+      const { vertices, edges } = this.state;
       const nextVertices = nextProps.vertices;
 
-      // Get the IDs of all new vertices
-      const newVertices = nextVertices.filter( nextVertex => {
-        return !this.state.vertices.find( vertex => (
-          vertex.get('id') === nextVertex.get('id')
-        ));
-      });
+      // Find all new vertices (don't exist in this.state.vertices)
+      const newVertices = filterVerticesNotInSecondGroup(nextVertices, vertices);
 
       // Set all edges that point to new vertices as 'expanding'
-      const nextEdges = nextProps.edges.map( edge => {
-        const pointsToNewVertex = newVertices.find( vertex => (
-          vertex.get('id') === edge.get('to')
-        ));
-
-        return pointsToNewVertex ? edge.set('expanding', true) : edge;
-      });
+      const nextEdges = markExpandingEdges(edges, newVertices);
 
       this.setState({
         vertices: nextVertices,
