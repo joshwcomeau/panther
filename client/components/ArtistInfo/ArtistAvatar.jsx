@@ -4,7 +4,7 @@ const DEFAULT_AVATAR = 'https://s3.amazonaws.com/joshmisc/default-avatar.png';
 
 
 const ArtistAvatar = ({images, artistVisible}) => {
-  console.log("Running!")
+  console.log("Avatar rendering with", images, artistVisible)
   const avatarUrl = getSmallestAcceptableImage(images);
   const styles = {
     opacity: artistVisible ? 1 : 0,

@@ -1,13 +1,17 @@
-import { bindActionCreators } from 'redux';
-import { connect }            from 'react-redux';
+import { bindActionCreators }   from 'redux';
+import { connect }              from 'react-redux';
 
-import selectedArtist         from '../selectors/selected-artist.selector';
-import ArtistAvatar           from '../components/ArtistInfo/ArtistAvatar.jsx';
+import {
+  artistVisibleSelector, imagesSelector
+} from '../selectors/artist-avatar.selector';
+
+import ArtistAvatar             from '../components/ArtistInfo/ArtistAvatar.jsx';
 
 
 function mapStateToProps(state) {
   return {
-    artist: null
+    images: imagesSelector(state),
+    artistVisible: artistVisibleSelector(state)
   };
 }
 
