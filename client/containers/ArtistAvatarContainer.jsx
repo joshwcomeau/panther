@@ -1,13 +1,13 @@
-import { bindActionCreators }   from 'redux';
-import { connect }              from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { connect }            from 'react-redux';
 
-import ArtistAvatar             from '../components/ArtistInfo/ArtistAvatar.jsx';
+import selectedArtist         from '../selectors/selected-artist.selector';
+import ArtistAvatar           from '../components/ArtistInfo/ArtistAvatar.jsx';
 
 
 function mapStateToProps(state) {
   return {
-    images: state.getIn(['graph', 'nodeGroups', 2, 'nodes', 0, 'images']),
-    artistVisible: state.getIn(['artistInfo', 'artistVisible'])
+    artist: null
   };
 }
 
