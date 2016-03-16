@@ -12,6 +12,7 @@ import {
   markRetractingEdges,
   markExpandingEdges,
   recalculateEdges,
+  getVerticesInRegion,
   verticesHaveChangedPositions
 } from '../../helpers/graph.helpers';
 
@@ -37,6 +38,9 @@ class Graph extends Component {
   }
 
   animate(nextProps) {
+    // Calculate positions of the new vertices
+    nextProps = this.calculateVertexAndEdgePositions(nextProps);
+
     this.animateRejection(nextProps)
       .then(this.animateReorder.bind(this, nextProps))
       .then(this.animateRelatedArtists.bind(this, nextProps));
@@ -76,11 +80,7 @@ class Graph extends Component {
 
       const duration = 1000;
       const easingFunction = easeInOutCubic;
-
       const startTime = new Date().getTime();
-
-      // Calculate X/Y coordinates for nextVertices
-      nextProps = this.calculateVertexAndEdgePositions(nextProps);
 
       const originVertices = this.state.vertices.slice();
 
@@ -127,19 +127,20 @@ class Graph extends Component {
 
   animateRelatedArtists(nextProps) {
     return new Promise( (resolve, reject) => {
-
-      // Calculate positions of the new vertices
-      nextProps = this.calculateVertexAndEdgePositions(nextProps);
-
+      const { vertices } = this.state;
       // No changes necessary for vertices
-      const { vertices, edges } = this.state;
       const nextVertices = nextProps.vertices;
+
+      // If we don't have any FUTURE nodes, we can skip this bit.
+      if ( getVerticesInRegion(nextVertices, FUTURE).size === 0 ) {
+        return resolve();
+      }
 
       // Find all new vertices (don't exist in this.state.vertices)
       const newVertices = filterVerticesNotInSecondGroup(nextVertices, vertices);
 
       // Set all edges that point to new vertices as 'expanding'
-      const nextEdges = markExpandingEdges(edges, newVertices);
+      const nextEdges = markExpandingEdges(nextProps.edges, newVertices);
 
       this.setState({
         vertices: nextVertices,

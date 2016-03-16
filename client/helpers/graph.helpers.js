@@ -52,7 +52,7 @@ export function markRejectedVertices(vertices, rejectedVertices) {
   return vertices.map( vertex => {
     const isRejected = findMatchingVertex(vertex, rejectedVertices);
 
-    return is_rejected ? vertex.set('rejected', true) : vertex;
+    return isRejected ? vertex.set('rejected', true) : vertex;
   });
 }
 
@@ -67,11 +67,11 @@ export function markEdgesByTheirDestination(edges, vertices, prop) {
 }
 
 export function markRetractingEdges(edges, rejectedVertices) {
-  markEdgesByTheirDestination(edges, rejectedVertices, 'retracting')
+  return markEdgesByTheirDestination(edges, rejectedVertices, 'retracting')
 }
 
 export function markExpandingEdges(edges, newVertices) {
-  markEdgesByTheirDestination(edges, newVertices, 'expanding')
+  return markEdgesByTheirDestination(edges, newVertices, 'expanding')
 }
 
 export function verticesHaveChangedPositions(vertices, nextVertices) {
@@ -81,12 +81,14 @@ export function verticesHaveChangedPositions(vertices, nextVertices) {
   });
 }
 
-
+export function getVerticesInRegion(vertices, region) {
+  return vertices.filter( vertex => vertex.get('region') === region );
+}
 
 
 function getVerticesInNextRegion(vertices, currentRegion) {
   const nextRegion = getNextRegion(currentRegion);
   if ( !nextRegion ) return [];
 
-  return vertices.filter( vertex => vertex.get('region') === nextRegion);
+  return getVerticesInRegion(vertices, nextRegion);
 }
