@@ -4,9 +4,9 @@ import { Map, List, fromJS } from 'immutable';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-const LOAD_TRACKS = 'LOAD_TRACKS';
-const PLAY_TRACK  = 'PLAY_TRACK';
-const STOP        = 'STOP';
+export const LOAD_TRACKS = 'LOAD_TRACKS';
+export const PLAY_TRACK  = 'PLAY_TRACK';
+export const STOP        = 'STOP';
 
 
 ///////////////////////////
