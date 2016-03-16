@@ -44,7 +44,7 @@ export function findMatchingVertex(vertex, others) {
   return others.find( otherVertex => otherVertex.get('id') === vertex.get('id') );
 }
 
-export function getRejectedVertices(vertices, nextVertices) {
+export function filterVerticesNotInSecondGroup(vertices, nextVertices) {
   return vertices.filter( vertex => !findMatchingVertex(vertex, nextVertices) );
 }
 
@@ -56,13 +56,28 @@ export function markRejectedVertices(vertices, rejectedVertices) {
   });
 }
 
-export function markRetractingEdges(edges, rejectedVertices) {
+export function markEdgesByTheirDestination(edges, vertices, prop) {
   return edges.map( edge => {
-    const pointsToRejectedVertex = rejectedVertices.find( vertex => (
+    const pointsToVertex = vertices.find( vertex => (
       vertex.get('id') === edge.get('to')
     ));
 
-    return pointsToRejectedVertex ? edge.set('retracting', true) : edge;
+    return pointsToVertex ? edge.set(prop, true) : edge;
+  });
+}
+
+export function markRetractingEdges(edges, rejectedVertices) {
+  markEdgesByTheirDestination(edges, rejectedVertices, 'retracting')
+}
+
+export function markExpandingEdges(edges, newVertices) {
+  markEdgesByTheirDestination(edges, newVertices, 'expanding')
+}
+
+export function verticesHaveChangedPositions(vertices, nextVertices) {
+  return vertices.some( vertex => {
+    const nextVertex = findMatchingVertex(vertex, nextVertices)
+    return nextVertex && vertex.get('region') !== nextVertex.get('region');
   });
 }
 
