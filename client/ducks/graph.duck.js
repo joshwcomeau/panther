@@ -16,7 +16,7 @@ export const SETUP_INITIAL_STAGE            = 'SETUP_INITIAL_STAGE';
 export const UPDATE_REPOSITION_STATUS       = 'UPDATE_REPOSITION_STATUS';
 export const ADD_RELATED_ARTISTS_TO_GRAPH   = 'ADD_RELATED_ARTISTS_TO_GRAPH';
 export const CENTER_GRAPH_AROUND_VERTEX     = 'CENTER_GRAPH_AROUND_VERTEX';
-
+export const MARK_VERTEX_AS_SELECTED        = 'MARK_VERTEX_AS_SELECTED';
 
 ///////////////////////////
 // REDUCER ///////////////
@@ -37,7 +37,8 @@ export default function reducer(state = initialState, action) {
 
     return state
       .set('vertices', initialVertices)
-      .set('status', 'idle');
+      .set('status', 'idle')
+      .set('selected', action.artist.get('id'));
 
   case UPDATE_REPOSITION_STATUS:
     return state.set('status', action.status);
@@ -97,9 +98,10 @@ export default function reducer(state = initialState, action) {
 
     return state
       .update('edges', edges => recalculateEdges(state.get('vertices')))
-      .set('status', 'repositioning');;
+      .set('status', 'repositioning');
 
-
+  case MARK_VERTEX_AS_SELECTED:
+    return state.set('selected', action.artist.get('id'));
 
   default:
     return state;
@@ -142,6 +144,13 @@ export function addRelatedArtistsToGraph(artists) {
 export function centerGraphAroundVertex(artist) {
   return {
     type: CENTER_GRAPH_AROUND_VERTEX,
+    artist
+  }
+}
+
+export function markVertexAsSelected(artist) {
+  return {
+    type: MARK_VERTEX_AS_SELECTED,
     artist
   }
 }

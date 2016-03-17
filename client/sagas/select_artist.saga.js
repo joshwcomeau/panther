@@ -4,9 +4,7 @@ import { take, call, put, select } from 'redux-saga/effects'
 import {
   SELECT_ARTIST,
   setupInitialStage,
-  updateRepositionStatus,
   addRelatedArtistsToGraph,
-  markArtistsAsRejected,
   centerGraphAroundVertex
 } from '../ducks/graph.duck';
 import { addArtists } from '../ducks/artists.duck';
@@ -38,10 +36,6 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
     put(addRelatedArtistsToGraph(first3Related)),
     put(loadTracks(top.tracks))
   ];
-
-  yield delay(edgesExpandLength);
-  yield put(updateRepositionStatus('idle'));
-
 }
 
 

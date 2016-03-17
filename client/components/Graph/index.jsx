@@ -43,7 +43,26 @@ class Graph extends Component {
 
     this.animateRejection(nextProps)
       .then(this.animateReorder.bind(this, nextProps))
+      .then(this.dispatchMarkVertexAsSelected.bind(this, nextProps))
       .then(this.animateRelatedArtists.bind(this, nextProps));
+  }
+
+  dispatchMarkVertexAsSelected(nextProps) {
+    return new Promise( (resolve, reject) => {
+      // Note: This is not actually an async action, I'm just promisifying it
+      // because it's between a chain of async actions.
+      const newSelectedVertex = nextProps.vertices.find( vertex => (
+        vertex.get('region') === PRESENT
+      ));
+
+      if ( !newSelectedVertex ) {
+        return reject("No vertex found in the PRESENT region");
+      }
+
+      this.props.actions.markVertexAsSelected(newSelectedVertex);
+
+      resolve();
+    });
   }
 
   animateRejection(nextProps) {

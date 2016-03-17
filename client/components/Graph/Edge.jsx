@@ -21,7 +21,6 @@ const Edge = ({ retracting, expanding, x1, y1, x2, y2 }) => {
     styles.animationDuration        = edgesRetractLength+'ms';
     styles.animationDelay           = edgesRetractDelay+'ms';
     styles.animationFillMode        = 'both';
-    console.log("Line retracting")
   }
 
   else if ( expanding ) {

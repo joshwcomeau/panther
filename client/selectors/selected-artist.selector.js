@@ -1,13 +1,13 @@
 import { createSelector } from 'reselect'
-import presentVertex from './present-vertex.selector';
 
 const artists = state => state.get('artists');
+const selectedVertex = state => state.get('graph').get('selected');
 
 const selectedArtistSelector = createSelector(
-  [ artists, presentVertex ],
-  ( artists, presentVertex ) => {
-    if ( !presentVertex ) return null;
-    return artists.get(presentVertex.get('id'))
+  [ artists, selectedVertex ],
+  ( artists, selectedVertex ) => {
+    if ( !selectedVertex ) return null;
+    return artists.get(selectedVertex)
   }
 );
 

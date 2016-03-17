@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect'
 import selectedArtist from './selected-artist.selector';
 
-const status = state => state.getIn(['graph', 'status']);
+const selected  = state => state.getIn(['graph', 'selected']);
+const status    = state => state.getIn(['graph', 'status']);
 
 export const artistVisibleSelector = createSelector(
   [ status ],

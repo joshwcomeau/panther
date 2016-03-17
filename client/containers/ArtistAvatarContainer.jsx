@@ -5,7 +5,7 @@ import {
   artistVisibleSelector, imagesSelector
 } from '../selectors/artist-avatar.selector';
 
-import ArtistAvatar             from '../components/ArtistInfo/ArtistAvatar.jsx';
+import ArtistAvatar from '../components/ArtistInfo/ArtistAvatar.jsx';
 
 
 function mapStateToProps(state) {
