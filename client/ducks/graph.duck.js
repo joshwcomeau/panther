@@ -35,10 +35,7 @@ export default function reducer(state = initialState, action) {
       regionIndex:  1
     }])
 
-    return state
-      .set('vertices', initialVertices)
-      .set('status', 'idle')
-      .set('selected', action.artist.get('id'));
+    return state.set('vertices', initialVertices)
 
   case UPDATE_REPOSITION_STATUS:
     return state.set('status', action.status);

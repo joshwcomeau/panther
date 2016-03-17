@@ -5,6 +5,7 @@ import {
   SELECT_ARTIST,
   setupInitialStage,
   addRelatedArtistsToGraph,
+  updateRepositionStatus,
   centerGraphAroundVertex
 } from '../ducks/graph.duck';
 import { addArtists } from '../ducks/artists.duck';
@@ -40,10 +41,14 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
 
 
 function* initializeWithArtist(artist) {
+  yield put(updateRepositionStatus('idle'));
+  yield delay(900);
+
   yield [
     put(addArtists(artist)),
     put(setupInitialStage(artist))
   ];
+  yield delay(250);
 
   yield fetchArtistAndTrackInfo({
     artistId: artist.get('id'),

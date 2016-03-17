@@ -4,15 +4,15 @@ import PlayButton from './PlayButton.jsx';
 import TrackName from './TrackName.jsx';
 import immutableProps from '../immutable_props.jsx';
 
-@immutableProps(['playing', 'artistVisible'])
+@immutableProps(['playing', 'visible'])
 class Samples extends Component {
   renderButtons() {
-    const { tracks, playing, artistVisible, actions } = this.props;
+    const { tracks, playing, visible, actions } = this.props;
 
     return tracks.map( (track, index) => {
       let styles;
 
-      if ( artistVisible ) {
+      if ( visible ) {
         styles = {
           opacity: 0,
           animationName: 'fadeIn',

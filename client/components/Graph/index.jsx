@@ -34,17 +34,14 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.animate(nextProps)
-  }
-
-  animate(nextProps) {
     // Calculate positions of the new vertices
     nextProps = this.calculateVertexAndEdgePositions(nextProps);
 
     this.animateRejection(nextProps)
       .then(this.animateReorder.bind(this, nextProps))
       .then(this.dispatchMarkVertexAsSelected.bind(this, nextProps))
-      .then(this.animateRelatedArtists.bind(this, nextProps));
+      .then(this.animateRelatedArtists.bind(this, nextProps))
+      .then(this.setState.bind(this, nextProps));
   }
 
   dispatchMarkVertexAsSelected(nextProps) {

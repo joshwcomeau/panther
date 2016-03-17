@@ -99,7 +99,7 @@
 }
 
 .search-animation-leave.search-animation-leave-active {
-  opacity: 0.01;
+  opacity: 0;
   -webkit-filter: blur(50px);
-  transition: 2500ms linear;
+  transition: 1000ms linear;
 }
