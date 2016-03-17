@@ -9,7 +9,7 @@ import { selectArtist }         from '../ducks/graph.duck';
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    artist: state.get('artists').get(ownProps.id)
+    artist: state.present.get('artists').get(ownProps.id)
   };
 }
 

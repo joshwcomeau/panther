@@ -7,7 +7,7 @@ import { selectArtist }         from '../ducks/graph.duck';
 import { selectActionCreators } from '../helpers/duck.helpers';
 
 function mapStateToProps(state) {
-  return { search: state.get('search') };
+  return { search: state.present.get('search') };
 }
 
 function mapDispatchToProps(dispatch) {

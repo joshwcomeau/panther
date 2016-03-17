@@ -1,4 +1,5 @@
 import { Map, List, fromJS } from 'immutable';
+import undoable from 'redux-undo';
 
 import graph from '../ducks/graph.duck';
 import search from '../ducks/search.duck';
@@ -30,4 +31,6 @@ const rootReducer = ( state = Map(), action ) => {
   });
 };
 
-export default rootReducer
+const undoableReducer = undoable(rootReducer);
+
+export default undoableReducer

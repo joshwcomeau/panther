@@ -29,7 +29,7 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
     delay(delayLength + 100) // Adding a 100ms buffer, because JS isn't instant.
   ];
 
-  const artistsInState = yield select( state => state.get('artists'));
+  const artistsInState = yield select( state => state.present.get('artists'));
   const first3Related = takeFirstFewUnseenArtists(related.artists, artistsInState);
 
   yield [

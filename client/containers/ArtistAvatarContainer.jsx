@@ -10,8 +10,8 @@ import ArtistAvatar from '../components/ArtistInfo/ArtistAvatar.jsx';
 
 function mapStateToProps(state) {
   return {
-    images: imagesSelector(state),
-    artistVisible: artistVisibleSelector(state)
+    images: imagesSelector(state.present),
+    artistVisible: artistVisibleSelector(state.present)
   };
 }
 

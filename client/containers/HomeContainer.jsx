@@ -5,8 +5,8 @@ import Home                     from '../components/Home';
 
 function mapStateToProps(state) {
   return {
-    graph: state.get('graph'),
-    search: state.get('search')
+    graph: state.present.get('graph'),
+    search: state.present.get('search')
   };
 }
 
