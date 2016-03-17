@@ -6,11 +6,11 @@ const DEFAULT_AVATAR = 'https://s3.amazonaws.com/joshmisc/default-avatar.png';
 const ArtistAvatar = ({images, artistVisible}) => {
   const avatarUrl = getSmallestAcceptableImage(images);
   const styles = {
-    opacity: artistVisible ? 1 : 0,
-    transform: artistVisible ? 'translateY(0)' : 'translateY(-50px)',
+    opacity: artistVisible ? 1 : 0.75,
+    transform: artistVisible ? 'translateY(0) scale(1, 1)' : 'translateY(230px) scale(0, 0)',
     backgroundImage: `url('${avatarUrl}')`,
     transition: artistVisible
-                ? 'opacity 1s ease 250ms'
+                ? 'opacity 1s, transform 1s ease 250ms'
                 : 'opacity 500ms, transform 1s ease 250ms'
   };
 
