@@ -146,6 +146,7 @@ export function centerGraphAroundVertex(artist) {
 }
 
 export function markVertexAsSelected(artist) {
+  console.log("Mark vertex received", arguments)
   return {
     type: MARK_VERTEX_AS_SELECTED,
     artist

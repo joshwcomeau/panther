@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import { artistAvatarLength } from '../../config/timing';
+
 const DEFAULT_AVATAR = 'https://s3.amazonaws.com/joshmisc/default-avatar.png';
 
 
@@ -8,11 +10,18 @@ const ArtistAvatar = ({images, artistVisible}) => {
   const styles = {
     opacity: artistVisible ? 1 : 0.75,
     transform: artistVisible ? 'translateY(0) scale(1, 1)' : 'translateY(230px) scale(0, 0)',
+    borderRadius: artistVisible ? '0px' : '100%',
     backgroundImage: `url('${avatarUrl}')`,
     transition: artistVisible
-                ? 'opacity 1s, transform 1s ease 250ms'
-                : 'opacity 500ms, transform 1s ease 250ms'
+                ? `opacity ${artistAvatarLength}ms ease,
+                   transform ${artistAvatarLength}ms ease,
+                   border-radius ${artistAvatarLength}ms ease-out 150ms`
+                : `opacity ${artistAvatarLength}ms ease,
+                   transform ${artistAvatarLength}ms ease,
+                   border-radius ${artistAvatarLength}ms ease`
   };
+
+  console.log("Worked out styles", styles)
 
   return (
     <div

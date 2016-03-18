@@ -13,7 +13,11 @@ import { loadTracks, stop } from '../ducks/samples.duck';
 
 import { takeFirstFewUnseenArtists } from '../helpers/artists.helpers';
 import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
-import { repositionDelay, repositionLength, edgesExpandLength } from '../config/timing';
+import {
+  repositionDelay, repositionLength,
+  edgesExpandLength, vertexEnterLength,
+  artistAvatarLength, artistAvatarDelay
+} from '../config/timing';
 
 
 // a utility function: return a Promise that will resolve after 1 second
@@ -42,13 +46,16 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
 
 function* initializeWithArtist(artist) {
   yield put(updateRepositionStatus('idle'));
-  yield delay(900);
+
+  // Wait half a second for the "search" component to fade away
+  yield delay(500);
 
   yield [
     put(addArtists(artist)),
     put(setupInitialStage(artist))
   ];
-  yield delay(250);
+  // Wait for the artist node to fade in, and the avatar to pop up.
+  yield delay(vertexEnterLength + artistAvatarLength);
 
   yield fetchArtistAndTrackInfo({
     artistId: artist.get('id'),

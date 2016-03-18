@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 
 import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
-import { rejectedFadeLength } from '../../config/timing';
+import { vertexEnterLength, vertexExitLength } from '../../config/timing';
 
 import VertexShadow from './VertexShadow.jsx';
 
@@ -33,7 +33,12 @@ class Vertex extends Component {
 
     if ( rejected ) {
       styles.animationName = 'rejected';
-      styles.animationDuration = rejectedFadeLength+'ms';
+      styles.animationDuration = vertexExitLength+'ms';
+      styles.animationFillMode = 'forwards';
+      styles.animationTimingFunction = 'ease';
+    } else {
+      styles.animationName = 'fadeIn';
+      styles.animationDuration = vertexEnterLength+'ms';
       styles.animationFillMode = 'forwards';
       styles.animationTimingFunction = 'ease';
     }

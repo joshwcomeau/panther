@@ -3,7 +3,9 @@ import { List, Map, fromJS } from 'immutable';
 import min from 'lodash/min'
 
 import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
-import { repositionDelay, repositionLength } from '../../config/timing';
+import {
+  repositionDelay, repositionLength, vertexEnterLength
+} from '../../config/timing';
 import { easeInOutCubic } from '../../helpers/easing.helpers';
 import {
   filterVerticesNotInSecondGroup,
@@ -25,6 +27,9 @@ class Graph extends Component {
   constructor(props) {
     super(props);
     this.state = this.calculateVertexAndEdgePositions(props);
+    this.animateReorder = this.animateReorder.bind(this);
+    this.dispatchMarkVertexAsSelected = this.dispatchMarkVertexAsSelected.bind(this);
+    this.animateRelatedArtists = this.animateRelatedArtists.bind(this);
   }
 
   componentDidMount() {
@@ -34,32 +39,28 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log("Component received props", nextProps, performance.now())
     // Calculate positions of the new vertices
     nextProps = this.calculateVertexAndEdgePositions(nextProps);
 
-    this.animateRejection(nextProps)
-      .then(this.animateReorder.bind(this, nextProps))
-      .then(this.dispatchMarkVertexAsSelected.bind(this, nextProps))
-      .then(this.animateRelatedArtists.bind(this, nextProps))
-      .then(this.setState.bind(this, nextProps));
-  }
-
-  dispatchMarkVertexAsSelected(nextProps) {
-    return new Promise( (resolve, reject) => {
-      // Note: This is not actually an async action, I'm just promisifying it
-      // because it's between a chain of async actions.
-      const newSelectedVertex = nextProps.vertices.find( vertex => (
-        vertex.get('region') === PRESENT
-      ));
-
-      if ( !newSelectedVertex ) {
-        return reject("No vertex found in the PRESENT region");
-      }
-
-      this.props.actions.markVertexAsSelected(newSelectedVertex);
-
-      resolve();
-    });
+    // The very first render is a special case; we don't have any rejections,
+    // reorderings or related artists, we just need to draw the node and mark
+    // the vertex as selected.
+    if ( !this.state.vertices.size ) {
+      this.setState({
+        vertices: nextProps.vertices,
+        edges: nextProps.edges
+      }, () => {
+        setTimeout(() => {
+          this.props.actions.markVertexAsSelected(this.state.vertices.get(0));
+        }, vertexEnterLength * 0.5)
+      })
+    } else {
+      this.animateRejection(nextProps)
+        .then(this.animateReorder.bind(this))
+        .then(this.dispatchMarkVertexAsSelected.bind(this))
+        .then(this.animateRelatedArtists.bind(this))
+    }
   }
 
   animateRejection(nextProps) {
@@ -69,7 +70,7 @@ class Graph extends Component {
       // Find all the vertices that do not exist in nextProps
       const rejectedVertices = filterVerticesNotInSecondGroup(vertices, nextProps.vertices);
 
-      if ( rejectedVertices.size === 0 ) { return resolve(); }
+      if ( rejectedVertices.size === 0 ) { return resolve(nextProps); }
 
       // For rejections, we just assign properties to vertices/edges.
       // The components handle their own transitions.
@@ -80,7 +81,7 @@ class Graph extends Component {
         vertices: nextVertices,
         edges: nextEdges
       }, () => {
-        setTimeout(resolve, repositionDelay);
+        setTimeout(resolve.bind(this, nextProps), repositionDelay);
       });
 
     });
@@ -92,7 +93,7 @@ class Graph extends Component {
 
       const animationNeeded = verticesHaveChangedPositions(vertices, nextProps.vertices);
 
-      if ( !animationNeeded ) return resolve();
+      if ( !animationNeeded ) return resolve(nextProps);
 
       const duration = 1000;
       const easingFunction = easeInOutCubic;
@@ -105,7 +106,7 @@ class Graph extends Component {
         requestAnimationFrame( () => {
           const time = new Date().getTime() - startTime;
 
-          if ( time > duration ) return resolve();
+          if ( time > duration ) return resolve(nextProps);
 
           // Figure out the new center points for our vertices
           const nextVertices = nextProps.vertices.map( vertex => {
@@ -141,6 +142,24 @@ class Graph extends Component {
     });
   }
 
+  dispatchMarkVertexAsSelected(nextProps) {
+    return new Promise( (resolve, reject) => {
+      // Note: This is not actually an async action, I'm just promisifying it
+      // because it's between a chain of async actions.
+      const newSelectedVertex = nextProps.vertices.find( vertex => (
+        vertex.get('region') === PRESENT
+      ));
+
+      if ( !newSelectedVertex ) {
+        return reject("No vertex found in the PRESENT region");
+      }
+
+      this.props.actions.markVertexAsSelected(newSelectedVertex);
+
+      resolve(nextProps);
+    });
+  }
+
   animateRelatedArtists(nextProps) {
     return new Promise( (resolve, reject) => {
       const { vertices } = this.state;
@@ -149,7 +168,7 @@ class Graph extends Component {
 
       // If we don't have any FUTURE nodes, we can skip this bit.
       if ( getVerticesInRegion(nextVertices, FUTURE).size === 0 ) {
-        return resolve();
+        return resolve(nextProps);
       }
 
       // Find all new vertices (don't exist in this.state.vertices)
@@ -161,7 +180,7 @@ class Graph extends Component {
       this.setState({
         vertices: nextVertices,
         edges:    nextEdges
-      }, resolve);
+      }, () => resolve(nextProps));
     });
   }
 
