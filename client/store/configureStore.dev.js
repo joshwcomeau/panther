@@ -1,12 +1,16 @@
 import { createStore, applyMiddleware, compose }  from 'redux';
 import thunkMiddleware                            from 'redux-thunk';
-import createSagaMiddleware                       from 'redux-saga'
+import createSagaMiddleware                       from 'redux-saga';
+import Immutable                                  from 'immutable';
+import installDevTools                            from 'immutable-devtools';
 
 import rootReducer                    from '../reducers';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
 import DevTools                       from '../containers/DevTools.jsx';
 
+// Make our store print nicely in the console
+installDevTools(Immutable);
 
 export default function configureStore() {
   // On the client, we pass in an array of sockets.

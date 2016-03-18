@@ -52,6 +52,7 @@
     "chai-immutable": "^1.5.3",
     "css-loader": "^0.23.0",
     "express": "^4.13.4",
+    "immutable-devtools": "0.0.6",
     "json-loader": "^0.5.4",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
