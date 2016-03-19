@@ -106,7 +106,8 @@ export default function reducer(state = initialState, action) {
     return state.set('history', state);
 
   case RESTORE_GRAPH_STATE:
-    return state.get('history');
+    const formerSelected = state.get('selected')
+    return state.get('history').set('selected', formerSelected).set('status', 'repositioning');
 
   default:
     return state;

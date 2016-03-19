@@ -30,6 +30,7 @@ class Graph extends Component {
     this.animateReorder = this.animateReorder.bind(this);
     this.dispatchMarkVertexAsSelected = this.dispatchMarkVertexAsSelected.bind(this);
     this.animateRelatedArtists = this.animateRelatedArtists.bind(this);
+    this.dispatchUpdateStatusToIdle = this.dispatchUpdateStatusToIdle.bind(this);
   }
 
   componentDidMount() {
@@ -56,9 +57,10 @@ class Graph extends Component {
       })
     } else {
       this.animateRejection(nextProps)
-        .then(this.animateReorder.bind(this))
-        .then(this.dispatchMarkVertexAsSelected.bind(this))
-        .then(this.animateRelatedArtists.bind(this))
+        .then(this.animateReorder)
+        .then(this.dispatchMarkVertexAsSelected)
+        .then(this.animateRelatedArtists)
+        .then(this.dispatchUpdateStatusToIdle);
     }
   }
 
@@ -128,7 +130,18 @@ class Graph extends Component {
               ));
           });
 
-          const nextEdges = this.updateEdgesFromVertices(nextVertices, recalculateEdges(nextVertices));
+          const nextEdges = this
+            .updateEdgesFromVertices(nextVertices, recalculateEdges(nextVertices))
+            .map( nextEdge => {
+              const previousEdge = edges.find( edge =>
+                edge.get('to') === nextEdge.get('to') &&
+                edge.get('from') === nextEdge.get('from')
+              );
+
+              return previousEdge ? previousEdge.merge(nextEdge) : nextEdge;
+            });
+
+
 
           this.setState({
             vertices: nextVertices,
@@ -168,8 +181,6 @@ class Graph extends Component {
       // If we don't have any FUTURE nodes, we can skip this bit.
       const futureVertices = getVerticesInRegion(nextVertices, FUTURE);
 
-      console.log("Future vertices:", futureVertices)
-
       if ( futureVertices.size === 0 ) {
         return resolve(nextProps);
       }
@@ -182,6 +193,10 @@ class Graph extends Component {
         edges:    nextEdges
       }, () => resolve(nextProps));
     });
+  }
+
+  dispatchUpdateStatusToIdle(nextProps) {
+    return this.props.actions.updateRepositionStatus('idle');
   }
 
   calculateResponsiveRadiusAndRegions() {
