@@ -4,9 +4,11 @@ import { take, call, put, select } from 'redux-saga/effects'
 import {
   SELECT_ARTIST,
   setupInitialStage,
-  addRelatedArtistsToGraph,
   updateRepositionStatus,
-  centerGraphAroundVertex
+  addRelatedArtistsToGraph,
+  centerGraphAroundVertex,
+  captureGraphState,
+  restoreGraphState
 } from '../ducks/graph.duck';
 import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
@@ -33,7 +35,7 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
     delay(delayLength + 100) // Adding a 100ms buffer, because JS isn't instant.
   ];
 
-  const artistsInState = yield select( state => state.present.get('artists'));
+  const artistsInState = yield select( state => state.get('artists'));
   const first3Related = takeFirstFewUnseenArtists(related.artists, artistsInState);
 
   yield [
@@ -45,6 +47,7 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
 
 
 function* initializeWithArtist(artist) {
+  yield put(captureGraphState());
   yield put(updateRepositionStatus('idle'));
 
   // Wait half a second for the "search" component to fade away
@@ -55,22 +58,27 @@ function* initializeWithArtist(artist) {
     put(setupInitialStage(artist))
   ];
   // Wait for the artist node to fade in, and the avatar to pop up.
-  yield delay(vertexEnterLength + artistAvatarLength);
+  yield delay(vertexEnterLength );
 
   yield fetchArtistAndTrackInfo({
     artistId: artist.get('id'),
     delayLength: 0
   });
+
+
 }
 
 
 export function* selectArtist(action) {
+  yield put(captureGraphState());
+
   yield put(centerGraphAroundVertex(action.artist));
 
   yield fetchArtistAndTrackInfo({
     artistId: action.artist.get('id'),
     delayLength: repositionDelay + repositionLength
   });
+
 }
 
 

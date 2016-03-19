@@ -21,8 +21,6 @@ const ArtistAvatar = ({images, artistVisible}) => {
                    border-radius ${artistAvatarLength}ms ease`
   };
 
-  console.log("Worked out styles", styles)
-
   return (
     <div
       className="artist-avatar"

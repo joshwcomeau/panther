@@ -2,20 +2,23 @@ import { bindActionCreators }   from 'redux';
 import { connect }              from 'react-redux';
 
 import Vertex                   from '../components/Graph/Vertex.jsx';
-import { selectArtist }         from '../ducks/graph.duck';
+import {
+  selectArtist,
+  restoreGraphState
+} from '../ducks/graph.duck';
 
 
 
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    artist: state.present.get('artists').get(ownProps.id)
+    artist: state.get('artists').get(ownProps.id)
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({ selectArtist }, dispatch)
+    actions: bindActionCreators({ selectArtist, restoreGraphState }, dispatch)
   }
 }
 

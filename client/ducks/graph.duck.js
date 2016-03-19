@@ -17,6 +17,8 @@ export const UPDATE_REPOSITION_STATUS       = 'UPDATE_REPOSITION_STATUS';
 export const ADD_RELATED_ARTISTS_TO_GRAPH   = 'ADD_RELATED_ARTISTS_TO_GRAPH';
 export const CENTER_GRAPH_AROUND_VERTEX     = 'CENTER_GRAPH_AROUND_VERTEX';
 export const MARK_VERTEX_AS_SELECTED        = 'MARK_VERTEX_AS_SELECTED';
+export const CAPTURE_GRAPH_STATE            = 'CAPTURE_GRAPH_STATE';
+export const RESTORE_GRAPH_STATE            = 'RESTORE_GRAPH_STATE';
 
 ///////////////////////////
 // REDUCER ///////////////
@@ -100,6 +102,12 @@ export default function reducer(state = initialState, action) {
   case MARK_VERTEX_AS_SELECTED:
     return state.set('selected', action.artist.get('id'));
 
+  case CAPTURE_GRAPH_STATE:
+    return state.set('history', state);
+
+  case RESTORE_GRAPH_STATE:
+    return state.get('history');
+
   default:
     return state;
   }
@@ -142,13 +150,20 @@ export function centerGraphAroundVertex(artist) {
   return {
     type: CENTER_GRAPH_AROUND_VERTEX,
     artist
-  }
+  };
 }
 
 export function markVertexAsSelected(artist) {
-  console.log("Mark vertex received", arguments)
   return {
     type: MARK_VERTEX_AS_SELECTED,
     artist
-  }
+  };
+}
+
+export function captureGraphState() {
+  return { type: CAPTURE_GRAPH_STATE };
+}
+
+export function restoreGraphState() {
+  return { type: RESTORE_GRAPH_STATE };
 }

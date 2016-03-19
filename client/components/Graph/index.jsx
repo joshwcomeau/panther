@@ -39,7 +39,6 @@ class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("Component received props", nextProps, performance.now())
     // Calculate positions of the new vertices
     nextProps = this.calculateVertexAndEdgePositions(nextProps);
 

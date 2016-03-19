@@ -11,9 +11,9 @@ import {
 
 function mapStateToProps(state) {
   return {
-    tracks:   state.present.getIn(['samples', 'tracks']),
-    playing:  state.present.getIn(['samples', 'playing']),
-    visible:  state.present.getIn(['graph', 'status']) !== 'repositioning'
+    tracks:   state.getIn(['samples', 'tracks']),
+    playing:  state.getIn(['samples', 'playing']),
+    visible:  state.getIn(['graph', 'status']) !== 'repositioning'
   };
 }
 
