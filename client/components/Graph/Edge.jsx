@@ -13,6 +13,14 @@ const Edge = ({ retracting, expanding, x1, y1, x2, y2 }) => {
   const classes = classNames({ retracting, expanding });
   let styles = {};
 
+  console.log("Rendering edge", retracting, expanding)
+
+  // If `expanding` is undefined, it means it hasn't yet been "activated".
+  // Don't show it.
+  // if ( typeof expanding === 'undefined' ) {
+  //   return <line />
+  // }
+
   if ( retracting ) {
     styles = setDashStyles(x1, y1, x2, y2);
     styles.animationName            = 'retract';

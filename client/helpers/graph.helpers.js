@@ -58,11 +58,11 @@ export function markRejectedVertices(vertices, rejectedVertices) {
 
 export function markEdgesByTheirDestination(edges, vertices, prop) {
   return edges.map( edge => {
-    const pointsToVertex = vertices.find( vertex => (
+    const pointsToVertex = vertices.some( vertex => (
       vertex.get('id') === edge.get('to')
     ));
 
-    return pointsToVertex ? edge.set(prop, true) : edge;
+    return edge.set(prop, pointsToVertex);
   });
 }
 

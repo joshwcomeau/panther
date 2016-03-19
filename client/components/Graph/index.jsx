@@ -166,15 +166,16 @@ class Graph extends Component {
       const nextVertices = nextProps.vertices;
 
       // If we don't have any FUTURE nodes, we can skip this bit.
-      if ( getVerticesInRegion(nextVertices, FUTURE).size === 0 ) {
+      const futureVertices = getVerticesInRegion(nextVertices, FUTURE);
+
+      console.log("Future vertices:", futureVertices)
+
+      if ( futureVertices.size === 0 ) {
         return resolve(nextProps);
       }
 
-      // Find all new vertices (don't exist in this.state.vertices)
-      const newVertices = filterVerticesNotInSecondGroup(nextVertices, vertices);
-
-      // Set all edges that point to new vertices as 'expanding'
-      const nextEdges = markExpandingEdges(nextProps.edges, newVertices);
+      // Set all edges that point to future vertices as 'expanding'
+      const nextEdges = markExpandingEdges(nextProps.edges, futureVertices);
 
       this.setState({
         vertices: nextVertices,
