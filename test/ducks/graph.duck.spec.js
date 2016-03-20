@@ -43,9 +43,11 @@ describe('Graph duck', () => {
           vertices: [
             { id: 'a', region: PAST, regionIndex: 1 },
             { id: 'd', region: PRESENT, regionIndex: 1 }
-          ], edges: [
+          ],
+          edges: [
             { from: 'a', to: 'd' }
-          ]
+          ],
+          status: 'repositioning'
         });
         const actualState = reducer(state, action);
 
