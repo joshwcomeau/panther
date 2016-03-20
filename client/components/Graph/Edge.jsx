@@ -21,7 +21,7 @@ class Edge extends Component {
     // If we've received new props, but our state of 'expanding' hasn't changed,
     // we don't need to re-animate the expansion.
     this.setState({
-      shouldExtend: !(nextProps.expanding && this.props.expanding)
+      shouldExtend: this.props.expanding === undefined
     });
   }
 
