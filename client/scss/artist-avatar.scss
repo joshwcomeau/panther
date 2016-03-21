@@ -1,4 +1,4 @@
-#artist-info {
+#artist-avatar-wrapper {
   position: absolute;
   z-index: 1;
   width: 33%;
@@ -12,7 +12,7 @@
   justify-content: center;
 
 
-  .artist-avatar {
+  #artist-avatar {
     position: relative;
     left: 0;
     right: 0;
@@ -26,6 +26,6 @@
 
   .node-spacer {
     width: 100%;
-    height: 225px;
+    height: 225px + 250px;
   }
 }

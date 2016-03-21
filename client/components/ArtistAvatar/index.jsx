@@ -22,10 +22,10 @@ const ArtistAvatar = ({images, artistVisible}) => {
   };
 
   return (
-    <div
-      className="artist-avatar"
-      style={styles}
-    />
+    <div id="artist-avatar-wrapper">
+      <div id="artist-avatar" style={styles} />
+      <div className="node-spacer" />
+    </div>
   );
 };
 
