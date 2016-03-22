@@ -8,10 +8,12 @@ import { search }                     from '../sagas/search.saga';
 
 
 export default function configureStore() {
-  let middlewares = [];
-  middlewares.push( createSagaMiddleware(watchSelectArtist) );
-  middlewares.push( createSagaMiddleware(search) );
-  middlewares.push( thunkMiddleware );
+  const middlewares = [
+    historyMiddleware,
+    thunkMiddleware,
+    createSagaMiddleware(watchSelectArtist),
+    createSagaMiddleware(search)
+  ];
 
   return createStore(
     rootReducer,

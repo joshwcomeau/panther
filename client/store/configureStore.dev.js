@@ -5,6 +5,7 @@ import Immutable                                  from 'immutable';
 import installDevTools                            from 'immutable-devtools';
 
 import rootReducer                    from '../reducers';
+import historyMiddleware              from '../middlewares/history.middleware';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
 import DevTools                       from '../containers/DevTools.jsx';
@@ -21,10 +22,12 @@ export default function configureStore() {
   // mixed-in extras (like the current user's auth data.)
 
 
-  let middlewares = [];
-  middlewares.push( createSagaMiddleware(watchSelectArtist) );
-  middlewares.push( createSagaMiddleware(search) );
-  middlewares.push( thunkMiddleware );
+  const middlewares = [
+    historyMiddleware,
+    thunkMiddleware,
+    createSagaMiddleware(watchSelectArtist),
+    createSagaMiddleware(search)
+  ];
 
   const store = createStore(
     rootReducer,

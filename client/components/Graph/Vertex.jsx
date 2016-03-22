@@ -18,7 +18,7 @@ class Vertex extends Component {
       case FUTURE:
         return this.props.actions.selectArtist(this.props.artist);
       case PAST:
-        return this.props.actions.restoreGraphState();
+        return this.props.actions.restoreGraphState(this.props.artist);
     }
   }
 

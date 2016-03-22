@@ -122,7 +122,13 @@ export default function reducer(state = initialState, action) {
 export function selectArtist(artist) {
   return {
     type: SELECT_ARTIST,
-    artist
+    artist,
+    meta: {
+      history: {
+        type: 'push',
+        path: `/artist/${artist.get('id')}`
+      }
+    }
   };
 }
 
@@ -165,6 +171,16 @@ export function captureGraphState() {
   return { type: CAPTURE_GRAPH_STATE };
 }
 
-export function restoreGraphState() {
-  return { type: RESTORE_GRAPH_STATE };
+export function restoreGraphState(artist) {
+  // `artist` parameter only used to restore the URL.
+  return {
+    type: RESTORE_GRAPH_STATE,
+    meta: {
+      history: {
+        type: 'push',
+        path: `/artist/${artist.get('id')}`
+      }
+    }
+
+  };
 }
