@@ -126,7 +126,7 @@ export function selectArtist(artist) {
     meta: {
       history: {
         type: 'push',
-        path: `/artist/${artist.get('id')}`
+        path: `/artist?artistId=${artist.get('id')}`
       }
     }
   };
@@ -178,7 +178,7 @@ export function restoreGraphState(artist) {
     meta: {
       history: {
         type: 'push',
-        path: `/artist/${artist.get('id')}`
+        path: `/artist?artistId=${artist.get('id')}`
       }
     }
 

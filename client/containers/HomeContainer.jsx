@@ -2,6 +2,7 @@ import { bindActionCreators }   from 'redux';
 import { connect }              from 'react-redux';
 
 import Home                     from '../components/Home';
+import { selectArtist }         from '../ducks/graph.duck';
 
 function mapStateToProps(state) {
   return {
@@ -12,8 +13,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: {}
-  }
+    actions: { selectArtist }
+  };
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( Home );

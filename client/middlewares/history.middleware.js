@@ -1,4 +1,4 @@
-import { createHistory } from 'history';
+import createHistory from 'history/lib/createBrowserHistory';
 
 
 const history = createHistory();
