@@ -1,5 +1,6 @@
 import { takeEvery } from 'redux-saga'
 import { take, call, put, select } from 'redux-saga/effects'
+import { fromJS } from 'immutable';
 
 import {
   SELECT_ARTIST,
@@ -14,7 +15,11 @@ import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
 
 import { takeFirstFewUnseenArtists } from '../helpers/artists.helpers';
-import { fetchRelatedArtists, fetchTopTracks } from '../helpers/api.helpers';
+import {
+  fetchRelatedArtists,
+  fetchTopTracks,
+  fetchArtistInfo
+} from '../helpers/api.helpers';
 import {
   repositionDelay, repositionLength,
   edgesExpandLength, vertexEnterLength,
@@ -27,7 +32,7 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
 
-function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
+function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
   // Fetch related artists
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artistId ),
@@ -47,6 +52,14 @@ function* fetchArtistAndTrackInfo({ artistId, delayLength }) {
 
 
 function* initializeWithArtist(artist) {
+  // It's possible we don't have all the info we need yet;
+  // If the user came to a specific URL, all we have is the ID.
+  if ( artist.get('type') !== 'artist' ) {
+    const artistData = yield call( fetchArtistInfo, artist.get('id') );
+    // TODO: Error handling (what happens if the API call fails?);
+    artist = fromJS(artistData);
+  }
+
   yield put(captureGraphState());
   yield put(updateRepositionStatus('idle'));
 
@@ -58,14 +71,12 @@ function* initializeWithArtist(artist) {
     put(setupInitialStage(artist))
   ];
   // Wait for the artist node to fade in, and the avatar to pop up.
-  yield delay(vertexEnterLength );
+  yield delay(vertexEnterLength);
 
-  yield fetchArtistAndTrackInfo({
+  yield fetchRelatedArtistsAndTopTracks({
     artistId: artist.get('id'),
     delayLength: 0
   });
-
-
 }
 
 
@@ -74,7 +85,7 @@ export function* selectArtist(action) {
 
   yield put(centerGraphAroundVertex(action.artist));
 
-  yield fetchArtistAndTrackInfo({
+  yield fetchRelatedArtistsAndTopTracks({
     artistId: action.artist.get('id'),
     delayLength: repositionDelay + repositionLength
   });

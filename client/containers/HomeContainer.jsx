@@ -13,7 +13,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: { selectArtist }
+    actions: bindActionCreators({ selectArtist }, dispatch)
   };
 }
 

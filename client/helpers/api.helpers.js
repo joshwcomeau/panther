@@ -26,6 +26,12 @@ export function fetchSearchResults(q, type = 'artist') {
   });
 }
 
+export function fetchArtistInfo(artistId) {
+  return fetchFromAPI({
+    endpoint: `artists/${artistId}`
+  });
+}
+
 export default function fetchFromAPI({endpoint, params}) {
   let url = `${ROOT_URL}/${endpoint}`;
 
