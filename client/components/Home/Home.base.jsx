@@ -1,4 +1,5 @@
 import React, { Component }     from 'react';
+import { Map }                  from 'immutable';
 import classNames               from 'classnames';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 
@@ -18,7 +19,15 @@ export default function HomeBase(DevTools = null) {
       const artistId = getQueryVariable('artistId');
 
       if ( artistId ) {
-        this.props.actions.selectArtist(artistId);
+        // selectArtist expects an immutable Map with artist data.
+        // We don't have that data yet; we have to fetch it from spotify.
+        // Create a placeholder object
+        const artistPlaceholder = Map({
+          id: artistId,
+          type: 'placeholder'
+        });
+
+        this.props.actions.selectArtist(artistPlaceholder, false);
       }
     }
 

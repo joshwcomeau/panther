@@ -119,17 +119,21 @@ export default function reducer(state = initialState, action) {
 // ACTION CREATORS ///////
 /////////////////////////
 
-export function selectArtist(artist) {
-  return {
+export function selectArtist(artist, addToHistory = true) {
+  let action = {
     type: SELECT_ARTIST,
     artist,
-    meta: {
-      history: {
-        type: 'push',
-        path: `/artist?artistId=${artist.get('id')}`
-      }
-    }
+    meta: {}
   };
+
+  if ( addToHistory ) {
+    action.meta.history = {
+      type: 'push',
+      path: `/artist?artistId=${artist.get('id')}`
+    }
+  }
+
+  return action;
 }
 
 export function setupInitialStage(artist) {
