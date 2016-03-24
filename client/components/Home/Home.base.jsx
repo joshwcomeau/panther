@@ -17,7 +17,7 @@ export default function HomeBase(DevTools = null) {
       // Figure out if the user has followed a specific artist URL.
       // If so, dispatch the action to select that artist.
       // This is a weird place to do this, but I can't think of a good alternative.
-      const artistId = getArtistIdFromUrl();
+      const artistId = getArtistIdFromUrl(window.location.pathname);
 
       if ( artistId ) {
         // selectArtist expects an immutable Map with artist data.

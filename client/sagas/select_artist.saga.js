@@ -32,13 +32,16 @@ import {
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
+// TODO: Error handling (what happens if the API calls fail?)
 
 function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
-  // Fetch related artists
+  // Make our API calls. We also want to add a small buffer to delayLength,
+  // so that these calls perform their updates _after_ the graph animations are
+  // complete)
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artistId ),
     call( fetchTopTracks, artistId ),
-    delay(delayLength + 100) // Adding a 100ms buffer, because JS isn't instant.
+    delay(delayLength + 50)
   ];
 
   const artistsInState = yield select( state => state.get('artists'));
@@ -60,11 +63,13 @@ function* initializeWithArtist(artist) {
   const artistDataLoaded = artist.get('type') === 'artist';
 
   if ( !artistDataLoaded ) {
-    const [ artistData, topTracks ] = yield [
+    const [ artistData, top ] = yield [
       call( fetchArtistInfo, artistId ),
-
+      call( fetchTopTracks, artistId )
     ];
-    // TODO: Error handling (what happens if the API call fails?);
+
+    put(loadTracks(top.tracks));
+
     artist = fromJS(artistData);
   }
 
@@ -90,7 +95,10 @@ function* initializeWithArtist(artist) {
 
 
 export function* selectArtist(action) {
-  yield put(captureGraphState());
+  yield [
+    put(captureGraphState()),
+    put(stop())
+  ];
 
   yield put(centerGraphAroundVertex(action.artist));
 

@@ -13,9 +13,9 @@ export function getQueryVariable(desiredVariableName) {
   return queryVariables[desiredVariableName];
 }
 
-export function getArtistIdFromUrl() {
+export function getArtistIdFromUrl(url) {
   const artistIdRegex = /^\/artist\/(.+)/;
-  const artistIdMatch = artistIdRegex.exec(window.location.pathname);
+  const artistIdMatch = artistIdRegex.exec(url);
 
   if ( !artistIdMatch ) return null;
 

@@ -4,7 +4,7 @@ import PlayButton from './PlayButton.jsx';
 import TrackName from './TrackName.jsx';
 import immutableProps from '../immutable_props.jsx';
 
-@immutableProps(['playing', 'visible'])
+@immutableProps
 class Samples extends Component {
   renderButtons() {
     const { tracks, playing, visible, actions } = this.props;
@@ -41,7 +41,7 @@ class Samples extends Component {
             active={track.get('id') === playing}
             size={60}
             progressCircleWidth={5}
-            progressCircleColor="#1888C8"
+            progressCircleColor="#78A931"
             idleBackgroundColor="#191b1d"
             activeBackgroundColor="#191b1d"
             play={actions.playTrack}
