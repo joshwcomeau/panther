@@ -3,6 +3,7 @@ import thunkMiddleware                  from 'redux-thunk';
 import createSagaMiddleware             from 'redux-saga'
 
 import rootReducer                    from '../reducers';
+import historyMiddleware              from '../middlewares/history.middleware';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
 

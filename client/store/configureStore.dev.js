@@ -14,14 +14,6 @@ import DevTools                       from '../containers/DevTools.jsx';
 installDevTools(Immutable);
 
 export default function configureStore() {
-  // On the client, we pass in an array of sockets.
-  // We will create one middleware step for each one.
-  // When actions are dispatched, each middleware will check its middleware.
-  // if the action has specified its namespace as a remote, the socket will
-  // emit an action on that socket with the action data, along with some
-  // mixed-in extras (like the current user's auth data.)
-
-
   const middlewares = [
     historyMiddleware,
     thunkMiddleware,
