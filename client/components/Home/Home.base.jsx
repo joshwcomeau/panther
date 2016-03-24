@@ -3,7 +3,7 @@ import { Map }                  from 'immutable';
 import classNames               from 'classnames';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 
-import { getQueryVariable }     from '../../helpers/url.helpers';
+import { getArtistIdFromUrl }     from '../../helpers/url.helpers';
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
@@ -16,7 +16,7 @@ export default function HomeBase(DevTools = null) {
       // Figure out if the user has followed a specific artist URL.
       // If so, dispatch the action to select that artist.
       // This is a weird place to do this, but I can't think of a good alternative.
-      const artistId = getQueryVariable('artistId');
+      const artistId = getArtistIdFromUrl();
 
       if ( artistId ) {
         // selectArtist expects an immutable Map with artist data.

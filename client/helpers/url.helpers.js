@@ -12,3 +12,13 @@ export function getQueryVariable(desiredVariableName) {
 
   return queryVariables[desiredVariableName];
 }
+
+export function getArtistIdFromUrl() {
+  const artistIdRegex = /^\/artist\/(.+)/;
+  const artistIdMatch = artistIdRegex.exec(window.location.pathname);
+
+  if ( !artistIdMatch ) return null;
+
+  const [ fullMatch, artistId ] = artistIdMatch;
+  return artistId;
+}

@@ -129,7 +129,7 @@ export function selectArtist(artist, addToHistory = true) {
   if ( addToHistory ) {
     action.meta.history = {
       type: 'push',
-      path: `/artist?artistId=${artist.get('id')}`
+      path: `/artist/${artist.get('id')}`
     }
   }
 
@@ -182,7 +182,7 @@ export function restoreGraphState(artist) {
     meta: {
       history: {
         type: 'push',
-        path: `/artist?artistId=${artist.get('id')}`
+        path: `/artist/${artist.get('id')}`
       }
     }
 
