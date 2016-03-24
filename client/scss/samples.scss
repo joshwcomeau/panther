@@ -1,21 +1,35 @@
-#samples {
-  position: relative;
+#samples-wrapper {
+  position: absolute;
+  z-index: 2;
+  width: 33%;
+  top: 0;
   left: 0;
   right: 0;
-  width: 250px;
-  height: 250px;
+  bottom: 0;
   margin: 0 auto;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-  .button-wrapper {
-    display: inline-block;
+  #samples {
     position: relative;
-    margin: 0 5px;
-    opacity: 0;
+    left: 0;
+    right: 0;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+    text-align: center;
+
+    .button-wrapper {
+      display: inline-block;
+      position: relative;
+      margin: 0 5px;
+      opacity: 0;
+    }
   }
 }
 
-@keyframes drop {
+@keyframes button-exit {
   from {
     transform: translateY(0);
     opacity: 1;
@@ -24,4 +38,17 @@
     transform: translateY(150px);
     opacity: 0;
   }
+}
+
+@keyframes button-enter {
+    from  {
+      transform: scale(0.5, 0.5);
+      transform-origin: 50% 50%;
+      opacity: 0.01;
+    }
+    to {
+      transform: scale(1, 1);
+      transform-origin: 50% 50%;
+      opacity: 1;
+    }
 }

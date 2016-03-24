@@ -13,6 +13,7 @@ import {
 } from '../ducks/graph.duck';
 import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
+import { updateMode } from '../ducks/app.duck';
 
 import { takeFirstFewUnseenArtists } from '../helpers/artists.helpers';
 import {
@@ -52,19 +53,27 @@ function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
 
 
 function* initializeWithArtist(artist) {
+  const artistId = artist.get('id');
+
   // It's possible we don't have all the info we need yet;
   // If the user came to a specific URL, all we have is the ID.
-  if ( artist.get('type') !== 'artist' ) {
-    const artistData = yield call( fetchArtistInfo, artist.get('id') );
+  const artistDataLoaded = artist.get('type') === 'artist';
+
+  if ( !artistDataLoaded ) {
+    const [ artistData, topTracks ] = yield [
+      call( fetchArtistInfo, artistId ),
+
+    ];
     // TODO: Error handling (what happens if the API call fails?);
     artist = fromJS(artistData);
   }
 
+  yield put(updateMode('graph'));
   yield put(captureGraphState());
   yield put(updateRepositionStatus('idle'));
 
   // Wait half a second for the "search" component to fade away
-  yield delay(500);
+  if ( artistDataLoaded ) yield delay(500);
 
   yield [
     put(addArtists(artist)),
@@ -74,7 +83,7 @@ function* initializeWithArtist(artist) {
   yield delay(vertexEnterLength);
 
   yield fetchRelatedArtistsAndTopTracks({
-    artistId: artist.get('id'),
+    artistId,
     delayLength: 0
   });
 }

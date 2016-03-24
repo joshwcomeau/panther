@@ -11,7 +11,7 @@ function mapStateToProps(state) {
   return {
     tracks:   state.getIn(['samples', 'tracks']),
     playing:  state.getIn(['samples', 'playing']),
-    visible:  state.getIn(['graph', 'status']) !== 'repositioning'
+    visible:  artistVisibleSelector(state)
   };
 }
 

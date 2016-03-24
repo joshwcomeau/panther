@@ -49,3 +49,10 @@ body, input, select, option, textarea {
     background: darken($navy, 2%);;
   }
 }
+
+// This is used by samples.scss and artist-avatar.scss.
+// TODO: Make its size dynamic
+.node-spacer {
+  width: 100%;
+  height: 225px + 250px;
+}

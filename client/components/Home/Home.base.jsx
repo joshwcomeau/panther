@@ -3,12 +3,13 @@ import { Map }                  from 'immutable';
 import classNames               from 'classnames';
 import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 
-import { getArtistIdFromUrl }     from '../../helpers/url.helpers';
+import { getArtistIdFromUrl }   from '../../helpers/url.helpers';
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
 import Search                   from '../Search';
 import Header                   from '../Header';
+
 
 export default function HomeBase(DevTools = null) {
   return class Home extends Component {
@@ -28,6 +29,11 @@ export default function HomeBase(DevTools = null) {
         });
 
         this.props.actions.selectArtist(artistPlaceholder, false);
+
+      } else {
+        // We haven't supplied an artist through the URL.
+        // Set the app mode to 'search'.
+        this.props.actions.updateMode('search')
       }
     }
 
@@ -36,18 +42,17 @@ export default function HomeBase(DevTools = null) {
         'wrapped-for-devtools': process.env.NODE_ENV !== 'production'
       });
 
-      const isGraphRunning = this.props.graph.get('status');
+      const isSearching     = this.props.mode === 'search';
+      const isGraphRunning  = this.props.mode === 'graph';
 
       return (
         <div id="layout" className={classes}>
           <ReactCSSTransitionGroup
             transitionName="search-animation"
-            transitionAppear={true}
-            transitionAppearTimeout={750}
             transitionEnterTimeout={0}
             transitionLeaveTimeout={2500}
           >
-            { isGraphRunning ? null : <Search /> }
+            { isSearching ? <Search /> : null }
           </ReactCSSTransitionGroup>
           { isGraphRunning ? <GraphContainer /> : null }
           { isGraphRunning ? <ArtistAvatarContainer /> : null }

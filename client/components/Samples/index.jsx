@@ -15,7 +15,7 @@ class Samples extends Component {
       if ( visible ) {
         styles = {
           opacity: 0,
-          animationName: 'fadeIn',
+          animationName: 'button-enter',
           animationFillMode: 'forwards',
           animationDuration: '600ms',
           animationTimingFunction: 'ease',
@@ -24,7 +24,7 @@ class Samples extends Component {
       } else {
         styles = {
           opacity: 1,
-          animationName: 'drop',
+          animationName: 'button-exit',
           animationFillMode: 'forwards',
           animationDuration: '600ms',
           animationTimingFunction: 'ease',
@@ -60,11 +60,15 @@ class Samples extends Component {
 
     return <TrackName name={track.get('name')} />
   }
+
   render() {
     return (
-      <div id="samples">
-        { this.renderButtons() }
-        { this.renderTrackName() }
+      <div id="samples-wrapper">
+        <div className="node-spacer" />
+        <div id="samples">
+          { this.renderButtons() }
+          { this.renderTrackName() }
+        </div>
       </div>
     );
   }
