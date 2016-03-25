@@ -9,6 +9,7 @@ import historyMiddleware              from '../middlewares/history.middleware';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
 import DevTools                       from '../containers/DevTools.jsx';
+import historyEnhancer                from './history-enhancer';
 
 // Make our store print nicely in the console
 installDevTools(Immutable);
@@ -24,8 +25,10 @@ export default function configureStore() {
   const store = createStore(
     rootReducer,
     compose(
+      historyEnhancer(),
       applyMiddleware.apply(this, middlewares),
       DevTools.instrument()
+
     )
   );
 
