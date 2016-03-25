@@ -19,20 +19,7 @@ export default function HomeBase(DevTools = null) {
       // This is a weird place to do this, but I can't think of a good alternative.
       const artistId = getArtistIdFromUrl(window.location.pathname);
 
-      if ( artistId ) {
-        // selectArtist expects an immutable Map with artist data.
-        // We don't have that data yet; we have to fetch it from spotify.
-        // Create a placeholder object
-        const artistPlaceholder = Map({
-          id: artistId,
-          type: 'placeholder'
-        });
-
-        this.props.actions.selectArtist(artistPlaceholder, false);
-
-      } else {
-        // We haven't supplied an artist through the URL.
-        // Set the app mode to 'search'.
+      if ( !artistId ) {
         this.props.actions.updateMode('search')
       }
     }

@@ -5,18 +5,16 @@ import Immutable                                  from 'immutable';
 import installDevTools                            from 'immutable-devtools';
 
 import rootReducer                    from '../reducers';
-import historyMiddleware              from '../middlewares/history.middleware';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
 import DevTools                       from '../containers/DevTools.jsx';
-import historyEnhancer                from './history-enhancer';
+import artistHistoryEnhancer          from '../enhancers/artist-history.enhancer';
 
 // Make our store print nicely in the console
 installDevTools(Immutable);
 
 export default function configureStore() {
   const middlewares = [
-    historyMiddleware,
     thunkMiddleware,
     createSagaMiddleware(watchSelectArtist),
     createSagaMiddleware(search)
@@ -25,7 +23,7 @@ export default function configureStore() {
   const store = createStore(
     rootReducer,
     compose(
-      historyEnhancer(),
+      artistHistoryEnhancer,
       applyMiddleware.apply(this, middlewares),
       DevTools.instrument()
 
