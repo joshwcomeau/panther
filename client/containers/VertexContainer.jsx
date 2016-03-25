@@ -3,9 +3,8 @@ import { connect }              from 'react-redux';
 
 import Vertex                   from '../components/Graph/Vertex.jsx';
 import {
-  selectArtist,
-  restoreGraphState
-} from '../ducks/graph.duck';
+  updateArtistUrl
+} from '../ducks/app.duck';
 
 
 
@@ -18,7 +17,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({ selectArtist, restoreGraphState }, dispatch)
+    actions: bindActionCreators({ updateArtistUrl }, dispatch)
   }
 }
 

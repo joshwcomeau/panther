@@ -13,17 +13,6 @@ import Header                   from '../Header';
 
 export default function HomeBase(DevTools = null) {
   return class Home extends Component {
-    componentWillMount() {
-      // Figure out if the user has followed a specific artist URL.
-      // If so, dispatch the action to select that artist.
-      // This is a weird place to do this, but I can't think of a good alternative.
-      const artistId = getArtistIdFromUrl(window.location.pathname);
-
-      if ( !artistId ) {
-        this.props.actions.updateMode('search')
-      }
-    }
-
     render() {
       let classes = classNames({
         'wrapped-for-devtools': process.env.NODE_ENV !== 'production'

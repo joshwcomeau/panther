@@ -14,12 +14,7 @@ class Vertex extends Component {
   }
 
   clickHandler() {
-    switch (this.props.region) {
-      case FUTURE:
-        return this.props.actions.selectArtist(this.props.artist);
-      case PAST:
-        return this.props.actions.restoreGraphState(this.props.artist);
-    }
+    return this.props.actions.updateArtistUrl(this.props.artist.get('id'));
   }
 
   render() {
