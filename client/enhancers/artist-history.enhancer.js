@@ -1,9 +1,15 @@
 import { Map, fromJS } from 'immutable';
 
-import historyEnhancer                      from '../store/history-enhancer';
-import { selectArtist, restoreGraphState }  from '../ducks/graph.duck';
-import { updateMode }                       from '../ducks/app.duck';
-import { getArtistIdFromUrl }               from '../helpers/url.helpers';
+import historyEnhancer        from '../store/history-enhancer';
+import { getArtistIdFromUrl } from '../helpers/url.helpers';
+import { updateMode }         from '../ducks/app.duck';
+import { unloadTracks }       from '../ducks/samples.duck';
+import {
+  selectArtist,
+  restoreGraphState,
+  emptyGraph
+} from '../ducks/graph.duck';
+
 
 function historyChange(location, store) {
   const artistId = getArtistIdFromUrl(location.pathname);
@@ -30,6 +36,8 @@ function historyChange(location, store) {
     }
   } else {
     store.dispatch(updateMode('search'));
+    store.dispatch(emptyGraph());
+    store.dispatch(unloadTracks());
   }
 
 }

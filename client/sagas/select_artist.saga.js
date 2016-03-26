@@ -14,6 +14,7 @@ import {
 import { addArtists } from '../ducks/artists.duck';
 import { loadTracks, stop } from '../ducks/samples.duck';
 import { updateMode } from '../ducks/app.duck';
+import { clearTypeahead } from '../ducks/search.duck';
 
 import { takeFirstFewUnseenArtists } from '../helpers/artists.helpers';
 import {
@@ -33,6 +34,7 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
 // TODO: Error handling (what happens if the API calls fail?)
+// TODO: Loading (Spotify is slowwww sometimes)
 
 function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
   // Make our API calls. We also want to add a small buffer to delayLength,
@@ -87,37 +89,48 @@ function* initializeWithArtist(artist) {
   // Wait for the artist node to fade in, and the avatar to pop up.
   yield delay(vertexEnterLength);
 
+  // Clear the typeahead, in case the user goes back to search
+  yield put(clearTypeahead());
+
   yield fetchRelatedArtistsAndTopTracks({
     artistId,
     delayLength: 0
   });
 }
 
-
-export function* selectArtist(action) {
+export function* progressWithArtist(artist) {
+  console.log("progressing", artist)
   yield [
     put(captureGraphState()),
     put(stop())
   ];
 
-  yield put(centerGraphAroundVertex(action.artist));
+  yield put(centerGraphAroundVertex(artist));
 
   yield fetchRelatedArtistsAndTopTracks({
-    artistId: action.artist.get('id'),
+    artistId: artist.get('id'),
     delayLength: repositionDelay + repositionLength
   });
-
 }
-
 
 // Our watcher Saga
 export function* watchSelectArtist() {
-  // The first time this action is triggered, the job is a bit different.
-  // We're setting up the structure, not moving forward to the next nodes.
-  // TODO: Some way of resetting this, so that the process can be restarted
-  // without refreshing the page.
-  const initialAction = yield take(SELECT_ARTIST);
-  yield initializeWithArtist(initialAction.artist)
+  while (true) {
+    const action = yield take(SELECT_ARTIST);
 
-  yield* takeEvery(SELECT_ARTIST, selectArtist);
+    console.log("Took", action)
+
+    // Figure out if the board is already set up, or if this is our initial artist.
+    // On first invocation, from the search form or from a direct URL, our role is
+    // different. We need to add our first node to the board.
+    // For subsequent invocations, the job is different: Shifting everything down
+    // one position.
+    const appMode = yield select( state => state.getIn(['app', 'mode']));
+    const initialArtist = appMode !== 'graph';
+    const artist = action.artist;
+
+    console.log("App Mode", appMode)
+
+    yield initialArtist ? initializeWithArtist(artist) : progressWithArtist(artist);
+  }
 }

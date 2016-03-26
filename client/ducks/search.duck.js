@@ -30,8 +30,7 @@ export default function reducer(state = initialState, action) {
       return state;
 
     case CLEAR_TYPEAHEAD:
-      // TODO: display some random artist names for inspiration
-      return state;
+      return initialState;
 
     case RECORD_VOICE:
       return state;

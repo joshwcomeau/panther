@@ -4,9 +4,10 @@ import { Map, List, fromJS } from 'immutable';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-export const LOAD_TRACKS = 'LOAD_TRACKS';
-export const PLAY_TRACK  = 'PLAY_TRACK';
-export const STOP        = 'STOP';
+export const LOAD_TRACKS    = 'LOAD_TRACKS';
+export const UNLOAD_TRACKS  = 'UNLOAD_TRACKS';
+export const PLAY_TRACK     = 'PLAY_TRACK';
+export const STOP           = 'STOP';
 
 
 ///////////////////////////
@@ -21,6 +22,9 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_TRACKS:
       return state.set('tracks', fromJS(action.tracks));
+
+    case UNLOAD_TRACKS:
+      return initialState;
 
     case PLAY_TRACK:
       return state.set('playing', action.trackId);
@@ -51,6 +55,10 @@ export function loadTracks(tracks) {
     type: LOAD_TRACKS,
     tracks
   };
+}
+
+export function unloadTracks() {
+  return { type: UNLOAD_TRACKS };
 }
 
 export function playTrack(trackId) {

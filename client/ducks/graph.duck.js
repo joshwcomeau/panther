@@ -19,13 +19,15 @@ export const CENTER_GRAPH_AROUND_VERTEX     = 'CENTER_GRAPH_AROUND_VERTEX';
 export const MARK_VERTEX_AS_SELECTED        = 'MARK_VERTEX_AS_SELECTED';
 export const CAPTURE_GRAPH_STATE            = 'CAPTURE_GRAPH_STATE';
 export const RESTORE_GRAPH_STATE            = 'RESTORE_GRAPH_STATE';
+export const EMPTY_GRAPH                    = 'EMPTY_GRAPH';
 
 ///////////////////////////
 // REDUCER ///////////////
 /////////////////////////
 const initialState = fromJS({
   vertices: [],
-  edges: []
+  edges: [],
+  selected: null
 });
 
 export default function reducer(state = initialState, action) {
@@ -37,7 +39,10 @@ export default function reducer(state = initialState, action) {
       regionIndex:  1
     }])
 
-    return state.set('vertices', initialVertices)
+    return state
+      .set('vertices', initialVertices)
+      .set('edges', List())
+      .set('status', 'idle');
 
   case UPDATE_REPOSITION_STATUS:
     return state.set('status', action.status);
@@ -107,7 +112,13 @@ export default function reducer(state = initialState, action) {
 
   case RESTORE_GRAPH_STATE:
     const formerSelected = state.get('selected')
-    return state.get('history').set('selected', formerSelected).set('status', 'repositioning');
+    return state
+      .get('history')
+      .set('selected', formerSelected)
+      .set('status', 'repositioning');
+
+  case EMPTY_GRAPH:
+    return initialState;
 
   default:
     return state;
@@ -166,7 +177,9 @@ export function captureGraphState() {
 }
 
 export function restoreGraphState() {
-  return {
-    type: RESTORE_GRAPH_STATE
-  };
+  return { type: RESTORE_GRAPH_STATE };
+}
+
+export function emptyGraph() {
+  return { type: EMPTY_GRAPH };
 }

@@ -55,7 +55,7 @@ class SearchBox extends Component {
 
     const suggestion = this.props.search.getIn(['suggestions', selectedIndex]);
 
-    this.props.actions.selectArtist(suggestion)
+    this.props.actions.updateArtistUrl(suggestion.get('id'))
   }
 
   renderSuggestions() {
