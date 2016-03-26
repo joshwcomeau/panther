@@ -250,7 +250,7 @@ class Graph extends Component {
     });
   }
 
-  calculateVertexAndEdgePositions(props = this.props) {
+  calculateVertexAndEdgePositions(props = this.state) {
     const {
       radius,
       regionCoords,

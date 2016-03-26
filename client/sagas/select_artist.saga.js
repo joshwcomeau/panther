@@ -99,7 +99,6 @@ function* initializeWithArtist(artist) {
 }
 
 export function* progressWithArtist(artist) {
-  console.log("progressing", artist)
   yield [
     put(captureGraphState()),
     put(stop())
@@ -118,8 +117,6 @@ export function* watchSelectArtist() {
   while (true) {
     const action = yield take(SELECT_ARTIST);
 
-    console.log("Took", action)
-
     // Figure out if the board is already set up, or if this is our initial artist.
     // On first invocation, from the search form or from a direct URL, our role is
     // different. We need to add our first node to the board.
@@ -128,8 +125,6 @@ export function* watchSelectArtist() {
     const appMode = yield select( state => state.getIn(['app', 'mode']));
     const initialArtist = appMode !== 'graph';
     const artist = action.artist;
-
-    console.log("App Mode", appMode)
 
     yield initialArtist ? initializeWithArtist(artist) : progressWithArtist(artist);
   }
