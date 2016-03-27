@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Howl } from 'howler';
 import noop from 'lodash/noop';
 
-import easeInOutCubic from '../../helpers/easing.helpers';
+import { easeOutCubic } from '../../helpers/easing.helpers';
 
 
 
@@ -88,9 +88,13 @@ class PlayButton extends Component {
       this.setState({ progress: 0, playing: false })
       this.howler.stop();
     } else if ( !this.props.active && nextProps.active ) {
-      this.setState({ progress: 0 }, this.updateProgress)
       this.howler.play();
-      this.animatePlayIcon();
+      this.setState({ progress: 0, playing: true }, () => {
+        this.animatePlayIcon();
+        this.updateProgress();
+      })
+
+
     }
   }
 
@@ -116,9 +120,11 @@ class PlayButton extends Component {
   }
 
   animatePlayIcon() {
-    const easingFunction = easeInOutCubic;
+    const easingFunction = easeOutCubic;
     const startTime = new Date().getTime();
     const initialPoints = this.state.iconPoints;
+    const finalPoints = getStopIconPoints(this.props);
+    const duration = this.props.iconAnimationLength
 
     const updatePosition = () => {
       // IF we stopped the track, stop animating!
@@ -128,58 +134,35 @@ class PlayButton extends Component {
         const time = new Date().getTime() - startTime;
 
         // Our end condition. The time has elapsed, the animation is completed.
-        if ( time > this.props.iconAnimationLength ) return;
+        if ( time > duration ) return;
 
-        // Let's figure out where the new points should be
+        // Let's figure out where the new points should be.
+        // There are a total of 8 numbers to work out (4 points, each with x/y).
+        // easiest way is probably just to map through them.
+        const newPoints = initialPoints.map( (initialPoint, index) => {
+          const [ initialX, initialY ]  = initialPoint;
+          const [ finalX, finalY ]      = finalPoints[index];
 
+          return [
+            easingFunction(time, initialX, finalX - initialX, duration),
+            easingFunction(time, initialY, finalY - initialY, duration)
+          ];
+        });
 
+        console.log("YEEEEP", newPoints)
+
+        this.setState({
+          iconPoints: newPoints
+        }, updatePosition);
       });
     }
-  }
 
-  getPolygonPoints({ active, size, progressCircleWidth }) {
-    const innerSize = size - progressCircleWidth * 2;
-    let points;
-
-    if ( active ) {
-      // Stop icon points
-      points = [
-        [
-          innerSize * 0.3 + progressCircleWidth,
-          innerSize * 0.3 + progressCircleWidth
-        ], [
-          innerSize * 0.3 + progressCircleWidth,
-          innerSize * 0.7 + progressCircleWidth
-        ], [
-          innerSize * 0.7 + progressCircleWidth,
-          innerSize * 0.7 + progressCircleWidth
-        ], [
-          innerSize * 0.7 + progressCircleWidth,
-          innerSize * 0.3 + progressCircleWidth
-        ]
-      ];
-    } else {
-      // Play icon points
-      points = [
-        [
-          innerSize * 7/20 +  progressCircleWidth,
-          innerSize * 1/4  +  progressCircleWidth
-        ], [
-          innerSize * 7/20 +  progressCircleWidth,
-          innerSize * 3/4  +  progressCircleWidth
-        ], [
-          innerSize * 31/40 + progressCircleWidth,
-          innerSize * 1/2   + progressCircleWidth
-        ]
-      ];
-    }
-
-    return points.map(p => p.join(',')).join(' ');
+    updatePosition();
   }
 
   renderIcon() {
     const { active, playIconColor, stopIconColor } = this.props;
-    const points = this.getPolygonPoints(this.props);
+    const points = this.state.iconPoints.map(p => p.join(',')).join(' ');
 
     return (
       <polygon
