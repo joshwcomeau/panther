@@ -27,6 +27,62 @@
       opacity: 0;
     }
   }
+
+  #track-name {
+    padding: 2rem 1rem;
+
+    h6 {
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: $yellow;
+    }
+
+    h4 {
+      position: relative;
+      margin: 8px 0;
+      font-size: 20px;
+      color: $lightgray;
+
+      &:after {
+        content: '';
+        position: absolute;
+        width: 30%;
+        height: 1px;
+        bottom: -14px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        opacity: 0.3;
+        background: $yellow;
+        animation: widen 1600ms both 300ms;
+      }
+    }
+  }
+}
+
+.track-name-enter {
+  opacity: 0.01;
+}
+
+.track-name-enter.track-name-enter-active {
+  opacity: 1;
+  transition: 500ms ease-in;
+}
+
+.track-name-leave {
+  opacity: 1;
+}
+
+.track-name-leave.track-name-leave-active {
+  opacity: 0;
+  transition: 500ms linear;
+}
+
+
+@keyframes widen {
+  from { transform: scaleX(0.01); }
+  to   { transform: scaleX(1); }
 }
 
 @keyframes button-exit {

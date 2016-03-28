@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 
 import PlayButton from 'react-play-button';
 import TrackName from './TrackName.jsx';
@@ -55,11 +56,18 @@ class Samples extends Component {
 
   renderTrackName() {
     const { tracks, playing } = this.props;
-    if ( !playing ) return null;
 
     const track = tracks.find( t => t.get('id') === playing );
 
-    return <TrackName name={track.get('name')} />
+    return (
+      <ReactCSSTransitionGroup
+        transitionName="track-name"
+        transitionEnterTimeout={1000}
+        transitionLeaveTimeout={1000}
+      >
+        { playing ? <TrackName name={track.get('name')} /> : null }
+      </ReactCSSTransitionGroup>
+    );
   }
 
   render() {
