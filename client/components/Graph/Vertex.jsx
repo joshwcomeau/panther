@@ -48,9 +48,9 @@ class Vertex extends Component {
           y={y}
           onClick={this.clickHandler}
         >
-          <g class={classes} style={styles}>
+          <g className={classes} style={styles}>
             <circle cx="50%" cy="50%" r="48%" fill="#FFFFFF" />
-            <text x="50%" y="51%" text-anchor="middle">{artistName}</text>
+            <text x="50%" y="51%" textAnchor="middle">{artistName}</text>
           </g>
         </svg>
       </g>

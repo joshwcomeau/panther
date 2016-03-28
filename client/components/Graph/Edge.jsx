@@ -58,7 +58,7 @@ class Edge extends Component {
     }
 
     return <line
-      class={classes}
+      className={classes}
       style={styles}
       x1={x1}
       y1={y1}
