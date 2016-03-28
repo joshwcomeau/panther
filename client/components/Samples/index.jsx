@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import PlayButton from './PlayButton.jsx';
+import PlayButton from 'react-play-button';
 import TrackName from './TrackName.jsx';
 import immutableProps from '../immutable_props.jsx';
 
@@ -36,7 +36,6 @@ class Samples extends Component {
         <span className="button-wrapper" style={styles} key={track.get('id')}>
           <PlayButton
             audioId={track.get('id')}
-            duration={30000}
             url={track.get('url')}
             active={track.get('id') === playing}
             size={60}
@@ -46,6 +45,8 @@ class Samples extends Component {
             activeBackgroundColor="#191b1d"
             play={actions.playTrack}
             stop={actions.stop}
+            fadeInLength={250}
+            fadeOutLength={250}
           />
         </span>
       );
