@@ -21,10 +21,14 @@ const initialState = Map({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case REQUEST_TYPEAHEAD_SUGGESTIONS:
-      return state.set('term', fromJS(action.term));
+      return state
+        .set('term', fromJS(action.term))
+        .set('loading', true);
 
     case RECEIVE_TYPEAHEAD_SUGGESTIONS:
-      return state.set('suggestions', fromJS(action.artists));
+      return state
+        .set('suggestions', fromJS(action.artists))
+        .set('loading', false);
 
     case FAILURE_TYPEAHEAD_SUGGESTIONS:
       return state;

@@ -34,6 +34,32 @@
   }
 }
 
+#graph-loader {
+  position: absolute;
+  z-index: 3;
+  bottom: 16px;
+  left: 16px;
+}
+
+.graph-loader-enter {
+  opacity: 0.01;
+}
+
+.graph-loader-enter.graph-loader-enter-active {
+  opacity: 1;
+  transition: 500ms ease-in;
+}
+
+.graph-loader-leave {
+  opacity: 1;
+}
+
+.graph-loader-leave.graph-loader-leave-active {
+  opacity: 0;
+  transition: 1000ms linear;
+}
+
+
 @keyframes retract {
   to {
     stroke-dashoffset: 0;

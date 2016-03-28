@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+// TODO: Move this into an external module
 
 const immutableProps = propNamesOrTargetComponent => {
   // If our decorator was not invoked, propNames is actually our Target Component.

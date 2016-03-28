@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { List, Map, fromJS } from 'immutable';
-import min from 'lodash/min'
+import min from 'lodash/min';
 
 import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../../config/regions';
 import {
@@ -17,7 +17,6 @@ import {
   getVerticesInRegion,
   verticesHaveChangedPositions
 } from '../../helpers/graph.helpers';
-
 
 import VertexContainer from '../../containers/VertexContainer.jsx';
 import Edge from './Edge.jsx';

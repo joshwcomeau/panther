@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import isNumber from 'lodash/isNumber';
+import Spinner from 'react-activity/lib/Spinner';
 
 
 class SearchBox extends Component {
@@ -58,6 +59,14 @@ class SearchBox extends Component {
     this.props.actions.updateArtistUrl(suggestion.get('id'))
   }
 
+  renderLoading() {
+    return (
+      <div className="typeahead-loading">
+        <Spinner />
+      </div>
+    );
+  }
+
   renderSuggestions() {
     return this.props.search.get('suggestions').map( (suggestion, i) => {
       const classes = classNames([
@@ -81,6 +90,7 @@ class SearchBox extends Component {
   render() {
     return (
       <div id="search-box">
+        { this.props.search.get('loading') ? this.renderLoading() : null }
         <input
           type="text"
           className="typeahead"
@@ -92,6 +102,7 @@ class SearchBox extends Component {
         <div className="suggestions">
           { this.props.search.get('suggestions') ? this.renderSuggestions() : null }
         </div>
+
       </div>
     );
   }
