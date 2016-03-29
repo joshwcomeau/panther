@@ -1,0 +1,29 @@
+#restart {
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  left: 12px;
+  line-height: 47px;
+  color: $lightgray;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 750ms;
+
+  svg {
+    fill: $green;
+    float: left;
+    margin-right: -5px;
+    transition: 750ms;
+  }
+
+  &:hover {
+    color: $white;
+    transition: 400ms;
+
+    svg {
+      fill: $yellow;
+      transition: 400ms;
+    }
+  }
+}

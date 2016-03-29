@@ -11,7 +11,8 @@ import {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    artist: state.get('artists').get(ownProps.id)
+    artist: state.get('artists').get(ownProps.id),
+    selected: state.getIn(['graph', 'selected']) === ownProps.id
   };
 }
 

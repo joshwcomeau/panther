@@ -9,7 +9,7 @@ import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
 import Search                   from '../Search';
-import Header                   from '../Header';
+import Restart                  from '../Restart';
 
 
 export default function HomeBase(DevTools = null) {
@@ -36,6 +36,8 @@ export default function HomeBase(DevTools = null) {
           { isGraphRunning ? <GraphContainer /> : null }
           { isGraphRunning ? <ArtistAvatarContainer /> : null }
           { isGraphRunning ? <SamplesContainer /> : null }
+
+          { isGraphRunning ? <Restart /> : null }
 
           <ReactCSSTransitionGroup
             transitionName="graph-loader"

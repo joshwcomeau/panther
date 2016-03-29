@@ -18,8 +18,10 @@ class Vertex extends Component {
   }
 
   render() {
-    const { region, radius, x, y, rejected, artist } = this.props;
+    const { region, radius, x, y, rejected, selected, artist } = this.props;
     const artistName = artist.get('name');
+
+    console.log("Vertex is selected", selected)
 
     const shadowFilterId = 'drop-shadow';
 
