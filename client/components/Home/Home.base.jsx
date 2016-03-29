@@ -8,8 +8,8 @@ import { getArtistIdFromUrl }   from '../../helpers/url.helpers';
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
+import RestartContainer         from '../../containers/RestartContainer.jsx';
 import Search                   from '../Search';
-import Restart                  from '../Restart';
 
 
 export default function HomeBase(DevTools = null) {
@@ -37,7 +37,7 @@ export default function HomeBase(DevTools = null) {
           { isGraphRunning ? <ArtistAvatarContainer /> : null }
           { isGraphRunning ? <SamplesContainer /> : null }
 
-          { isGraphRunning ? <Restart /> : null }
+          { isGraphRunning ? <RestartContainer /> : null }
 
           <ReactCSSTransitionGroup
             transitionName="graph-loader"
