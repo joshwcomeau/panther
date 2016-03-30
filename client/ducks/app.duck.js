@@ -6,8 +6,9 @@ import { Map, List, fromJS } from 'immutable';
 ///////////////////////////
 // ACTION TYPES //////////
 /////////////////////////
-export const UPDATE_MODE = 'UPDATE_MODE';
-export const UPDATE_ARTIST_URL = 'UPDATE_ARTIST_URL'
+export const UPDATE_MODE        = 'UPDATE_MODE';
+export const UPDATE_ARTIST_URL  = 'UPDATE_ARTIST_URL';
+export const RESTART            = 'RESTART';
 
 
 ///////////////////////////
@@ -20,7 +21,15 @@ const initialState = fromJS({
 export default function reducer(state = initialState, action) {
   switch (action.type) {
   case UPDATE_MODE:
-    return state.set('mode', action.mode)
+    return state.set('mode', action.mode);
+
+  case RESTART:
+    // This action delegates to a saga. Has no direct result on state.
+    return state;
+
+  case UPDATE_ARTIST_URL:
+    // This action delegates to a saga. Has no direct result on state.
+    return state;
 
   default:
     return state;
@@ -36,6 +45,10 @@ export function updateMode(mode) {
     type: UPDATE_MODE,
     mode
   };
+}
+
+export function restart() {
+  return { type: RESTART };
 }
 
 export function updateArtistUrl(artistId) {

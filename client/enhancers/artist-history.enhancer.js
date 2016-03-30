@@ -2,12 +2,10 @@ import { Map, fromJS } from 'immutable';
 
 import historyEnhancer        from '../store/history-enhancer';
 import { getArtistIdFromUrl } from '../helpers/url.helpers';
-import { updateMode }         from '../ducks/app.duck';
-import { unloadTracks }       from '../ducks/samples.duck';
+import { restart }            from '../ducks/app.duck';
 import {
   selectArtist,
-  restoreGraphState,
-  emptyGraph
+  restoreGraphState
 } from '../ducks/graph.duck';
 
 
@@ -35,9 +33,7 @@ function historyChange(location, store) {
       store.dispatch(selectArtist(artistPlaceholder, false));
     }
   } else {
-    store.dispatch(updateMode('search'));
-    store.dispatch(emptyGraph());
-    store.dispatch(unloadTracks());
+    store.dispatch(restart());
   }
 
 }

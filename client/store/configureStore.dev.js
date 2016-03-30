@@ -7,6 +7,7 @@ import installDevTools                            from 'immutable-devtools';
 import rootReducer                    from '../reducers';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
+import { restart }                    from '../sagas/restart.saga';
 import DevTools                       from '../containers/DevTools.jsx';
 import artistHistoryEnhancer          from '../enhancers/artist-history.enhancer';
 
@@ -17,7 +18,8 @@ export default function configureStore() {
   const middlewares = [
     thunkMiddleware,
     createSagaMiddleware(watchSelectArtist),
-    createSagaMiddleware(search)
+    createSagaMiddleware(search),
+    createSagaMiddleware(restart)
   ];
 
   const store = createStore(

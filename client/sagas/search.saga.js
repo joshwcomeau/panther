@@ -1,4 +1,3 @@
-import { takeEvery } from 'redux-saga';
 import { take, call, put } from 'redux-saga/effects';
 
 import { fetchSearchResults } from '../helpers/api.helpers';
