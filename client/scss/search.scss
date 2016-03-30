@@ -88,6 +88,52 @@
       top: 13px;
     }
   }
+
+  #search-ideas {
+    position: relative;
+    padding: 2rem;
+    margin-top: 1rem;
+
+    .heading {
+      color: $yellow;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    li {
+      display: inline-block;
+      padding: 6px 12px 6px 0;
+    }
+
+    a {
+      position: relative;
+      cursor: pointer;
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        bottom: -2px;
+        height: 2px;
+        background: $green;
+        transform: translateY(7px);
+        opacity: 0;
+        transition: 400ms ease-out;
+      }
+
+      &:hover {
+        &:before {
+          transform: translateY(0);
+          opacity: 1;
+          transition: 250ms ease-out;
+        }
+      }
+
+    }
+  }
 }
 
 .search-animation-enter {
