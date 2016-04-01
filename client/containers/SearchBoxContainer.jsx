@@ -3,7 +3,7 @@ import { connect }              from 'react-redux';
 
 import SearchBox                from '../components/Search/SearchBox.jsx';
 import * as Actions             from '../ducks/search.duck';
-import { updateArtistUrl }      from '../ducks/app.duck';
+import { updateUrl }            from '../ducks/app.duck';
 import { selectActionCreators } from '../helpers/duck.helpers';
 
 function mapStateToProps(state) {
@@ -16,7 +16,7 @@ function mapDispatchToProps(dispatch) {
   // Add in our Graph action.
   // This may be a bad pattern? There is a need for cross-concern communication,
   // though, and wrapping both ducks in a parent duck just for this seems silly.
-  const mixedActionCreators = { updateArtistUrl, ...validActionCreators };
+  const mixedActionCreators = { updateUrl, ...validActionCreators };
 
   return {
     actions: bindActionCreators(mixedActionCreators, dispatch)

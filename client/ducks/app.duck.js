@@ -51,13 +51,15 @@ export function restart() {
   return { type: RESTART };
 }
 
-export function updateArtistUrl(artistId) {
+export function updateUrl(artistId) {
+  const path = artistId ? `/artist/${artistId}` : '/';
+
   return {
     type: UPDATE_ARTIST_URL,
     meta: {
       history: {
         type: 'push',
-        path: `/artist/${artistId}`
+        path
       }
     }
   }

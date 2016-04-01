@@ -14,7 +14,7 @@ class Vertex extends Component {
   }
 
   clickHandler() {
-    return this.props.actions.updateArtistUrl(this.props.artist.get('id'));
+    return this.props.actions.updateUrl(this.props.artist.get('id'));
   }
 
   render() {

@@ -3,8 +3,8 @@ import React from 'react';
 import CaretLeft from './CaretLeft.jsx';
 
 
-const Restart = ({restart}) => {
-  return <div id="restart" onClick={restart}>
+const Restart = ({updateUrl}) => {
+  return <div id="restart" onClick={() => updateUrl()}>
     <CaretLeft size={45} />
     Start Over
   </div>

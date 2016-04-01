@@ -2,9 +2,7 @@ import { bindActionCreators }   from 'redux';
 import { connect }              from 'react-redux';
 
 import Vertex                   from '../components/Graph/Vertex.jsx';
-import {
-  updateArtistUrl
-} from '../ducks/app.duck';
+import { updateUrl }            from '../ducks/app.duck';
 
 
 
@@ -17,7 +15,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({ updateArtistUrl }, dispatch)
+    actions: bindActionCreators({ updateUrl }, dispatch)
   }
 }
 
