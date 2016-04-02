@@ -9,7 +9,7 @@ if ( typeof process.env.NODE_ENV === 'undefined' ) {
 }
 
 const DEFAULT_CONFIG      = './server/config/defaults.json';
-const DEVELOPMENT_CONFIG  = './server/config/private.json';
+const DEVELOPMENT_CONFIG  = './server/config/development.json';
 const PRODUCTION_CONFIG   = '/home/deploy/config/panther/production.json';
 
 let ENV_CONFIG = process.env.NODE_ENV === 'production'

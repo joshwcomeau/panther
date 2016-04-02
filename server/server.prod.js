@@ -1,16 +1,16 @@
 import express  from 'express';
-import r        from 'rethinkdb';
+import bodyParser           from 'body-parser';
 
 import routes   from './routes';
+
 
 const app   = new express();
 const port  = 8001;
 
-app.use('/static', express.static('dist'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  r.connect()
-})
+app.use('/static', express.static('dist'));
 
 
 routes(app);
