@@ -15,7 +15,6 @@ app.use(webpackDevMiddleware(
 ));
 app.use(webpackHotMiddleware(compiler));
 
-console.log(routes);
 routes(app);
 
 
