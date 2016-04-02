@@ -1,3 +1,4 @@
+import express              from 'express';
 import webpack              from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
@@ -5,7 +6,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import routes from './routes';
 import config from '../webpack.dev';
 
-const app   = new (require('express'))();
+const app   = new express();
 const port  = 5678;
 
 const compiler = webpack(config);

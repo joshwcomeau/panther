@@ -1,21 +1,11 @@
-import webpack              from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
+import express from 'express';
 
 import routes from './routes';
-import config from '../webpack.dev';
 
-const app   = new (require('express'))();
-const port  = 5678;
+const app   = new express();
+const port  = 80;
 
-const compiler = webpack(config);
-app.use(webpackDevMiddleware(
-  compiler,
-  { noInfo: true, publicPath: config.output.publicPath }
-));
-app.use(webpackHotMiddleware(compiler));
-
-console.log(routes);
+app.use('/static', express.static('dist'))
 routes(app);
 
 
