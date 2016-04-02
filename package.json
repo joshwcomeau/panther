@@ -13,6 +13,7 @@
   "author": "Joshua Comeau",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "classnames": "^2.2.1",
     "faker": "^3.0.1",
     "history": "^1.17.0",
