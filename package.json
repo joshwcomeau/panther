@@ -20,6 +20,7 @@
     "immutable": "^3.7.6",
     "lodash": "^4.5.0",
     "moment": "^2.11.2",
+    "nconf": "^0.8.4",
     "react": "^15.0.0-rc.2",
     "react-activity": "^1.0.14",
     "react-addons-css-transition-group": "^0.14.7",
@@ -33,6 +34,7 @@
     "redux-thunk": "^1.0.0",
     "redux-undo": "^0.6.1",
     "reselect": "^2.0.1",
+    "rethinkdb": "^2.2.3",
     "web-animations-js": "^2.1.4",
     "whatwg-fetch": "^0.11.0"
   },

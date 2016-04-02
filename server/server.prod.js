@@ -1,11 +1,18 @@
-import express from 'express';
+import express  from 'express';
+import r        from 'rethinkdb';
 
-import routes from './routes';
+import routes   from './routes';
 
 const app   = new express();
-const port  = 80;
+const port  = 8001;
 
-app.use('/static', express.static('dist'))
+app.use('/static', express.static('dist'));
+
+app.use((req, res, next) => {
+  r.connect()
+})
+
+
 routes(app);
 
 
