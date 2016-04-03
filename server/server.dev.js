@@ -4,10 +4,10 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import bodyParser           from 'body-parser';
 
-
 import routes from './routes';
 import config from '../webpack.dev';
 import { setupStructureIfRequired } from './database';
+
 
 const app   = new express();
 const port  = 5678;

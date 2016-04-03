@@ -5,23 +5,28 @@ import { getConnection, createConnection, closeConnection } from './database';
 
 
 export default function(app) {
-  app.get('/searched_artist', createConnection, (req, res) => {
-    if ( !req.query || !req.query.id ) {
-      res.status(500).send({ error: 'Missing `id` query'});
-    }
+  // TODO: Validations
+
+  app.get('/searched_artists', createConnection, (req, res) => {
+    let { orderBy, limit } = req.query;
+
+    // Set up our query params to be used by RethinkDB (or, supply defaults).
+    orderBy = { index: orderBy || 'createdAt' };
+    limit   = Number(limit) || 10;
 
     const conn = getConnection(req);
 
     r.table('artists')
-      .orderBy({ index: 'createdAt' })
-      .limit(6)
+      .orderBy(orderBy)
+      .limit(limit)
       .run(conn)
+      .then( cursor => cursor.toArray() )
       .then( artist => res.send(artist) )
       .error( error => res.status(500).send({ error }) )
-      .finally( () => closeConnection(req) );
+      .finally(  () => closeConnection(req) );
   });
 
-  app.post('/searched_artist', createConnection, (req, res, next) => {
+  app.post('/searched_artists', createConnection, (req, res, next) => {
     if ( !req.body ) res.status(500).send({ error: 'Missing `body`'});
 
     const valid_keys = ['id', 'name'];
@@ -49,7 +54,6 @@ export default function(app) {
   });
 
   app.get('*', function(req, res) {
-    console.log("Got *")
     res.sendFile(path.join(__dirname, '../index.html'));
   });
 }

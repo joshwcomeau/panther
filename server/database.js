@@ -16,7 +16,6 @@ export function createConnection(req, res, next) {
 }
 
 export function closeConnection(req) {
-  console.log("Connection closed!")
   req._rdbConn.close();
 }
 
