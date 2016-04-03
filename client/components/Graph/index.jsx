@@ -29,7 +29,7 @@ class Graph extends Component {
     this.animateReorder = this.animateReorder.bind(this);
     this.dispatchMarkVertexAsSelected = this.dispatchMarkVertexAsSelected.bind(this);
     this.animateRelatedArtists = this.animateRelatedArtists.bind(this);
-    this.dispatchUpdateStatusToIdle = this.dispatchUpdateStatusToIdle.bind(this);
+    this.dispatchUpdateRepositionStatus = this.dispatchUpdateRepositionStatus.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +59,7 @@ class Graph extends Component {
         .then(this.animateReorder)
         .then(this.dispatchMarkVertexAsSelected)
         .then(this.animateRelatedArtists)
-        .then(this.dispatchUpdateStatusToIdle);
+        .then(this.dispatchUpdateRepositionStatus);
     }
   }
 
@@ -194,8 +194,8 @@ class Graph extends Component {
     });
   }
 
-  dispatchUpdateStatusToIdle(nextProps) {
-    return this.props.actions.updateRepositionStatus('idle');
+  dispatchUpdateRepositionStatus(nextProps) {
+    return this.props.actions.updateRepositionStatus(false);
   }
 
   calculateResponsiveRadiusAndRegions() {

@@ -35,8 +35,9 @@ export default function HomeBase(DevTools = null) {
 
       const isSearching     = this.props.mode === 'search';
       const isGraphRunning  = this.props.mode === 'graph';
-      const graphStatus     = this.props.graph.get('status');
-      const isLoading       = isGraphRunning && graphStatus !== 'idle';
+      const isRepositioning = this.props.graph.get('repositioning');
+      const isLoading       = this.props.graph.get('loading');
+      const showSentry      = isRepositioning || isLoading;
 
       return (
         <div id="layout" className={classes}>
@@ -55,7 +56,7 @@ export default function HomeBase(DevTools = null) {
             transitionEnterTimeout={500}
             transitionLeaveTimeout={1500}
           >
-            { isLoading ? <div id="graph-loader"><Sentry size={45} /></div> : null }
+            { showSentry ? <div id="graph-loader"><Sentry size={45} /></div> : null }
           </ReactCSSTransitionGroup>
 
           { DevTools ? <DevTools /> : null }

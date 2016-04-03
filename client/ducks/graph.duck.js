@@ -14,6 +14,7 @@ import {
 export const SELECT_ARTIST                  = 'SELECT_ARTIST';
 export const SETUP_INITIAL_STAGE            = 'SETUP_INITIAL_STAGE';
 export const UPDATE_REPOSITION_STATUS       = 'UPDATE_REPOSITION_STATUS';
+export const UPDATE_LOADING_STATUS          = 'UPDATE_LOADING_STATUS';
 export const ADD_RELATED_ARTISTS_TO_GRAPH   = 'ADD_RELATED_ARTISTS_TO_GRAPH';
 export const CENTER_GRAPH_AROUND_VERTEX     = 'CENTER_GRAPH_AROUND_VERTEX';
 export const MARK_VERTEX_AS_SELECTED        = 'MARK_VERTEX_AS_SELECTED';
@@ -42,10 +43,13 @@ export default function reducer(state = initialState, action) {
     return state
       .set('vertices', initialVertices)
       .set('edges', List())
-      .set('status', 'idle');
+      .set('repositioning', false);
 
   case UPDATE_REPOSITION_STATUS:
-    return state.set('status', action.status);
+    return state.set('repositioning', action.status);
+
+  case UPDATE_LOADING_STATUS:
+    return state.set('loading', action.status);
 
   case ADD_RELATED_ARTISTS_TO_GRAPH:
     return state
@@ -73,8 +77,7 @@ export default function reducer(state = initialState, action) {
         })));
 
         return edges.concat(newEdges);
-      })
-      .set('status', 'adding-related-artists');
+      });
 
 
   case CENTER_GRAPH_AROUND_VERTEX:
@@ -102,7 +105,7 @@ export default function reducer(state = initialState, action) {
 
     return state
       .update('edges', edges => recalculateEdges(state.get('vertices')))
-      .set('status', 'repositioning');
+      .set('repositioning', true);
 
   case MARK_VERTEX_AS_SELECTED:
     return state.set('selected', action.artist.get('id'));
@@ -115,7 +118,7 @@ export default function reducer(state = initialState, action) {
     return state
       .get('history')
       .set('selected', formerSelected)
-      .set('status', 'repositioning');
+      .set('repositioning', true);
 
   case EMPTY_GRAPH:
     return initialState;
@@ -147,6 +150,13 @@ export function setupInitialStage(artist) {
 export function updateRepositionStatus(status) {
   return {
     type: UPDATE_REPOSITION_STATUS,
+    status
+  };
+}
+
+export function updateLoadingStatus(status) {
+  return {
+    type: UPDATE_LOADING_STATUS,
     status
   };
 }

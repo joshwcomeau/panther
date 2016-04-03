@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect'
 import selectedArtist from './selected-artist.selector';
 
-const status    = state => state.getIn(['graph', 'status']);
+const isRepositioning = state => state.getIn(['graph', 'repositioning']);
 
 const artistVisibleSelector = createSelector(
-  [ status, selectedArtist ],
-  ( status, selectedArtist ) => status !== 'repositioning' && !!selectedArtist
+  [ isRepositioning, selectedArtist ],
+  ( isRepositioning, selectedArtist ) => !isRepositioning && !!selectedArtist
 );
 
 export default artistVisibleSelector;

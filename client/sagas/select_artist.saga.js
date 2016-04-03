@@ -6,6 +6,7 @@ import {
   SELECT_ARTIST,
   setupInitialStage,
   updateRepositionStatus,
+  updateLoadingStatus,
   addRelatedArtistsToGraph,
   centerGraphAroundVertex,
   captureGraphState,
@@ -40,6 +41,8 @@ function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
   // Make our API calls. We also want to add a small buffer to delayLength,
   // so that these calls perform their updates _after_ the graph animations are
   // complete)
+  yield put(updateLoadingStatus(true));
+
   const [ related, top ] = yield [
     call( fetchRelatedArtists, artistId ),
     call( fetchTopTracks, artistId ),
@@ -54,6 +57,8 @@ function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
     put(addRelatedArtistsToGraph(first3Related)),
     put(loadTracks(top.tracks))
   ];
+
+  yield put(updateLoadingStatus(false));
 }
 
 
@@ -77,7 +82,7 @@ function* initializeWithArtist(artist) {
 
   yield put(updateMode('graph'));
   yield put(captureGraphState());
-  yield put(updateRepositionStatus('idle'));
+  yield put(updateRepositionStatus(false));
 
   // Wait half a second for the "search" component to fade away
   if ( artistDataLoaded ) yield delay(500);
