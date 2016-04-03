@@ -62,6 +62,10 @@
     }
 
     .suggestions {
+      position: absolute;
+      width: 100%;
+      z-index: 2;
+
       .suggestion {
         padding: 12px;
         background: darken($navy, 2%);
