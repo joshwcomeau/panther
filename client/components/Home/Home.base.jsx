@@ -9,7 +9,7 @@ import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
 import RestartContainer         from '../../containers/RestartContainer.jsx';
-import Search                   from '../Search';
+import SearchContainer          from '../../containers/SearchContainer.jsx';
 
 
 export default function HomeBase(DevTools = null) {
@@ -26,13 +26,17 @@ export default function HomeBase(DevTools = null) {
 
       return (
         <div id="layout" className={classes}>
+          { /* Search homescreen stuff */}
           <ReactCSSTransitionGroup
             transitionName="search-animation"
             transitionEnterTimeout={0}
             transitionLeaveTimeout={2500}
           >
-            { isSearching ? <Search /> : null }
+            { isSearching ? <SearchContainer /> : null }
           </ReactCSSTransitionGroup>
+
+
+          { /* Running graph stuff */}
           { isGraphRunning ? <GraphContainer /> : null }
           { isGraphRunning ? <ArtistAvatarContainer /> : null }
           { isGraphRunning ? <SamplesContainer /> : null }
@@ -46,6 +50,7 @@ export default function HomeBase(DevTools = null) {
           >
             { isLoading ? <div id="graph-loader"><Sentry size={45} /></div> : null }
           </ReactCSSTransitionGroup>
+
 
           { DevTools ? <DevTools /> : null }
         </div>

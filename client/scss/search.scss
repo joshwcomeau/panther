@@ -89,7 +89,7 @@
     }
   }
 
-  #search-ideas {
+  #recent-searches {
     position: relative;
     padding: 1.5rem 1rem;
     margin-top: 1rem;
@@ -137,20 +137,35 @@
   }
 }
 
+.recent-searches-enter {
+  opacity: 0.01;
+  transform: translateY(50px);
+}
+.recent-searches-enter.recent-searches-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 1500ms;
+}
+.recent-searches-leave {
+  opacity: 1;
+}
+.recent-searches-leave.recent-searches-leave-active {
+  opacity: 0;
+  transition: 1000ms linear;
+}
+
+
 .search-animation-enter {
   opacity: 0.01;
 }
-
 .search-animation-enter.search-animation-enter-active {
   opacity: 1;
   transition: 500ms ease-in;
 }
-
 .search-animation-leave {
   opacity: 1;
   -webkit-filter: blur(0px);
 }
-
 .search-animation-leave.search-animation-leave-active {
   opacity: 0;
   -webkit-filter: blur(50px);

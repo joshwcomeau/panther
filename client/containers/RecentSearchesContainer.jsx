@@ -1,7 +1,7 @@
 import { bindActionCreators }     from 'redux';
 import { connect }                from 'react-redux';
 
-import SearchIdeas                from '../components/Search/SearchIdeas.jsx';
+import RecentSearches             from '../components/Search/RecentSearches.jsx';
 import { requestRecentSearches }  from '../ducks/search.duck';
 import { updateUrl }              from '../ducks/app.duck';
 
@@ -18,4 +18,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( SearchIdeas );
+export default connect( mapStateToProps, mapDispatchToProps )( RecentSearches );
