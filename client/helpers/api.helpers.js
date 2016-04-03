@@ -53,11 +53,18 @@ export function fetchRecentSearches() {
   });
 }
 
+export function sendRecentSearch({ id, name }) {
+  return postToAPI({
+    endpoint: 'searched_artists',
+    body:     { id, name }
+  });
+}
+
 
 ///////////////////////////
 // GENERAL HELPERS ///////
 /////////////////////////
-export default function fetchFromAPI({root, endpoint, params}) {
+function fetchFromAPI({root, endpoint, params}) {
   let url = [root, endpoint].join('/');
 
   if ( params ) {
@@ -66,6 +73,19 @@ export default function fetchFromAPI({root, endpoint, params}) {
   }
 
   return fetch(url).then(checkStatus).then( response => response.json() );
+}
+
+function postToAPI({root, endpoint, body}) {
+  let url = [root, endpoint].join('/');
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Accept':       'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
 }
 
 function checkStatus(response) {

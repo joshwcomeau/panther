@@ -1,6 +1,6 @@
 import { Map, List, fromJS }    from 'immutable';
 
-import { fetchRecentSearches }  from '../helpers/api.helpers';
+import { fetchRecentSearches, sendRecentSearch }  from '../helpers/api.helpers';
 
 
 ///////////////////////////
@@ -12,6 +12,7 @@ export const FAILURE_TYPEAHEAD_SUGGESTIONS  = 'FAILURE_TYPEAHEAD_SUGGESTIONS';
 export const REQUEST_RECENT_SEARCHES        = 'REQUEST_RECENT_SEARCHES';
 export const RECEIVE_RECENT_SEARCHES        = 'RECEIVE_RECENT_SEARCHES';
 export const FAILURE_RECENT_SEARCHES        = 'FAILURE_RECENT_SEARCHES';
+export const SEND_SELECTION_TO_SERVER       = 'SEND_SELECTION_TO_SERVER';
 export const CLEAR_TYPEAHEAD                = 'CLEAR_TYPEAHEAD';
 
 
@@ -99,6 +100,18 @@ export function failureRecentSearches(error) {
   return {
     type: FAILURE_RECENT_SEARCHES,
     error
+  }
+}
+
+export function sendSelectionToServer(selection) {
+  return {
+    type: SEND_SELECTION_TO_SERVER,
+    meta: {
+      event: {
+        type:     'search',
+        payload:  selection.toJS()
+      }
+    }
   }
 }
 

@@ -11,14 +11,14 @@ class SearchIdeas extends Component {
       let artistName = recent.name;
 
       // Append a comma to all artists except the final one.
-      const suffix = (this.props.recent.length - index > 1) ? ',' : '';
+      const isLastItem = this.props.recent.length - index > 1;
 
       return (
         <li key={index}>
           <a onClick={ () => this.props.actions.updateUrl(recent.id) }>
             {artistName}
           </a>
-          {suffix}
+          {isLastItem ? ',' : null}
         </li>
       );
     });

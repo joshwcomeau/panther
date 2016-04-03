@@ -5,6 +5,7 @@ import Immutable                                  from 'immutable';
 import installDevTools                            from 'immutable-devtools';
 
 import rootReducer                    from '../reducers';
+import eventTrackerMiddleware         from '../middlewares/event-tracker.middleware';
 import { watchSelectArtist }          from '../sagas/select_artist.saga';
 import { search }                     from '../sagas/search.saga';
 import { restart }                    from '../sagas/restart.saga';
@@ -17,6 +18,7 @@ installDevTools(Immutable);
 export default function configureStore() {
   const middlewares = [
     thunkMiddleware,
+    eventTrackerMiddleware,
     createSagaMiddleware(watchSelectArtist),
     createSagaMiddleware(search),
     createSagaMiddleware(restart)
