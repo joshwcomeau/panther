@@ -5,6 +5,8 @@
 @import 'reset';
 
 @import 'artist-avatar';
+@import 'footer';
+@import 'github-link';
 @import 'graph';
 @import 'panther-logo';
 @import 'restart';
@@ -24,6 +26,15 @@ body, input, select, option, textarea {
   &.wrapped-for-devtools {
     width: 70%;
   }
+}
+
+a {
+  text-decoration: none;
+  color: $white;
+}
+
+.mono {
+  font-family: monospace;
 }
 
 .background {

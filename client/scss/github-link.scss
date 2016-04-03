@@ -5,14 +5,23 @@
   right: 2rem;
   top: 1.6rem;
 
-  svg path {
-    fill: darken($white, 20%);
-    transition: fill 600ms;
+  svg {
+    transition: transform 600ms;
+
+    path {
+      fill: darken($white, 20%);
+      transition: fill 600ms;
+    }
   }
 
-  &:hover svg path {
-    fill: $yellow;
-    transition: fill 600ms;
+  &:hover svg {
+    transform: scale(1.3, 1.3) rotate(7deg);
+    transition: transform 400ms;
+
+    path {
+      fill: $yellow;
+      transition: fill 600ms;
+    }
   }
 
 }

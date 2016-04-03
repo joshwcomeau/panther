@@ -1,0 +1,55 @@
+#footer {
+	position: absolute;
+	z-index: 4;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 33%;
+	margin: auto;
+	padding: 1.5rem 0;
+	text-align: center;
+	color: $white;
+
+	h4 {
+		font-size: 18px;
+		margin-bottom: 8px;
+		color: darken($white, 20%);
+	}
+
+	h6 {
+		font-size: 13px;
+		color: darken($white, 40%);
+	}
+
+	.me {
+		display: inline-block;
+		position: relative;
+		font-weight: bold;
+		color: darken($white, 15%);
+		transition: 200ms;
+
+		&:after {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: -4px;
+			height: 3px;
+			background: $green;
+			border-radius: 6px;
+			transform: scaleY(0);
+			transition: 200ms;
+		}
+
+		&:hover {
+			color: $white;
+			transform: translateY(-3px);
+			transition: 500ms;
+
+			&:after {
+				transform: scaleY(1);
+				transition: 500ms;
+			}
+		}
+	}
+}
