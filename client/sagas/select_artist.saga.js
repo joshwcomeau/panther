@@ -123,9 +123,9 @@ export function* watchSelectArtist() {
     // For subsequent invocations, the job is different: Shifting everything down
     // one position.
     const appMode = yield select( state => state.getIn(['app', 'mode']));
-    const initialArtist = appMode !== 'graph';
+    const isInitialArtist = appMode !== 'graph';
     const artist = action.artist;
 
-    yield initialArtist ? initializeWithArtist(artist) : progressWithArtist(artist);
+    yield isInitialArtist ? initializeWithArtist(artist) : progressWithArtist(artist);
   }
 }

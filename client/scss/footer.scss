@@ -21,7 +21,7 @@
 		color: darken($white, 40%);
 	}
 
-	.me {
+	.raised-link {
 		display: inline-block;
 		position: relative;
 		font-weight: bold;
@@ -35,7 +35,7 @@
 			right: 0;
 			bottom: -4px;
 			height: 3px;
-			background: $green;
+			background: $white;
 			border-radius: 6px;
 			transform: scaleY(0);
 			transition: 200ms;
@@ -51,5 +51,8 @@
 				transition: 500ms;
 			}
 		}
+
+		&.me:after 			{ background: $yellow; }
+		&.spotify:after { background: $green; }
 	}
 }
