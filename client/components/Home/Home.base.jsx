@@ -24,7 +24,6 @@ export default function HomeBase(DevTools = null) {
           <ArtistAvatarContainer />
           <SamplesContainer />
           <RestartContainer />
-          <Footer />
         </div>
       )
     }
@@ -60,6 +59,8 @@ export default function HomeBase(DevTools = null) {
           </ReactCSSTransitionGroup>
 
           { DevTools ? <DevTools /> : null }
+
+          <Footer />
         </div>
       );
     }
