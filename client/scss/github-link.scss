@@ -1,0 +1,18 @@
+#github-link {
+  display: block;
+  position: absolute;
+  z-index: 5;
+  right: 2rem;
+  top: 1.6rem;
+
+  svg path {
+    fill: darken($white, 20%);
+    transition: fill 600ms;
+  }
+
+  &:hover svg path {
+    fill: $yellow;
+    transition: fill 600ms;
+  }
+
+}

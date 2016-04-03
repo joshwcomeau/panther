@@ -5,6 +5,8 @@ import ReactCSSTransitionGroup  from 'react-addons-css-transition-group';
 import Sentry                   from 'react-activity/lib/Sentry';
 
 import { getArtistIdFromUrl }   from '../../helpers/url.helpers';
+import GithubLink               from '../GithubLink';
+import Footer                   from '../Footer';
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
@@ -17,10 +19,12 @@ export default function HomeBase(DevTools = null) {
     renderRunning() {
       return (
         <div>
+          <GithubLink />
           <GraphContainer />
           <ArtistAvatarContainer />
           <SamplesContainer />
           <RestartContainer />
+          <Footer />
         </div>
       )
     }
