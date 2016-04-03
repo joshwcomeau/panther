@@ -45,7 +45,10 @@ export default function reducer(state = initialState, action) {
       return state.set('recent', action.recent);
 
     case CLEAR_TYPEAHEAD:
-      return initialState;
+      return state
+        .set('term', '')
+        .delete('loading')
+        .delete('suggestions');
 
     default:
       return state;

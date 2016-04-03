@@ -48,7 +48,7 @@ export function fetchRecentSearches() {
     endpoint:   'searched_artists',
     params: {
       orderBy:  'createdAt',
-      limit:    6
+      limit:    12
     }
   });
 }

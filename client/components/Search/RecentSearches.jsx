@@ -14,7 +14,7 @@ class RecentSearches extends Component {
           <a onClick={ () => this.props.actions.updateUrl(recent.id) }>
             {artistName}
           </a>
-          {isLastItem ? ',' : null}
+          {isLastItem ? ',' : '.'}
         </li>
       );
     });
@@ -28,7 +28,7 @@ class RecentSearches extends Component {
           { this.props.recent ? this.renderItems() : null }
         </ul>
       </div>
-    )
+    );
   }
 }
 

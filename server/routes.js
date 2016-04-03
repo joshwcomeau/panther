@@ -35,8 +35,6 @@ export default function(app) {
 
     const conn = getConnection(req);
 
-    console.log("Received", req.body)
-
     if ( valid_keys.toString() !== supplied_keys.toString() ) {
       return res.status(500).send({
         error: 'Please supply an `id` and a `name`, and nothing else.'

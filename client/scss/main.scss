@@ -4,12 +4,13 @@
 @import 'variables';
 @import 'reset';
 
-@import 'header';
 @import 'artist-avatar';
+@import 'graph';
+@import 'panther-logo';
+@import 'restart';
 @import 'search';
 @import 'samples';
-@import 'graph';
-@import 'restart';
+
 
 html, body, #render-target, #layout {
   height: 100%;

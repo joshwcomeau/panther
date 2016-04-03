@@ -133,7 +133,7 @@
         &:before {
           transform: translateY(0);
           opacity: 1;
-          transition: 250ms ease-out;
+          transition: 150ms ease-out;
         }
       }
 
@@ -159,10 +159,10 @@
 }
 
 
-.search-animation-enter {
+.search-animation-enter, .search-animation-appear {
   opacity: 0.01;
 }
-.search-animation-enter.search-animation-enter-active {
+.search-animation-enter.search-animation-enter-active, .search-animation-appear.search-animation-appear-active {
   opacity: 1;
   transition: 500ms ease-in;
 }

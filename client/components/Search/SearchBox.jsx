@@ -19,8 +19,10 @@ class SearchBox extends Component {
 
   // Handle input changes, new search terms.
   changeHandler(ev) {
+    const { requestTypeaheadSuggestions, clearTypeahead } = this.props.actions;
     const searchTerm = ev.target.value;
-    this.props.actions.requestTypeaheadSuggestions(searchTerm)
+
+    searchTerm ? requestTypeaheadSuggestions(searchTerm) : clearTypeahead();
   }
 
   // Handle typeahead controls (moving around, selecting an entry)
