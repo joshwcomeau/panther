@@ -1,39 +1,64 @@
+// Api helpers
+// A set of functions that connect both to the Spotify API,
+// and to our own back-end server.
 import toPairs from 'lodash/toPairs';
 
 
-const ROOT_URL = 'https://api.spotify.com/v1';
+///////////////////////////
+// SPOTIFY ///////////////
+/////////////////////////
+const SPOTIFY_ROOT  = 'https://api.spotify.com/v1';
 
 export function fetchRelatedArtists(artistId) {
-  return fetchFromAPI({ endpoint: `artists/${artistId}/related-artists`});
+  return fetchFromAPI({
+    root:     SPOTIFY_ROOT,
+    endpoint: `artists/${artistId}/related-artists`
+  });
 }
 
 export function fetchTopTracks(artistId) {
   return fetchFromAPI({
+    root:     SPOTIFY_ROOT,
     endpoint: `artists/${artistId}/top-tracks`,
-    params: {
-      country: 'US'
-    }
+    params:   { country: 'US' }
   });
 }
 
 export function fetchSearchResults(q, type = 'artist') {
   return fetchFromAPI({
+    root:     SPOTIFY_ROOT,
     endpoint: 'search',
-    params: {
-      type,
-      q
-    }
+    params:   { q, type }
   });
 }
 
 export function fetchArtistInfo(artistId) {
   return fetchFromAPI({
+    root:     SPOTIFY_ROOT,
     endpoint: `artists/${artistId}`
   });
 }
 
-export default function fetchFromAPI({endpoint, params}) {
-  let url = `${ROOT_URL}/${endpoint}`;
+
+///////////////////////////
+// SERVER ////////////////
+/////////////////////////
+export function fetchRecentSearches() {
+  return fetchFromAPI({
+    endpoint:   'searched_artists',
+    params: {
+      orderBy:  'createdAt',
+      limit:    6
+    }
+  });
+}
+
+
+///////////////////////////
+// GENERAL HELPERS ///////
+/////////////////////////
+export default function fetchFromAPI({root, endpoint, params}) {
+  let url = [root, endpoint].join('/');
 
   if ( params ) {
     const paramString = toPairs(params).map(param => param.join('=')).join('&');
