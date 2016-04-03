@@ -8,10 +8,11 @@ export default function(app) {
   // TODO: Validations
 
   app.get('/searched_artists', createConnection, (req, res) => {
-    let { orderBy, limit } = req.query;
+    let { orderBy, orderDirection, limit } = req.query;
 
     // Set up our query params to be used by RethinkDB (or, supply defaults).
-    orderBy = { index: orderBy || 'createdAt' };
+    const orderFn = r[orderDirection || 'desc'];
+    orderBy = { index: orderFn(orderBy) || 'createdAt' };
     limit   = Number(limit) || 10;
 
     const conn = getConnection(req);
