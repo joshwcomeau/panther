@@ -70,6 +70,8 @@ function* initializeWithArtist(artist) {
   const artistDataLoaded = artist.get('type') === 'artist';
 
   if ( !artistDataLoaded ) {
+    yield put(updateLoadingStatus(true));
+
     const [ artistData, top ] = yield [
       call( fetchArtistInfo, artistId ),
       call( fetchTopTracks, artistId )
@@ -82,6 +84,8 @@ function* initializeWithArtist(artist) {
 
   yield put(updateMode('graph'));
   yield put(captureGraphState());
+  yield put(updateLoadingStatus(true));
+
   yield put(updateRepositionStatus(false));
 
   // Wait half a second for the "search" component to fade away

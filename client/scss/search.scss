@@ -113,6 +113,11 @@
       animation-name: fadeRecentItem;
       animation-duration: 500ms;
       animation-fill-mode: backwards;
+
+      &.faded {
+        opacity: 0;
+        transition: opacity 1000ms ease-out;
+      }
     }
 
     @for $i from 1 through 12 {
