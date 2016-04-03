@@ -91,8 +91,9 @@
 
   #search-ideas {
     position: relative;
-    padding: 2rem;
+    padding: 1.5rem 1rem;
     margin-top: 1rem;
+    cursor: default;
 
     .heading {
       color: $yellow;
@@ -104,7 +105,7 @@
 
     li {
       display: inline-block;
-      padding: 6px 12px 6px 0;
+      padding: 6px 6px 6px 0;
     }
 
     a {
