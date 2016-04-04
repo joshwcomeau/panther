@@ -10,14 +10,20 @@ export function getAccessToken(callback = noop) {
   // To make authenticated requests to Spotify (and benefit from a higher rate-
   // limit), we need to proxy a request for an access token through our server.
   // The first step is to check if we already have it, in localStorage.
-  const storedToken = localStorage.getItem(TOKEN_KEY);
+  const storedTokenString = localStorage.getItem(TOKEN_KEY);
 
-  // If we already have it, and it isn't expired, no need for a server request.
-  // TODO: Check expiration. Decide on format.
-  if ( storedToken ) {
-    // Wrapping this in a setTimeout, so that this function is always async.
-    // For predictability and to avoid JS weirdness.
-    return window.setTimeout( () => callback(storedToken) )
+  if ( storedTokenString ) {
+    const storedToken = JSON.parse(storedTokenString);
+
+    // Check to see if it's expired.
+    const isExpired = Date.now() > storedToken.expiration;
+
+    // If it's still valid, we don't need to make a server request :)
+    if ( !isExpired ) {
+      // Wrapping this in a setTimeout, so that this function is always async.
+      // For predictability and to avoid JS weirdness.
+      return window.setTimeout( () => callback(storedToken) )
+    }
   }
 
   // BLock concurrent requests.
@@ -34,10 +40,37 @@ export function getAccessToken(callback = noop) {
 
   // Make a request to our back-end to generate a token.
   fetchAccessToken()
-    .then( token => {
-      localStorage.setItem(TOKEN_KEY, token);
+    .then( response => {
+      // The received token will be of type:
+      // {
+      //  "access_token": "BQCHMB...rDw",
+      //  "token_type": "Bearer",
+      //  "expires_in": 3600
+      // }
+      //
+      // We want to convert that `expires_in` into a unix timestamp.
+      //
+      // We're also going to subtract 20s, since the countdown started from
+      // when the token was generated, on Spotify's servers.
+      const expiresInMs = (response.expires_in - 20) * 1000;
+      const expirationTimestamp = Date.now() + expiresInMs;
+
+      const token = {
+        value:      response.access_token,
+        expiration: expirationTimestamp
+      };
+
+      localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+
+      // Reset our 'fetching' flag.
+      isFetching = false;
+
       return callback(token);
     })
-    .catch( err => console.error("Error fetching token from server", err) )
-    .finally( () => isFetching = false );
+    .catch( err => {
+      console.error("Error fetching token from server", err);
+
+      // Argh, no `finally` on the Fetch polyfill :(
+      isFetching = false;
+    });
 }
