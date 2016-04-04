@@ -4,15 +4,17 @@ import ReactDOM, { render }             from 'react-dom';
 import { Provider }                     from 'react-redux';
 import classNames                       from 'classnames';
 
-import configureStore     from './store';
-import HomeContainer      from './containers/HomeContainer';
-import { getAccessToken } from './helpers/auth.helpers';
+import configureStore from './store';
+import HomeContainer  from './containers/HomeContainer';
+
+import { fetchAndStoreAccessToken } from './helpers/auth.helpers';
+
+require('./scss/main.scss');
+
 
 // Fetch and store the Spotify access token in localStorage.
 // Will be available when we need it =)
-getAccessToken();
-
-require('./scss/main.scss');
+fetchAndStoreAccessToken();
 
 const store = configureStore();
 

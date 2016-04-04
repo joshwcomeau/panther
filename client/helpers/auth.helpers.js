@@ -1,12 +1,12 @@
 import noop from 'lodash/noop';
 
-import { fetchAccessToken } from './api.helpers';
+import { fetchFromAPI } from './api.helpers';
 
 
-const TOKEN_KEY = 'panther-audio-access-token';
-let isFetching  = false;
+const TOKEN_KEY     = 'panther-audio-access-token';
+const AUTH_ENDPOINT = 'spotify_access_token'
 
-export function getAccessToken(callback = noop) {
+export function fetchAndStoreAccessToken() {
   // To make authenticated requests to Spotify (and benefit from a higher rate-
   // limit), we need to proxy a request for an access token through our server.
   // The first step is to check if we already have it, in localStorage.
@@ -15,31 +15,12 @@ export function getAccessToken(callback = noop) {
   if ( storedTokenString ) {
     const storedToken = JSON.parse(storedTokenString);
 
-    // Check to see if it's expired.
-    const isExpired = Date.now() > storedToken.expiration;
-
     // If it's still valid, we don't need to make a server request :)
-    if ( !isExpired ) {
-      // Wrapping this in a setTimeout, so that this function is always async.
-      // For predictability and to avoid JS weirdness.
-      return window.setTimeout( () => callback(storedToken) )
-    }
+    if ( isTokenStillValid(storedToken) ) return;
   }
 
-  // BLock concurrent requests.
-  // When the app first loads, this function is invoked to fetch the token.
-  // Let's imagine, though, that the server is slow, and the user starts trying
-  // to use the app before the original request has resolved.
-  // In that case, we don't want to create a new request for a token, since
-  // we'll have one shortly. Instead, just return early.
-  // This works, because the access token is _optional_. We can make
-  // unauthenticated requests if we really need to.
-  if ( isFetching ) return callback(null);
-
-  isFetching = true;
-
   // Make a request to our back-end to generate a token.
-  fetchAccessToken()
+  fetchFromAPI({ endpoint: AUTH_ENDPOINT })
     .then( response => {
       // The received token will be of type:
       // {
@@ -61,16 +42,34 @@ export function getAccessToken(callback = noop) {
       };
 
       localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
-
-      // Reset our 'fetching' flag.
-      isFetching = false;
-
-      return callback(token);
     })
-    .catch( err => {
-      console.error("Error fetching token from server", err);
+    .catch( err => console.error("Error fetching token from server", err) );
+}
 
-      // Argh, no `finally` on the Fetch polyfill :(
-      isFetching = false;
-    });
+export function getAccessTokenFromLocalStorage() {
+  const accessTokenObject = JSON.parse(localStorage.getItem(TOKEN_KEY));
+
+  // If there isn't a token yet, don't worry about it. Return null.
+  if ( !accessTokenObject ) return null;
+
+  // If there is a token, and it's still valid, we can just return it.
+  if ( isTokenStillValid(accessTokenObject) ) return accessTokenObject.value;
+
+  // If the token is expired, we want to return `null`.
+  // We'll make a request for a new token, but we won't stick around and wait
+  // for the result.
+  // We can get away with this because tokens are _optional_. They increase the
+  // rate limit, so they're generally a good idea, but it's better to make the
+  // request immediately sans-token, rather than waiting for a new one.
+  fetchAndStoreAccessToken();
+  return null;
+}
+
+
+///////////////////////////
+// GENERAL HELPERS ///////
+/////////////////////////
+
+function isTokenStillValid(token) {
+  return Date.now() < token.expiration;
 }
