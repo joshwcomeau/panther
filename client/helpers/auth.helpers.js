@@ -1,10 +1,9 @@
-import noop from 'lodash/noop';
-
 import { fetchFromAPI } from './api.helpers';
 
 
 const TOKEN_KEY     = 'panther-audio-access-token';
-const AUTH_ENDPOINT = 'spotify_access_token'
+const AUTH_ENDPOINT = 'spotify_access_token';
+let isFetching      = false;
 
 export function fetchAndStoreAccessToken() {
   // To make authenticated requests to Spotify (and benefit from a higher rate-
@@ -18,6 +17,10 @@ export function fetchAndStoreAccessToken() {
     // If it's still valid, we don't need to make a server request :)
     if ( isTokenStillValid(storedToken) ) return;
   }
+
+  // Don't allow multiple fetches to occur simultaneously.
+  if ( isFetching ) return;
+  isFetching = true;
 
   // Make a request to our back-end to generate a token.
   fetchFromAPI({ endpoint: AUTH_ENDPOINT })
@@ -42,6 +45,8 @@ export function fetchAndStoreAccessToken() {
       };
 
       localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+
+      isFetching = false;
     })
     .catch( err => console.error("Error fetching token from server", err) );
 }
@@ -56,8 +61,7 @@ export function getAccessTokenFromLocalStorage() {
   if ( isTokenStillValid(accessTokenObject) ) return accessTokenObject.value;
 
   // If the token is expired, we want to return `null`.
-  // We'll make a request for a new token, but we won't stick around and wait
-  // for the result.
+  // We'll make a request for a new token, but we won't stick around for it.
   // We can get away with this because tokens are _optional_. They increase the
   // rate limit, so they're generally a good idea, but it's better to make the
   // request immediately sans-token, rather than waiting for a new one.
