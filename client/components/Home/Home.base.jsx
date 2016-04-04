@@ -6,6 +6,7 @@ import Sentry                   from 'react-activity/lib/Sentry';
 
 import GithubLink               from '../GithubLink';
 import Footer                   from '../Footer';
+import LoadingApology           from '../LoadingApology';
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
@@ -34,9 +35,10 @@ export default function HomeBase(DevTools = null) {
 
       const isSearching     = this.props.mode === 'search';
       const isGraphRunning  = this.props.mode === 'graph';
-      const isRepositioning = this.props.graph.get('repositioning');
       const isLoading       = this.props.graph.get('loading');
-      const showSpinner     = isRepositioning || isLoading;
+      const isRepositioning = this.props.graph.get('repositioning');
+      const showSpinner     = isLoading ||  isRepositioning;
+      const showApology     = isLoading && !isRepositioning;
 
       return (
         <div id="layout" className={classes}>
@@ -61,6 +63,8 @@ export default function HomeBase(DevTools = null) {
               : null
             }
           </ReactCSSTransitionGroup>
+
+          { showApology ? <LoadingApology /> : null}
 
           { DevTools ? <DevTools /> : null }
 
