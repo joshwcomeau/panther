@@ -34,6 +34,7 @@
     "redux-saga": "^0.9.1",
     "redux-thunk": "^1.0.0",
     "redux-undo": "^0.6.1",
+    "request": "^2.69.0",
     "reselect": "^2.0.1",
     "rethinkdb": "^2.2.3",
     "web-animations-js": "^2.1.4",

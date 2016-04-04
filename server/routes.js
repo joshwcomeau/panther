@@ -1,4 +1,6 @@
 import path from 'path';
+import nconf from 'nconf';
+import request from 'request';
 import r from 'rethinkdb';
 
 import { getConnection, createConnection, closeConnection } from './database';
@@ -27,6 +29,7 @@ export default function(app) {
       .finally(  () => closeConnection(req) );
   });
 
+
   app.post('/searched_artists', createConnection, (req, res, next) => {
     if ( !req.body ) res.status(500).send({ error: 'Missing `body`'});
 
@@ -53,6 +56,31 @@ export default function(app) {
       .error( error => res.status(500).send({ error }) )
       .finally( () => closeConnection(req) );
   });
+
+
+  app.get('/spotify_access_token', (req, res, next) => {
+    const clientId      = nconf.get('SPOTIFY_CLIENT_ID');
+    const clientSecret  = nconf.get('SPOTIFY_CLIENT_SECRET');
+
+    // We need, annoyingly, a base64-encoded string of our id:secret, for spotify.
+    // We can use Buffers to do this for us.
+    const authString = new Buffer(clientId+':'+clientSecret).toString('base64');
+
+    request.post({
+      url: 'https://accounts.spotify.com/api/token',
+      json: true,
+      body: 'grant_type=client_credentials',
+      headers: {
+        'Authorization':  `Basic ${authString}`,
+        'Content-Type':   'application/x-www-form-urlencoded'
+      }
+    }, (err, ___, body) => {
+      if ( err ) console.error('Oh no! Error getting bearer token', err);
+
+      return res.send(body);
+    });
+  });
+
 
   app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, '../index.html'));
