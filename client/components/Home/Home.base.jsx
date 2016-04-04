@@ -37,7 +37,7 @@ export default function HomeBase(DevTools = null) {
       const isGraphRunning  = this.props.mode === 'graph';
       const isRepositioning = this.props.graph.get('repositioning');
       const isLoading       = this.props.graph.get('loading');
-      const showSentry      = isRepositioning || isLoading;
+      const showSpinner     = isRepositioning || isLoading;
 
       return (
         <div id="layout" className={classes}>
@@ -56,7 +56,11 @@ export default function HomeBase(DevTools = null) {
             transitionEnterTimeout={500}
             transitionLeaveTimeout={1500}
           >
-            { showSentry ? <div id="graph-loader"><Sentry size={45} /></div> : null }
+            {
+              showSpinner
+              ? <div id="graph-loader"><Sentry size={45} /></div>
+              : null
+            }
           </ReactCSSTransitionGroup>
 
           { DevTools ? <DevTools /> : null }
