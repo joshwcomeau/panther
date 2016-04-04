@@ -60,6 +60,13 @@ export function sendRecentSearch({ id, name }) {
   });
 }
 
+export function fetchAccessToken() {
+  return fetchFromAPI({
+    endpoint: 'spotify_access_token'
+  });
+}
+
+
 
 ///////////////////////////
 // GENERAL HELPERS ///////
