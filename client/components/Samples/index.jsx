@@ -20,7 +20,7 @@ class Samples extends Component {
           animationFillMode: 'forwards',
           animationDuration: '600ms',
           animationTimingFunction: 'ease',
-          animationDelay: `${index*50}ms`
+          animationDelay: `${500 + index*50}ms`
         }
       } else {
         styles = {

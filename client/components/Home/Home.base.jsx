@@ -19,7 +19,6 @@ export default function HomeBase(DevTools = null) {
     renderRunning() {
       return (
         <div>
-          <GithubLink />
           <GraphContainer />
           <ArtistAvatarContainer />
           <SamplesContainer />
@@ -37,7 +36,6 @@ export default function HomeBase(DevTools = null) {
       const isGraphRunning  = this.props.mode === 'graph';
       const isLoading       = this.props.graph.get('loading');
       const isRepositioning = this.props.graph.get('repositioning');
-      const showSpinner     = isLoading ||  isRepositioning;
       const showApology     = isLoading && !isRepositioning;
 
       return (
@@ -58,7 +56,7 @@ export default function HomeBase(DevTools = null) {
             transitionLeaveTimeout={1500}
           >
             {
-              showSpinner
+              isLoading
               ? <div id="graph-loader"><Sentry size={45} /></div>
               : null
             }
@@ -66,9 +64,11 @@ export default function HomeBase(DevTools = null) {
 
           { showApology ? <LoadingApology /> : null}
 
+          <GithubLink />
+          <Footer />
+
           { DevTools ? <DevTools /> : null }
 
-          <Footer />
         </div>
       );
     }
