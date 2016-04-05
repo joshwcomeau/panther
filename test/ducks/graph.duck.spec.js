@@ -2,11 +2,12 @@ import { expect }               from 'chai';
 import { List, Map, fromJS }    from 'immutable';
 import * as _                   from 'lodash';
 
-import { GRAVEYARD, PAST, PRESENT, FUTURE } from '../../client/config/regions';
+import { CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE } from '../../client/config/regions';
 
 import { selectActionCreators } from '../../client/helpers/duck.helpers';
 import reducer                  from '../../client/ducks/graph.duck';
 import * as duckStuff           from '../../client/ducks/graph.duck';
+
 
 const Actions = selectActionCreators(duckStuff);
 const {
@@ -17,42 +18,164 @@ const {
   CENTER_GRAPH_AROUND_VERTEX
 } = duckStuff;
 
+const regions = [ CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE ];
+
 
 describe('Graph duck', () => {
   describe('Reducer', () => {
     describe(CENTER_GRAPH_AROUND_VERTEX, () => {
-      it('updates correctly without PAST or GRAVEYARD', () => {
-        const state = fromJS({
-          vertices: [
-            { id: 'a', region: PRESENT, regionIndex: 1 },
-            { id: 'b', region: FUTURE, regionIndex: 0 },
-            { id: 'c', region: FUTURE, regionIndex: 1 },
-            { id: 'd', region: FUTURE, regionIndex: 2 },
-          ], edges: [
-            { from: 'a', to: 'b' },
-            { from: 'a', to: 'c' },
-            { from: 'a', to: 'd' }
-          ]
-        });
+      it('updates correctly without PAST (1st transition)', () => {
+        const state = generateInitialGraph({ present: true, future: 3})
+
         const action = {
           type: CENTER_GRAPH_AROUND_VERTEX,
-          artist: fromJS({ id: 'd' })
+          artist: fromJS({ id: 'fut2' })
         };
 
         const expectedState = fromJS({
           vertices: [
-            { id: 'a', region: PAST, regionIndex: 1 },
-            { id: 'd', region: PRESENT, regionIndex: 1 }
+            { id: 'pres', region: PAST, regionIndex: 1 },
+            { id: 'fut2', region: PRESENT, regionIndex: 1 }
           ],
           edges: [
-            { from: 'a', to: 'd' }
+            { from: 'pres', to: 'fut2' }
           ],
-          status: 'repositioning'
+          repositioning: true
         });
         const actualState = reducer(state, action);
 
         expect(actualState).to.equal(expectedState);
       });
+
+      it('updates correctly without GRAVEYARD (2nd transition)', () => {
+        const state = generateInitialGraph({ past: true, present: true, future: 3})
+        const action = {
+          type: CENTER_GRAPH_AROUND_VERTEX,
+          artist: fromJS({ id: 'fut1' })
+        };
+
+        const expectedState = fromJS({
+          vertices: [
+            { id: 'past', region: GRAVEYARD, regionIndex: 1 },
+            { id: 'pres', region: PAST, regionIndex: 1 },
+            { id: 'fut1', region: PRESENT, regionIndex: 1 }
+          ],
+          edges: [
+            { from: 'past', to: 'pres' },
+            { from: 'pres', to: 'fut1' }
+          ],
+          repositioning: true
+        });
+        const actualState = reducer(state, action);
+
+        expect(actualState).to.equal(expectedState);
+      });
+
+      it('updates correctly without CATACOMBS (3rd transition)', () => {
+        const state = generateInitialGraph({
+          graveyard: true,
+          past: true,
+          present: true,
+          future: 3
+        })
+
+        const action = {
+          type: CENTER_GRAPH_AROUND_VERTEX,
+          artist: fromJS({ id: 'fut1' })
+        };
+
+        const expectedState = fromJS({
+          vertices: [
+            { id: 'grav', region: CATACOMBS, regionIndex: 1 },
+            { id: 'past', region: GRAVEYARD, regionIndex: 1 },
+            { id: 'pres', region: PAST, regionIndex: 1 },
+            { id: 'fut1', region: PRESENT, regionIndex: 1 }
+          ],
+          edges: [
+            { from: 'grav', to: 'past' },
+            { from: 'past', to: 'pres' },
+            { from: 'pres', to: 'fut1' }
+          ],
+          repositioning: true
+        });
+        const actualState = reducer(state, action);
+
+        expect(actualState).to.equal(expectedState);
+      });
+
+      it('updates correctly with all components (4th+ transition)', () => {
+        const state = generateInitialGraph({
+          catacombs: true,
+          graveyard: true,
+          past: true,
+          present: true,
+          future: 3
+        })
+
+        const action = {
+          type: CENTER_GRAPH_AROUND_VERTEX,
+          artist: fromJS({ id: 'fut0' })
+        };
+
+        const expectedState = fromJS({
+          vertices: [
+            { id: 'grav', region: CATACOMBS, regionIndex: 1 },
+            { id: 'past', region: GRAVEYARD, regionIndex: 1 },
+            { id: 'pres', region: PAST, regionIndex: 1 },
+            { id: 'fut0', region: PRESENT, regionIndex: 1 }
+          ],
+          edges: [
+            { from: 'grav', to: 'past' },
+            { from: 'past', to: 'pres' },
+            { from: 'pres', to: 'fut0' }
+          ],
+          repositioning: true
+        });
+        const actualState = reducer(state, action);
+
+        expect(actualState).to.equal(expectedState);
+      });
+
+
+
     });
   });
 });
+
+function generateInitialGraph({ catacombs, graveyard, past, present, future=0 }) {
+  let vertices = [];
+  let edges = [];
+
+  if ( catacombs ) {
+    vertices.push({ id: 'cata', region: CATACOMBS, regionIndex: 1 });
+  }
+  if ( graveyard ) {
+    vertices.push({ id: 'grav', region: GRAVEYARD, regionIndex: 1 });
+  }
+  if ( past ) {
+    vertices.push({ id: 'past', region: PAST, regionIndex: 1 });
+  }
+  if ( present ) {
+    vertices.push({ id: 'pres', region: PRESENT, regionIndex: 1 });
+  }
+
+  _.range(future).forEach( (futureVertex, i) => {
+    vertices.push({ id: 'fut'+i, region: FUTURE, regionIndex: i });
+  });
+
+  // Calculate edges by taking vertices two at a time
+  vertices.forEach( (vertex, i) => {
+    const regionIndex = regions.indexOf(vertex.region)
+    const nextRegion = regions[regionIndex+1];
+
+    if ( !nextRegion ) return;
+
+    const nextVertices = vertices.filter( ({region}) => region === nextRegion );
+
+    nextVertices.forEach( nextVertex => {
+      edges.push({ from: vertex.id, to: nextVertex.id });
+    });
+  });
+
+  return fromJS({ vertices, edges });
+}
