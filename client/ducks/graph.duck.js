@@ -31,7 +31,7 @@ const initialState = fromJS({
   selected: null
 });
 
-export default function reducer(state = initialState, action) {
+export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
   case SETUP_INITIAL_STAGE:
     const initialVertices = fromJS([{
@@ -114,11 +114,18 @@ export default function reducer(state = initialState, action) {
     return state.set('history', state);
 
   case RESTORE_GRAPH_STATE:
-    const formerSelected = state.get('selected')
+    // Normally, simply setting it to the previous state would be enough.
+    // There's a subtle problem though; the ArtistAvatar component.
+    // It takes a few hundred milliseconds to transition away, and if we update
+    // the `selected` property, the avatar src will immediately switch, so the
+    // _previous_ artist will be seen shrinking away.
+    // We'll start by grabbing the currently-selected artist ID, and maintain
+    // it until the transition is complete.
+    const currentSelected = state.get('selected');
+
     return state
       .get('history')
-      .set('selected', formerSelected)
-      .set('repositioning', true);
+      .set('selected', currentSelected);
 
   case EMPTY_GRAPH:
     return initialState;

@@ -5,7 +5,8 @@ import { getArtistIdFromUrl } from '../helpers/url.helpers';
 import { restart }            from '../ducks/app.duck';
 import {
   selectArtist,
-  restoreGraphState
+  restoreGraphState,
+  updateRepositionStatus
 } from '../ducks/graph.duck';
 
 
@@ -23,6 +24,7 @@ function historyChange(location, store) {
 
     if ( region === 'PAST' ) {
       store.dispatch(restoreGraphState());
+      store.dispatch(updateRepositionStatus(true));
     } else {
       // Transform the artistId into an immutable Map, to match the type expected.
       const artistPlaceholder = Map({
