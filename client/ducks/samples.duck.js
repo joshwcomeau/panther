@@ -18,7 +18,7 @@ const initialState = fromJS({
   playing: null
 });
 
-export default function reducer(state = initialState, action) {
+export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOAD_TRACKS:
       return state.set('tracks', fromJS(action.tracks));

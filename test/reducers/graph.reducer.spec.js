@@ -25,7 +25,7 @@ const {
 const regions = [ CATACOMBS, GRAVEYARD, PAST, PRESENT, FUTURE ];
 
 
-describe('Graph duck', () => {
+describe('Graph Reducer', () => {
   it(SETUP_INITIAL_STAGE, () => {
     const artist = fromJS({ id: '1337' });
     const state  = reducer();
