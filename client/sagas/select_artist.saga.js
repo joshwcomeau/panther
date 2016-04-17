@@ -35,7 +35,6 @@ export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 
 // TODO: Error handling (what happens if the API calls fail?)
-// TODO: Loading (Spotify is slowwww sometimes)
 
 function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
   // Make our API calls. We also want to add a small buffer to delayLength,
