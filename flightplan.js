@@ -45,18 +45,19 @@ plan.local( 'deploy', local => {
   }
 
   local.log('Copying files to remote');
-  const filenames = ['index.html', 'dist', 'client', 'server', 'package.json'];
-  const files = filenames.reduce( (memo, filename) => {
-    let file = local.find(filename, { silent: true }).stdout.split('\n');
-    return [ ...memo, file ];
-  }, []);
+  // const filenames = ['index.html', 'dist', 'client', 'server', 'package.json'];
+  // const files = filenames.reduce( (memo, filename) => {
+  //   let file = local.find(filename, { silent: true }).stdout.split('\n');
+  //   memo.push(file);
+  //   return memo;
+  // }, []);
 
-  // const index     = local.find('index.html', {silent: true}).stdout.split('\n');
-  // const dist      = local.find('dist', {silent: true}).stdout.split('\n');
-  // const client    = local.find('client', {silent: true}).stdout.split('\n');
-  // const server    = local.find('server', {silent: true}).stdout.split('\n');
-  // const packjson  = local.find('package.json', {silent: true}).stdout.split('\n');
-  // const files     = [].concat(dist, client, server, packjson);
+  const index     = local.find('index.html', {silent: true}).stdout.split('\n');
+  const dist      = local.find('dist', {silent: true}).stdout.split('\n');
+  const client    = local.find('client', {silent: true}).stdout.split('\n');
+  const server    = local.find('server', {silent: true}).stdout.split('\n');
+  const packjson  = local.find('package.json', {silent: true}).stdout.split('\n');
+  const files     = [].concat(index, dist, client, server, packjson);
 
   local.transfer(files, `/tmp/${newDirectoryName}`);
 });

@@ -16,8 +16,6 @@ const PRODUCTION_CONFIG     = './server/config/production.json';
 const REMOTE_PRIVATE_CONFIG = '/home/deploy/config/panther/production.json';
 const LOCAL_PRIVATE_CONFIG  = './server/config/privates.json';
 
-console.log("Local?", RUNNING_LOCALLY)
-
 const ENV_CONFIG = NODE_ENV === 'production'
                   ? PRODUCTION_CONFIG
                   : DEVELOPMENT_CONFIG;
