@@ -2,7 +2,31 @@
 <html>
 <head>
 	<meta charset=utf-8 />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="" sizes="256x256" type="image/png">
+
+	<!-- Critical, Pre-JS styles -->
+	<style>
+		.background {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: #22272a;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: -ms-flexbox;
+			display: flex;
+		}
+
+		@media ( min-width: 760px ) and ( orientation: landscape ) {
+			.background div { flex: 1; }
+			.background div:nth-of-type(1) { background: #272c30; }
+			.background div:nth-of-type(2) { background: #22272a; }
+			.background div:nth-of-type(3) { background: #1d2224; }
+		}
+	</style>
 
   <!-- Typekit. Replace me with Google Fonts, edgefonts, etc -->
 	<script src="https://use.typekit.net/zmc0niv.js"></script>

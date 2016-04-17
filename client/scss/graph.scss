@@ -60,6 +60,13 @@
 }
 
 
+
+@media ( max-width: 760px ) and ( orientation: portrait ) {
+  #graph line {
+    stroke: rgba(24, 136, 200, 0.5);
+  }
+}
+
 @keyframes retract {
   to {
     stroke-dashoffset: 0;

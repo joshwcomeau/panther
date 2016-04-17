@@ -199,38 +199,79 @@ class Graph extends Component {
   }
 
   calculateResponsiveRadiusAndRegions() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width   = window.innerWidth;
+    const height  = window.innerHeight;
+    const mode    = ( width <= 750 && width < height ) ? 'mobile' : 'desktop';
+    const radius  = mode === 'mobile' ? width * 0.18 : height * 0.1;
 
-    const radius = min([width, height]) * 1/10;
+    let coords = { }
 
-    // TODO: A mobile mode where the nodes stack in rows instead of columns.
-    return {
-      radius,
-      regionCoords: {
-        [CATACOMBS]:  width * -1/4 - radius,
-        [GRAVEYARD]:  width * -1/4 - radius,
-        [PAST]:       width *  1/6 - radius,
-        [PRESENT]:    width *  3/6 - radius,
-        [FUTURE]:     width *  5/6 - radius
-      },
-      regionIndexCoords: [
-        height * 3/12 - radius,
-        height * 6/12 - radius,
-        height * 9/12 - radius
-      ],
-      regionOffset: {
-        [CATACOMBS]:  [0,0,0],
-        [GRAVEYARD]:  [0,0,0],
-        [PAST]:       [0,0,0],
-        [PRESENT]:    [0,0,0],
-        [FUTURE]:     [
-          width * -1/40,
-          width * 1/40,
-          width * -1/40
-        ]
-      }
-    };
+    if ( mode === 'mobile' ) {
+      coords = {
+        [CATACOMBS]: {
+          x: width * 1/2 - radius,
+          y: height * -1/4 - radius
+        },
+        [GRAVEYARD]: {
+          x: width * 1/2 - radius,
+          y: height * -1/4 - radius
+        },
+        [PAST]: {
+          x: width * 1/2 - radius,
+          y: height * -1/4 - radius
+        },
+        [PRESENT]: {
+          x: width * 1/2 - radius,
+          y: height * 1/4 - radius
+        },
+        [FUTURE]: {
+          x: [
+            width * 1/6 - radius,
+            width * 3/6 - radius,
+            width * 5/6 - radius
+          ],
+          y: [
+            // TODO: slight offsets
+            height * 3/4 + height * -1/20 - radius,
+            height * 3/4 + height *  1/20 - radius,
+            height * 3/4 + height * -1/20 - radius
+          ]
+        }
+      };
+    } else {
+      coords = {
+        [CATACOMBS]: {
+          x: width * -1/4 - radius,
+          y: height * 1/2 - radius
+        },
+        [GRAVEYARD]: {
+          x: width * -1/4 - radius,
+          y: height * 1/2 - radius
+        },
+        [PAST]: {
+          x: width *  1/6 - radius,
+          y: height * 1/2 - radius
+        },
+        [PRESENT]: {
+          x: width *  3/6 - radius,
+          y: height * 1/2 - radius
+        },
+        [FUTURE]: {
+          x: [
+            width * 5/6 + width * -1/40 - radius,
+            width * 5/6 + width *  1/40 - radius,
+            width * 5/6 + width * -1/40 - radius
+          ],
+          y: [
+            height * 3/12 - radius,
+            height * 6/12 - radius,
+            height * 9/12 - radius
+          ]
+        }
+      };
+    }
+
+    return { radius, coords };
   }
 
   updateEdgesFromVertices(vertices, edges) {
@@ -250,19 +291,25 @@ class Graph extends Component {
   }
 
   calculateVertexAndEdgePositions(props = this.state) {
-    const {
-      radius,
-      regionCoords,
-      regionIndexCoords,
-      regionOffset
-    } = this.calculateResponsiveRadiusAndRegions();
+    const { radius, coords } = this.calculateResponsiveRadiusAndRegions();
 
-    const vertices = props.vertices.map( v => v
-      .set( 'x',  regionCoords[v.get('region')]
-                + regionOffset[v.get('region')][v.get('regionIndex')])
-      .set( 'y', regionIndexCoords[v.get('regionIndex')] )
-      .set( 'radius', radius )
-    );
+    const vertices = props.vertices.map( v => {
+      let x = coords[v.get('region')]['x'];
+      let y = coords[v.get('region')]['y'];
+
+      // The 'FUTURE' region can vary depending on the item's index. The first
+      // FUTURE vertex might have a different position than the second.
+      // To deal with this, the coordinates can either hold an integer, when
+      // all values are the same, or an array of integers when it varies. We
+      // can look up the appropriate value with our regionIndex.
+      if ( typeof x === 'object' ) x = x[v.get('regionIndex')];
+      if ( typeof y === 'object' ) y = y[v.get('regionIndex')];
+
+      return v
+        .set( 'x', x )
+        .set( 'y', y )
+        .set( 'radius', radius );
+    });
 
     const edges = this.updateEdgesFromVertices(vertices, props.edges);
 

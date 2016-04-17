@@ -1,6 +1,6 @@
 #samples-wrapper {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   width: 33%;
   top: 0;
   left: 0;
@@ -79,15 +79,27 @@
   transition: 500ms linear;
 }
 
-@media (max-width: 750px) {
+@media ( max-width: 760px ) and ( orientation: portrait ) {
   #samples-wrapper {
     width: 100%;
     display: block;
-    height: 35%;
+    height: 38%;
 
     .node-spacer {
       height: 100%;
     }
+  }
+
+  #samples-wrapper #track-name {
+    border-radius: 30%;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    text-shadow:
+      1px 1px 0px $navy,
+      2px 2px 0px $navy,
+      3px 3px 0px $navy,
+      1px 1px 10px $navy
+    ;
   }
 }
 
