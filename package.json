@@ -57,7 +57,6 @@
     "chai-equal-jsx": "^1.0.9",
     "chai-immutable": "^1.5.3",
     "css-loader": "^0.23.0",
-    "express": "^4.13.4",
     "flightplan": "^0.6.13",
     "immutable-devtools": "0.0.6",
     "json-loader": "^0.5.4",
