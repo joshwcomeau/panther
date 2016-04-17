@@ -56,3 +56,9 @@
 		&.spotify:after { background: $green; }
 	}
 }
+
+@media ( max-width: 750px ) {
+	#footer {
+		width: 95%;
+	}
+}

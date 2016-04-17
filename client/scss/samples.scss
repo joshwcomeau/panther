@@ -79,6 +79,18 @@
   transition: 500ms linear;
 }
 
+@media (max-width: 750px) {
+  #samples-wrapper {
+    width: 100%;
+    display: block;
+    height: 35%;
+
+    .node-spacer {
+      height: 100%;
+    }
+  }
+}
+
 
 @keyframes widen {
   from { transform: scaleX(0.01); }
