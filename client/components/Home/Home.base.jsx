@@ -6,7 +6,6 @@ import Sentry                   from 'react-activity/lib/Sentry';
 
 import GithubLink               from '../GithubLink';
 import Footer                   from '../Footer';
-import LoadingApology           from '../LoadingApology';
 import GraphContainer           from '../../containers/GraphContainer.jsx';
 import ArtistAvatarContainer    from '../../containers/ArtistAvatarContainer.jsx';
 import SamplesContainer         from '../../containers/SamplesContainer.jsx';
@@ -36,14 +35,13 @@ export default function HomeBase(DevTools = null) {
       const isGraphRunning  = this.props.mode === 'graph';
       const isLoading       = this.props.graph.get('loading');
       const isRepositioning = this.props.graph.get('repositioning');
-      const showApology     = isLoading && !isRepositioning;
 
       return (
         <div id="layout" className={classes}>
           <ReactCSSTransitionGroup
             transitionName="search-animation"
             transitionEnterTimeout={1000}
-            transitionLeaveTimeout={2500}
+            transitionLeaveTimeout={1000}
           >
             { isSearching ? <SearchContainer /> : null }
           </ReactCSSTransitionGroup>
@@ -61,8 +59,6 @@ export default function HomeBase(DevTools = null) {
               : null
             }
           </ReactCSSTransitionGroup>
-
-          { showApology ? <LoadingApology /> : null}
 
           <GithubLink />
           <Footer />
