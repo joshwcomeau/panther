@@ -33,9 +33,15 @@ class Graph extends Component {
   }
 
   componentDidMount() {
-    this.resizeHandler = window.addEventListener('resize', () => {
+    this.resizeHandler = () => {
       this.setState(this.calculateVertexAndEdgePositions());
-    });
+    }
+
+    window.addEventListener('resize', this.resizeHandler);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeHandler);
   }
 
   componentWillReceiveProps(nextProps) {
