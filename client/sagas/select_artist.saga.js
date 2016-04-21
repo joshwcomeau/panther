@@ -61,7 +61,7 @@ function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
 }
 
 
-function* initializeWithArtist(artist) {
+function* initializeWithArtist(artist, appMode) {
   const artistId = artist.get('id');
 
   // It's possible we don't have all the info we need yet;
@@ -88,7 +88,7 @@ function* initializeWithArtist(artist) {
   yield put(updateRepositionStatus(false));
 
   // Wait half a second for the "search" component to fade away
-  if ( artistDataLoaded ) yield delay(500);
+  if ( appMode === 'search' ) yield delay(1000);
 
   yield [
     put(addArtists(artist)),
@@ -134,6 +134,8 @@ export function* watchSelectArtist() {
     const isInitialArtist = appMode !== 'graph';
     const artist = action.artist;
 
-    yield isInitialArtist ? initializeWithArtist(artist) : progressWithArtist(artist);
+    yield isInitialArtist
+      ? initializeWithArtist(artist, appMode)
+      : progressWithArtist(artist);
   }
 }

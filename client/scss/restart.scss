@@ -4,9 +4,10 @@
   top: 12px;
   left: 12px;
   line-height: 47px;
-  color: $lightgray;
+  color: lighten($lightgray, 10%);
   font-weight: bold;
   font-size: 14px;
+  text-shadow: 1px 1px 2px $navy;
   cursor: pointer;
   transition: 750ms;
 
