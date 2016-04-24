@@ -7,30 +7,47 @@ import immutableProps from '../immutable_props.jsx';
 
 @immutableProps
 class Samples extends Component {
+  componentWillMount() {
+    this.setState({
+      // We want to disable the animations the first time it renders,
+      // so we don't see it transition away on load.
+      enableButtonAnimation: false
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ( nextProps.visible )
+      this.setState({
+        enableButtonAnimation: true
+      })
+  }
+
   renderButtons() {
     const { tracks, playing, visible, actions } = this.props;
 
     return tracks.map( (track, index) => {
-      let styles;
+      let styles = {};
 
-      if ( visible ) {
-        styles = {
-          opacity: 0,
-          animationName: 'button-enter',
-          animationFillMode: 'forwards',
-          animationDuration: '600ms',
-          animationTimingFunction: 'ease',
-          animationDelay: `${500 + index*50}ms`
+      if ( this.state.enableButtonAnimation ) {
+        if ( visible ) {
+          styles = {
+            opacity: 0,
+            animationName: 'button-enter',
+            animationFillMode: 'forwards',
+            animationDuration: '600ms',
+            animationTimingFunction: 'ease',
+            animationDelay: `${500 + index*50}ms`
+          }
+        } else {
+          styles = {
+            opacity: 1,
+            animationName: 'button-exit',
+            animationFillMode: 'forwards',
+            animationDuration: '600ms',
+            animationTimingFunction: 'ease',
+            animationDelay: `${index*50}ms`
+          };
         }
-      } else {
-        styles = {
-          opacity: 1,
-          animationName: 'button-exit',
-          animationFillMode: 'forwards',
-          animationDuration: '600ms',
-          animationTimingFunction: 'ease',
-          animationDelay: `${index*50}ms`
-        };
       }
 
       return (

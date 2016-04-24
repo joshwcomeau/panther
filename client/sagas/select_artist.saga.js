@@ -12,8 +12,12 @@ import {
   captureGraphState,
   restoreGraphState
 } from '../ducks/graph.duck';
+import {
+  loadTracks,
+  selectArtistForTracks,
+  stop
+} from '../ducks/samples.duck';
 import { addArtists } from '../ducks/artists.duck';
-import { loadTracks, stop } from '../ducks/samples.duck';
 import { updateMode } from '../ducks/app.duck';
 import { clearTypeahead } from '../ducks/search.duck';
 
@@ -54,7 +58,8 @@ function* fetchRelatedArtistsAndTopTracks({ artistId, delayLength }) {
   yield [
     put(addArtists(first3Related)),
     put(addRelatedArtistsToGraph(first3Related)),
-    put(loadTracks(top.tracks))
+    put(loadTracks(top.tracks, artistId)),
+    put(selectArtistForTracks(artistId))
   ];
 
   yield put(updateLoadingStatus(false));
@@ -76,7 +81,10 @@ function* initializeWithArtist(artist, appMode) {
       call( fetchTopTracks, artistId )
     ];
 
-    put(loadTracks(top.tracks));
+    yield [
+      put(loadTracks(top.tracks, artistId)),
+      put(selectArtistForTracks(artistId))
+    ];
 
     artist = fromJS(artistData);
   }
