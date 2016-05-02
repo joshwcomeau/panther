@@ -4,4 +4,4 @@ coverage
 *.log
 /dist
 
-config/privates.json
+server/config/privates.json
