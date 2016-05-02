@@ -5,7 +5,7 @@ const Footer = () => (
     <h4>
       Made by <a className="raised-link me" href="https://twitter.com/JoshWComeau">Joshua Comeau.</a> Powered by <a className="raised-link spotify" href="https://www.spotify.com">Spotify.</a>
     </h4>
-    <h6>Copyright <span className="mono">Date.now()</span>. All rights, wrongs, and grey areas reserved.</h6>
+    <h6>Copyright <span className="mono this-is-a-joke" title="This is a joke, not a bug :)">Date.now()</span>. All rights, wrongs, and grey areas reserved.</h6>
   </footer>
 );
 
