@@ -58,7 +58,10 @@ export function fetchRecentSearches() {
 export function sendRecentSearch({ id, name }) {
   return postToAPI({
     endpoint: 'searched_artists',
-    body:     { id, name }
+    body:     {
+      spotifyArtistId: id,
+      name
+    }
   });
 }
 

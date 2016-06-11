@@ -28,7 +28,7 @@ class RecentSearches extends Component {
 
       return (
         <li key={index} className={classes}>
-          <a onClick={ () => this.clickHandler(recent.id) }>
+          <a onClick={ () => this.clickHandler(recent.spotifyArtistId) }>
             {artistName}
           </a>
           {isLastItem ? ',' : '.'}

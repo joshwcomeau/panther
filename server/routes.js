@@ -33,14 +33,14 @@ export default function(app) {
   app.post('/searched_artists', createConnection, (req, res, next) => {
     if ( !req.body ) res.status(500).send({ error: 'Missing `body`'});
 
-    const valid_keys = ['id', 'name'];
+    const valid_keys = ['name', 'spotifyArtistId'];
     const supplied_keys = Object.keys(req.body).sort();
 
     const conn = getConnection(req);
 
     if ( valid_keys.toString() !== supplied_keys.toString() ) {
       return res.status(500).send({
-        error: 'Please supply an `id` and a `name`, and nothing else.'
+        error: 'Please supply an `spotifyArtistId` and a `name`, and nothing else.'
       });
     }
 
