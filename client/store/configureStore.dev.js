@@ -12,9 +12,6 @@ import { restart }                    from '../sagas/restart.saga';
 import DevTools                       from '../containers/DevTools.jsx';
 import artistHistoryEnhancer          from '../enhancers/artist-history.enhancer';
 
-import Perf from 'react-addons-perf';
-window.Perf = Perf;
-
 // Make our store print nicely in the console
 installDevTools(Immutable);
 

@@ -25,6 +25,7 @@ export function fetchAndStoreAccessToken() {
   // Make a request to our back-end to generate a token.
   fetchFromAPI({ endpoint: AUTH_ENDPOINT })
     .then( response => {
+      console.log({response})
       // The received token will be of type:
       // {
       //  "access_token": "BQCHMB...rDw",

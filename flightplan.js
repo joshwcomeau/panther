@@ -26,7 +26,22 @@ const projectDir        = `/home/${user}/${appName}`;
 const newDirectory      = `${projectDir}/${newDirectoryName}`;
 const linkedDirectory   = `${projectDir}/current`;
 
-const MAX_SAVED_DEPLOYS = 3
+const MAX_SAVED_DEPLOYS = 3;
+
+const restartServer = (remote) => {
+  // Start/Restart the application
+  // First, figure out if the app is already running
+  let appDetails = remote.exec(`pm2 show ${appName}`, {failsafe: true});
+  let appNotRunning = !!appDetails.stderr;
+
+  if ( appNotRunning ) {
+    remote.log("App is not already running. Starting it fresh")
+    remote.exec(`pm2 start ${linkedDirectory}/server --name="${appName}"`)
+  } else {
+    remote.log("Restarting app")
+    remote.exec(`pm2 restart ${appName}`)
+  }
+}
 
 plan.target('production', {
   host:       nconf.get('SERVER_HOST'),
@@ -78,24 +93,13 @@ plan.remote( 'deploy', remote => {
     { user }
   );
 
-
   remote.log('Creating symlink');
   remote.sudo(`ln -snf ${newDirectory} ${linkedDirectory}`, { user });
 
-  // Start/Restart the application
-  // First, figure out if the app is already running
-  let appDetails = remote.exec(`pm2 show ${appName}`, {failsafe: true});
-  let appNotRunning = !!appDetails.stderr;
-
-  if ( appNotRunning ) {
-    remote.log("App is not already running. Starting it fresh")
-    remote.exec(`pm2 start ${linkedDirectory}/server --name="${appName}"`)
-  } else {
-    remote.log("Restarting app")
-    remote.exec(`pm2 restart ${appName}`)
-  }
+  restartServer(remote);
 
   remote.log('Removing oldest copies of deploy');
   remote.exec(`cd ${projectDir} && rm -rf \`ls -td wws_* | awk 'NR>${MAX_SAVED_DEPLOYS}'\``);
-
 });
+
+plan.remote("restart", restartServer);
